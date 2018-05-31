@@ -1,0 +1,2 @@
+0 - dagger.txt
+1 - ring.txt

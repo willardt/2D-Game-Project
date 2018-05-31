@@ -1,0 +1,6 @@
+Quest ID - 1
+Quest Type - 1
+Quest Name - Do Something For Me
+Total Kills - 20
+Target ID - 2
+Target Name - Link

@@ -1,0 +1,2 @@
+Player - Data/Textures/player.png
+Greg - Data/Textures/greg.png

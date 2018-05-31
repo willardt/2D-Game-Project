@@ -1,0 +1,5 @@
+Empty - Data/Maps/Tiles/empty.png
+Grass - Data/Maps/Tiles/grass.png
+Grass2 - Data/Maps/Tiles/grass2.png
+Water - Data/Maps/Tiles/water.png
+Water2 - Data/Maps/Tiles/water2.png

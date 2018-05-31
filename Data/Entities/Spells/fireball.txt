@@ -1,0 +1,10 @@
+Name - Fireball
+Texture - Data/Textures/fireball.bmp
+Width - 20
+Height - 20
+Speed - .01
+Max Distance - 500
+Damage - 20
+End Frame - 25
+Fire Rate - 10
+Mana Cost - 5

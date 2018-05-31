@@ -1,0 +1,2 @@
+0 dagger - Data/Textures/Items/dagger.png
+1 ring - Data/Textures/Items/ring.png

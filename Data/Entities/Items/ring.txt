@@ -1,0 +1,13 @@
+id - 1
+type - 4
+name - Ring
+Damage - 0
+Defense - 0
+Health - 20
+Hps - 0
+Mana - 29
+Mps - 0
+Leech - 0
+Drain - 0
+Luck - 1
+Speed - 2

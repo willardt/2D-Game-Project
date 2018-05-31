@@ -1,0 +1,37 @@
+Name - Link
+Texture - Data/Textures/link.png
+Width - 32
+Height - 32
+Total Frames - 8
+Run Frame - 8
+Min Down - 0
+Max Down - 1
+Min Up - 2
+Max Up - 3
+Min Right - 4
+Max Right - 5
+Min Left - 6
+Max Left - 7
+Level - 1
+Exp - 5
+Health - 100
+Health Regen - 5
+Mana - 100
+Mana Regen - 50
+Damage - 5
+Defense - 5
+Leech - 0
+Drain - 0
+Luck - 0
+Speed - 1
+Shards - 1
+Total Cast Frames - 0
+Up - 0
+Down - 0
+Left - 0
+Right - 0
+Up Right - 0
+Up Left - 0
+Down Right - 0
+Down Left - 0
+Spell ID - 0
