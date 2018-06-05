@@ -1,5 +1,0 @@
-id - 6
-name - Yellow House
-Width - 150
-Height - 200
-Solid - 1
