@@ -11,3 +11,5 @@ Leech - 6
 Drain - 7
 Luck - 1
 Speed - 0
+Drop Chance - 40
+Price - 20

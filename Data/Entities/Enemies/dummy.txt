@@ -25,13 +25,17 @@ Drain - 0
 Luck - 0
 Speed - 1
 Shards - 1
-Total Cast Frames - 0
-Up - 0
-Down - 0
-Left - 0
-Right - 0
-Up Right - 0
-Up Left - 0
-Down Right - 0
-Down Left - 0
+Total Cast Frames - 8
+Up - 12
+Down - 9
+Left - 11
+Right - 10
+Up Right - 13
+Up Left - 16
+Down Right - 14
+Down Left - 15
 Spell ID - 0
+Loot Size - 0
+Loot Table - 
+Combat Range w - 300
+Combat Range h - 300

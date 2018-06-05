@@ -24,8 +24,7 @@ Leech - 0
 Drain - 0
 Luck - 0
 Speed - 1
-Shards - 1
-Has Quest - 1
+Shards - 20
 Total Cast Frames - 0
 Up - 0
 Down - 0
@@ -36,3 +35,7 @@ Up Left - 0
 Down Right - 0
 Down Left - 0
 Spell ID - 0
+Loot Size - 0
+Loot Table - 
+Combat Range w - 0
+Combat Range h - 0

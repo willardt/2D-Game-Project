@@ -35,3 +35,7 @@ Up Left - 0
 Down Right - 0
 Down Left - 0
 Spell ID - 0
+Loot Size - 1
+Loot Table - 0
+Combat Range w - 500
+Combat Range h - 500
