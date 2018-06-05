@@ -9,13 +9,13 @@
 #define TEXT_H
 
 // Text types, affects font / color if undefined
-#define TEXT_NORMAL 1
-#define TEXT_DAMAGE 2
-#define TEXT_BOX 3
+#define TEXT_NORMAL 0
+#define TEXT_DAMAGE 1
+#define TEXT_BOX 2
 
 class Text {
 private:
-	enum { _PTSIZE = 30, _OUTLINE = 2 };
+	enum { _PTSIZE = 50, _OUTLINE = 2 };
 	const static std::string _NORMAL_FONT_PATH;
 	const static std::string _DAMAGE_FONT_PATH;
 	const static std::string _RUSSIAN_FONT_PATH;
@@ -44,6 +44,7 @@ public:
 	const static SDL_Color GREEN;
 	const static SDL_Color BLACK;
 	const static SDL_Color WHITE;
+	const static SDL_Color PURPLE;
 	const static SDL_Color NORMAL_COLOR;
 	const static SDL_Color DAMAGE_COLOR;
 
@@ -82,9 +83,12 @@ public:
 	static void printT(const int& ntype, std::string text, SDL_Rect npos, std::vector<Text>& texts);
 	static void printT(const int& ntype, std::string text, SDL_Rect npos, std::vector<Text>& texts, SDL_Color ncolor);
 	static void printT(const int& ntype, u16string utext, SDL_Rect npos, std::vector<Text>& texts);
+	static void printT(const int& ntype, u16string utext, SDL_Rect npos, std::vector<Text>& texts, bool spacing);
 	static void printT(const int& ntype, u16string utext, SDL_Rect npos, std::vector<Text>& texts, SDL_Color ncolor);
+	static void printT(const int& ntype, u16string utext, SDL_Rect npos, std::vector<Text>& texts, SDL_Color ncolor, bool spacing);
 	static Text printT(const int& ntype, std::string text, SDL_Rect npos, SDL_Color ncolor);
 	static Text printT(const int& ntype, u16string utext, SDL_Rect npos, SDL_Color ncolor);
+	static void clear(std::vector<Text>& texts);
 };
 
 

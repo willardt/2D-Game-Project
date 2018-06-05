@@ -22,8 +22,6 @@ class Texture {
 private:
 	std::string _path;  // File path | Image path
 public:
-	enum { BAR_SPACING_X = 8, BAR_SPACING_Y = 20, BAR_H = 8 };
-
 	const static SDL_Color healthBarFullGreen;
 	const static SDL_Color healthBarFull;
 	const static SDL_Color healthBarEmpty;
@@ -48,8 +46,9 @@ public:
 
 	static void drawRect(const SDL_Rect& rect, const SDL_Color& color, SDL_Renderer* renderer);
 	static void drawRectNoCam(const SDL_Rect& rect, const SDL_Color& color, SDL_Renderer* renderer);
+	static void drawRectTrans(const SDL_Rect& rect, const SDL_Color& color, SDL_Renderer* renderer);
 	static void drawRectTransNoCam(const SDL_Rect& rect, const SDL_Color& color, SDL_Renderer* renderer);
-	static void drawBar(SDL_Rect& rect, int height, const int& maxH, const int& h, SDL_Color front, SDL_Color Back, SDL_Renderer* renderer);
+	static void drawRectOutline(SDL_Rect rect, SDL_Color color, SDL_Renderer* renderer);
 	static Sprite updateSprite(SDL_Rect& rect, const int& frame);
 	
 	std::string getPath();

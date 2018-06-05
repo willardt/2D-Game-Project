@@ -18,19 +18,33 @@ typedef std::basic_string<uint16_t, std::char_traits<uint16_t>, std::allocator<u
 class File {
 private:
 	std::string _filepath;
+	std::vector<std::string> _data;
+	std::vector<u16string> _udata;
+
+	void _setPath(const int& filenum);
+	void _setPath(std::string filename);
 public:
-	std::string readStr(const int& filenum, const int& linenum);
-	std::string readStr(const int& linenum);
-	u16string readUnicodeStr(const int& linenum);
-	void writeStr(const int& filenum, const int& linenum);
-	void writeStr(const int& linenum);
-	int readInt(const int& filenum, const int& linenum);
-	int readInt(const int& linenum);
-	void writeInt(const int& filenum, const int& linenum);
-	void writeInt(const int& linenum);
-	float readFloat(const int& linenum);
-	void setPath(const int& filenum);
-	void setPath(std::string filename);
+	void read();
+	//*path - filepath
+	void read(std::string path);
+
+	void uread();
+	//*path - filepath
+	void uread(std::string path);
+
+	// *line - file line
+	int getInt(int line);
+	// *line - file line
+	float getFloat(int line);
+	// *line - file line
+	std::string getStr(int line);
+	// *line - file line
+	u16string getU16(int line);
+
+	int getSize();
+
+	//Checks if file exists
+	bool exists(std::string path);
 };
 
 #endif

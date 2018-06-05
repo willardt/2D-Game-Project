@@ -15,6 +15,8 @@ public:
 
 	void playerUpdate();
 
+	void pickupShards(std::vector<Item>& items, std::vector<Text>& texts);
+
 	// Return postion of quest in the vector
 	int findQuestNpc(const int& npcID);
 	int findQuestTarget(const int& enemyID);

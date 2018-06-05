@@ -25,6 +25,7 @@ public:
 	int count;
 	int total;
 	int targetID;
+	int rewardID;
 	bool isComplete;
 	bool isActive;
 	bool isEnd;

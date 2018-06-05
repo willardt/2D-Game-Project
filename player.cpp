@@ -18,6 +18,15 @@ void Player::playerUpdate() {
 	updateSpells();
 }
 
+void Player::pickupShards(std::vector<Item>& items, std::vector<Text>& texts) {
+	int q = collision(items);
+	if (q != -1 && items[q].id == 2) {
+		shards += items[q].damage;
+		Text::printT(TEXT_DAMAGE, "+" + std::to_string(items[q].damage), { pos.x + 50, pos.y - 50, NULL, 25 }, texts, Text::PURPLE);
+		items.erase(items.begin() + q);
+	}
+}
+
 void Player::equipItem(const int& index) {
 	int slot = items[index].type;
 	if (equipped[slot].isEquipped == true && equipped[slot].id != -1) {
@@ -101,12 +110,12 @@ void Player::loadItems() {
 	int itemSize = 0;
 	int data = 0;
 
-	file.setPath(PLAYER_FILE);
+	file.read("Data/player.txt");
 	std::cout << "Loading Items" << std::endl;
 	items.clear();
 
-	itemSize = file.readInt(6);
-	fileData = file.readStr(7);
+	itemSize = file.getInt(6);
+	fileData = file.getStr(7);
 	fileDataLength = int(fileData.length());
 
 	int p = 0;
@@ -128,7 +137,7 @@ void Player::loadItems() {
 		items.push_back(tempItem);
 	}
 
-	fileData = file.readStr(23);
+	fileData = file.getStr(23);
 	fileDataLength = int(fileData.length());
 
 	p = 0;
@@ -162,12 +171,12 @@ void Player::loadQuests() {
 	int fileDataLength = 0;
 	int questSize = 0;
 	int data = 0;
-	file.setPath(PLAYER_FILE);
+	file.read("Data/player.txt");
 	std::cout << "Loading Quests" << std::endl;
 	quests.clear();
 
-	questSize = file.readInt(4);
-	fileData = file.readStr(5);
+	questSize = file.getInt(4);
+	fileData = file.getStr(5);
 	fileDataLength = int(fileData.length());
 
 	int p = 0;

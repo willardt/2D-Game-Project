@@ -47,17 +47,28 @@ struct SpellAni {
 	int dleft;
 };
 
+struct Path {
+	bool met;
+	int x;
+	int y;
+};
+
 class Entity {
 private:
 public:
 	// _NPCSRC - NPC SPEECH REGION SCALE SIZE
-	enum { LOAD_DATA_SIZE = 3, NPCSRC = 20 };
-	enum { TOTAL_ENEMY_TEXTURES = 3, TOTAL_NPC_TEXTURE = 2, HEALTH_BAR_MAX_FRAME = 500 };
+	enum { LOAD_DATA_SIZE = 5, PATH_LOAD_DATA_SIZE = 3, NPCSRC = 40 };
+	enum { HEALTH_BAR_MAX_FRAME = 500 };
 	enum { RAND_DAMAGE_TEXT_X = 40, RAND_DAMAGE_TEXT_Y = 16, DAMAGE_TEXT_SPACEING_X = 10, DAMAGE_TEXT_SPACEING_Y = 10 };
-	enum { CASTING_ANI_TIME = 90, REGEN_TIME = 60};
+	enum { CASTING_ANI_TIME = 25, REGEN_TIME = 300};
 
 	Sprite sprite;
 	SDL_Rect pos;
+	int posWidthHalf;
+	int posHeightHalf;
+	SDL_Rect combatRange;
+	int combatRangeWidthHalf;
+	int combatRangeHeightHalf;
 
 	Animation ani;
 	SpellAni spellAni;
@@ -65,6 +76,9 @@ public:
 	std::vector<Spell> spells;
 	Spell spell;
 
+	std::vector<Path> paths;
+
+	Time combat;
 	Time regen;
 	Time casting;
 	Time castingAni;
@@ -84,15 +98,24 @@ public:
 
 	int combatFrame;
 	int castDir;
+	int activePath;
+	int fireRate;
+
+	std::vector<Item> lootTable;
 
 	void Init(const int& ntype, const int& nid, const int& x, const int& y);
 	
 	void update();
+	void updateCombat();
 	void updateRegen();
 	void updateCasting();
 	void updateCastingAni();
 	void updateSpells();
-	void move(const int& dir, const int& ndis, const bool& update);
+	void updatePath();
+	void updateCombat(SDL_Rect& player);
+
+	void move(const int& dir, int dis, const bool& update);
+	void checkCam(const int& type, const int& dis);
 	void updateSprite(const int& type, const int& dir);
 	void collision(const int& dir, const int& dis, std::vector<Entity>& obj, const int& selfIndex);
 	void collision(const int& dir, const int& dis, std::vector<Entity>& obj);
@@ -105,12 +128,22 @@ public:
 	bool collision(Spell& s, std::vector<Tile>& tile);
 
 	void applyDamage(const int& damage);
-	void applyDamage(const int& damage, std::vector<Text>& t);
-	int calcDamage(int d);
+	void applyDamage(const int& damage, std::vector<Text>& t, SDL_Color& color);
+	int calcDamage(int d, int def, int lvl);
 
-	void castSpell(int mX, int mY);
+	void castSpellMouse(int mX, int mY);
+	void castSpell(int nX, int nY);
 	int calcCastDir(int mX, int mY);
 
+	void addExp(int xp, TextBox& t);
+	void dropLoot(std::vector<Item>& items);
+
+	void loadPaths(int& size, std::string& fileData, const int& fileDataLength, int& p, int& q);
+
+	int getPathDir();
+	void reversePath();
+
+	static std::vector<Item> loadLootTable(const int& id, const int& type);
 	static std::vector<Texture> memInit(const int& type);
 	static std::string findName(const int& type, const int& id);
 };

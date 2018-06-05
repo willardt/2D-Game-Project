@@ -8,6 +8,7 @@ void Editor::Init() {
 	_tileWindow.update = true;
 
 	map.Init(0);
+	mainMap = Map::memInit();
 	tileMap = Map::memInit();
 	tileEnemyMem = Entity::memInit(ENEMY);
 	mainEnemyMem = Entity::memInit(ENEMY);
@@ -15,6 +16,8 @@ void Editor::Init() {
 	mainNpcMem = Entity::memInit(NPC);
 	tileItemsMem = Item::memInit();
 	mainItemsMem = Item::memInit();
+	tileObjectMem = Object::memInit();
+	mainObjectMem = Object::memInit();
 
 	backRect = { 0, 0, _mainWindow.getWidth(), _mainWindow.getHeight() };
 	tileRect = { 0, 0, _tileWindow.getWidth(), _tileWindow.getHeight() };
@@ -23,15 +26,21 @@ void Editor::Init() {
 	selectedTextureEnemy.setPath("Data/Maps/Tiles/empty.png");
 	selectedTextureNpc.setPath("Data/Maps/Tiles/empty.png");
 	selectedTextureItem.setPath("Data/Maps/Tiles/empty.png");
+	selectedTextureObject.setPath("Data/Maps/Tiles/empty.png");
 
 	options.camX = 0;
 	options.camY = 0;
 	options.isCam = false;
 
 	isRunning = true;
-	isTiles = true;
-	isEnemies = false;
-	isNpcs = false;
+	
+	chooseType = CHOOSE_TILES;
+	selectType = NULL;
+	
+	isWarpSelecting = false;
+	isWarpPos = false;
+	isWarpDest = false;
+	isPathSelecting = false;
 
 	mouseX = 0;
 	mouseY = 0;
@@ -39,7 +48,6 @@ void Editor::Init() {
 }
 
 void Editor::begin() {
-
 
 	while (isRunning != false) {
 		input();
@@ -59,6 +67,10 @@ void Editor::input() {
 	static bool keyDown2 = true;
 	static bool keyDown3 = true;
 	static bool keyDown4 = true;
+	static bool keyDown5 = true;
+	static bool keyDown6 = true;
+	static bool keyDownE = true;
+	static bool keyDownQ = true;
 
 	Options& options = options.Instance();
 
@@ -79,23 +91,26 @@ void Editor::input() {
 
 	//SELECT TILE ON TILE WINDOW
 	if (in.leftClick(mouseX, mouseY, _tileWindow.getWindow()) == true) {
-		if (isTiles == true) {
+		if (chooseType == CHOOSE_TILES) {
 			currentT = setCurrentTile();
 		}
-		else if (isEnemies == true) {
+		else if (chooseType == CHOOSE_ENEMIES) {
 			currentE = setCurrentEntity();
 		}
-		else if (isNpcs == true) {
+		else if (chooseType == CHOOSE_NPCS) {
 			currentN = setCurrentNpc();
 		}
-		else if (isItems == true) {
+		else if (chooseType == CHOOSE_ITEMS) {
 			currentI = setCurrentItem();
+		}
+		else if (chooseType == CHOOSE_OBJECTS) {
+			currentO = setCurrentObject();
 		}
 	}
 
 	//PLACE TILE ON MAIN WINDOW
 	if (in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == true) {
-		if (isTiles == true) {
+		if (chooseType == CHOOSE_TILES) {
 			placeTile();
 		}
 	}
@@ -105,11 +120,62 @@ void Editor::input() {
 	}
 
 	if (keyDownLeftMouse == false && in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == true) {
-		if (isEnemies == true || isNpcs == true) {
+		if (chooseType == CHOOSE_ENEMIES || chooseType == CHOOSE_NPCS) {
 			placeEntity();
 		}
-		else if (isItems == true) {
+		else if (chooseType == CHOOSE_ITEMS) {
 			placeItem();
+		}
+		else if (chooseType == CHOOSE_NONE) {
+			select();
+		}
+		else if (chooseType == CHOOSE_WARPS) {
+			bool isSelecting = true;
+			isWarpPos = true;
+			isWarpDest = false;
+			placeWarp(currentW.pos);
+			currentW.teleID = getMapIDInput(OLD);
+			int tempMapID = map.id;
+			int tempCamX = options.camX;
+			int tempCamY = options.camY;
+			save();
+			loadMap(currentW.teleID);
+			isWarpPos = false;
+			isWarpDest = true;
+			keyDownLeftMouse = true;
+			std::cout << in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) << " " << in.getQuit(_mainWindow.getWindow()) << std::endl;
+			while (isSelecting == true) {
+				isSelecting = in.getQuit(_mainWindow.getWindow());
+				if (in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == false) {
+					keyDownLeftMouse = false;
+				}
+				else if (keyDownLeftMouse == false && in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == true) {
+					isSelecting = false;
+				}
+				if (options.isCam == false && in.isPressed(SDL_SCANCODE_W) == true) {
+					options.camY -= options.camSpeed;
+				}
+				if (options.isCam == false && in.isPressed(SDL_SCANCODE_A) == true) {
+					options.camX -= options.camSpeed;
+				}
+				if (options.isCam == false && in.isPressed(SDL_SCANCODE_S) == true) {
+					options.camY += options.camSpeed;
+				}
+				if (options.isCam == false && in.isPressed(SDL_SCANCODE_D) == true) {
+					options.camX += options.camSpeed;
+				}
+
+				display();
+				fps.calcFPS();
+			}
+			placeWarp(currentW.dest);
+			loadMap(tempMapID);
+			options.camX = tempCamX;
+			options.camY = tempCamY;
+			warps.push_back(currentW);
+		}
+		else if (chooseType == CHOOSE_OBJECTS) {
+			placeObject();
 		}
 		keyDownLeftMouse = true;
 	}
@@ -144,12 +210,9 @@ void Editor::input() {
 	}
 
 	if (keyDown1 == false && in.isPressed(SDL_SCANCODE_1) == true) {
-		isTiles = true;
-		isEnemies = false;
-		isNpcs = false;
-		isItems = false;
-		selectedRect.w = 32;
-		selectedRect.h = 32;
+		chooseType = CHOOSE_TILES;
+		selectedRect.w = 64;
+		selectedRect.h = 64;
 		keyDown1 = true;
 	}
 
@@ -158,10 +221,7 @@ void Editor::input() {
 	}
 
 	if (keyDown2 == false && in.isPressed(SDL_SCANCODE_2) == true) {
-		isEnemies = false;
-		isNpcs = true;
-		isTiles = false;
-		isItems = false;
+		chooseType = CHOOSE_NPCS;
 		selectedRect.w = currentN.pos.w;
 		selectedRect.h = currentN.pos.h;
 		keyDown2 = true;
@@ -172,10 +232,7 @@ void Editor::input() {
 	}
 
 	if (keyDown3 == false && in.isPressed(SDL_SCANCODE_3) == true) {
-		isEnemies = true;
-		isNpcs = false;
-		isTiles = false;
-		isItems = false;
+		chooseType = CHOOSE_ENEMIES;
 		selectedRect.w = currentE.pos.w;
 		selectedRect.h = currentE.pos.h;
 		keyDown3 = true;
@@ -186,13 +243,82 @@ void Editor::input() {
 	}
 
 	if (keyDown4 == false && in.isPressed(SDL_SCANCODE_4) == true) {
-		isEnemies = false;
-		isNpcs = false;
-		isTiles = false;
-		isItems = true;
-		selectedRect.w = currentI.pos.w;
-		selectedRect.h = currentI.pos.h;
+		chooseType = CHOOSE_ITEMS;
+		selectedRect.w = 64;
+		selectedRect.h = 64;
 		keyDown4 = true;
+	}
+
+	if (in.isPressed(SDL_SCANCODE_5) == false) {
+		keyDown5 = false;
+	}
+	if (keyDown5 == false && in.isPressed(SDL_SCANCODE_5) == true) {
+		chooseType = CHOOSE_OBJECTS;
+		selectedRect.w = 86;
+		selectedRect.h = 86;
+		keyDown6 = true;
+	}
+
+	if (in.isPressed(SDL_SCANCODE_6) == false) {
+		keyDown6 = false;
+	}
+	if (keyDown6 == false && in.isPressed(SDL_SCANCODE_6) == true) {
+		chooseType = CHOOSE_WARPS;
+		keyDown5 = true;
+	}
+
+	if (in.isPressed(SDL_SCANCODE_E) == false) {
+		keyDownE = false;
+	}
+	if (keyDownE == false && in.isPressed(SDL_SCANCODE_E) == true) {
+		chooseType = CHOOSE_NONE;
+		if (chooseType == CHOOSE_ENEMIES) {
+			selectedRect.w = enemies[selected].pos.w;
+			selectedRect.h = enemies[selected].pos.h;
+		}
+		else if (chooseType == CHOOSE_NPCS) {
+			selectedRect.w = npcs[selected].pos.w;
+			selectedRect.h = npcs[selected].pos.h;
+		}
+		else if (chooseType == CHOOSE_ITEMS) {
+			selectedRect.w = 64;
+			selectedRect.h = 64;
+		}
+		else if (chooseType == CHOOSE_OBJECTS) {
+			selectedRect.w = 86;
+			selectedRect.h = 86;
+		}
+
+		keyDownE = true;
+	}
+
+	if (in.isPressed(SDL_SCANCODE_Q) == false) {
+		keyDownQ = false;
+	}
+	if (keyDownQ == false && in.isPressed(SDL_SCANCODE_Q) == true) {
+		if (chooseType == CHOOSE_NONE) {
+			if (selectType == SELECT_ENEMY) {
+				enemies.erase(enemies.begin() + selected);
+				selectType = NULL;
+			}
+			else if (selectType == SELECT_NPC) {
+				npcs.erase(npcs.begin() + selected);
+				selectType = NULL;
+			}
+			else if (selectType == SELECT_ITEM) {
+				items.erase(items.begin() + selected);
+				selectType = NULL;
+			}
+			else if (selectType == SELECT_WARP) {
+				warps.erase(warps.begin() + selected);
+				selectType = NULL;
+			}
+			else if (selectType == SELECT_OBJECT) {
+				objects.erase(objects.begin() + selected);
+				selectType = NULL;
+			}
+		}
+		keyDownQ = true;
 	}
 }
 
@@ -200,59 +326,137 @@ void Editor::update() {
 }
 
 void Editor::display() {
+	Options& options = options.Instance();
 
 	// ----------MAIN WINDOW----------
 	background.drawRectNoCam(backRect, { 255, 0, 255, 255 }, _mainWindow.getRenderer());
 	background.drawRectNoCam({ (_mainWindow.getWidth() / 2) - 3, 0, 3, _mainWindow.getHeight() }, { 255, 255, 255, 0 }, _mainWindow.getRenderer());
 	background.drawRectNoCam({ 0, (_mainWindow.getHeight() / 2) - 3, _mainWindow.getWidth(), 3 }, { 255, 255, 255, 0 }, _mainWindow.getRenderer());
+	SDL_Rect mouse = { mouseX + options.camX - 43, mouseY + options.camY - 43, 86, 86 };
 
 	// ----------MAP----------
 	for (int i = 0; i < map.area; i++) {
-		map.tiles[map.map[i].id].render(map.map[i].pos, _mainWindow.getRenderer());
+		mainMap[map.map[i].id].render(map.map[i].pos, _mainWindow.getRenderer());
+	}
+
+	for (size_t i = 0; i < warps.size(); i++) {
+		Texture::drawRectTrans(warps[i].pos, Text::PURPLE, _mainWindow.getRenderer());
+	}
+
+	if (isWarpSelecting) {
+		if (isWarpDest) {
+			Texture::drawRectTrans(currentW.dest, Text::RED, _mainWindow.getRenderer());
+		}
+		else if(isWarpPos) {
+			Texture::drawRectTrans(currentW.pos, Text::RED, _mainWindow.getRenderer());
+		}
+	}
+
+	for (size_t i = 0; i < paths.size(); i++) {
+		Texture::drawRectTrans({ paths[i].x, paths[i].y, 20, 20 }, Text::RED, _mainWindow.getRenderer());
+	}
+
+	for (size_t i = 0; i < objects.size(); i++) {
+		mainObjectMem[objects[i].id].render(objects[i].pos, _mainWindow.getRenderer());
+	}
+	if (chooseType == CHOOSE_OBJECTS) {
+		mouse = { mouseX + options.camX - (currentO.pos.w / 2), mouseY + options.camY - (currentO.pos.h / 2), currentO.pos.w, currentO.pos.h};
+		mainObjectMem[currentO.id].render(mouse, _mainWindow.getRenderer());
 	}
 
 	for (size_t i = 0; i < items.size(); i++) {
 		mainItemsMem[items[i].id].render(items[i].pos, _mainWindow.getRenderer());
 	}
+	if (chooseType == CHOOSE_ITEMS) {
+		mouse = { mouseX + options.camX - 16, mouseY + options.camY - 16, 32, 32 };
+		mainItemsMem[currentI.id].render(mouse, _mainWindow.getRenderer());
+	}
 
 	for (size_t i = 0; i < enemies.size(); i++) {
 		mainEnemyMem[enemies[i].id].renderSprite(enemies[i].pos, enemies[i].sprite, _mainWindow.getRenderer());
+	}
+	if (chooseType == CHOOSE_ENEMIES && !isPathSelecting) {
+		Sprite s = { 0, 0, NULL };
+		mouse = { mouseX + options.camX - (currentE.pos.w / 2), mouseY + options.camY - (currentE.pos.h / 2), currentE.pos.w, currentE.pos.h };
+		mainEnemyMem[currentE.id].renderSprite(mouse, s, _mainWindow.getRenderer());
 	}
 
 	for (size_t i = 0; i < npcs.size(); i++) {
 		mainNpcMem[npcs[i].id].renderSprite(npcs[i].pos, npcs[i].sprite, _mainWindow.getRenderer());
 	}
+	if (chooseType == CHOOSE_NPCS && !isPathSelecting) {
+		Sprite s = { 0, 0, NULL };
+		mouse = { mouseX + options.camX - (currentN.pos.w / 2), mouseY + options.camY - (currentN.pos.h / 2), currentN.pos.w, currentN.pos.h };
+		mainNpcMem[currentN.id].renderSprite(mouse, s, _mainWindow.getRenderer());
+	}
 
+	if (chooseType == CHOOSE_TILES) {
+		Texture::drawRectOutline({ mouseX - (Map::TILE_SIZE / 2), mouseY - (Map::TILE_SIZE / 2), Map::TILE_SIZE, Map::TILE_SIZE }, Text::RED, _mainWindow.getRenderer());
+	}
 
 	// ----------TILE WINDOW----------
 	background.drawRectNoCam(tileRect, { 55, 55, 55, 255 }, _tileWindow.getRenderer());
 
-	if (isTiles == true) {
+	if (chooseType == CHOOSE_TILES) {
 		selectedTextureTile.renderNoCam(selectedRect, _tileWindow.getRenderer());
 
-		for (int i = 0; i < Map::TOTAL_TEXTURES; i++) {
-			tileMap[i].renderNoCam({ (i * Map::TILE_SIZE), Editor::TILE_LAYOUT_Y, Map::TILE_SIZE, Map::TILE_SIZE }, _tileWindow.getRenderer());
+		int k = 0;
+		int j = 0;
+		for (int i = 0; i < int(mainMap.size()); i++) {
+			if (i % Editor::ROW_SIZE == 0 && i != 0) {
+				k++;
+				j = 0;
+			}
+			if (i < Editor::ROW_SIZE) {
+				tileMap[i].renderNoCam({ j * (Map::TILE_SIZE + 1), Editor::TILE_LAYOUT_Y, Map::TILE_SIZE, Map::TILE_SIZE }, _tileWindow.getRenderer());
+			}
+			else {
+				tileMap[i].renderNoCam({ j * (Map::TILE_SIZE + 1), (k * Map::TILE_SIZE + 1) + Editor::TILE_LAYOUT_Y, Map::TILE_SIZE, Map::TILE_SIZE }, _tileWindow.getRenderer());
+			}
+			j++;
 		}
 	}
-	else if (isEnemies == true) {
+
+	else if (chooseType == CHOOSE_ENEMIES) {
 		selectedTextureEnemy.renderNoCamSprite(selectedRect, { 0, 0, NULL }, _tileWindow.getRenderer());
 
 		for (int i = 0; i < int(tileEnemyMem.size()); i++) {
 			tileEnemyMem[i].renderNoCamSprite({ i * Map::TILE_SIZE, Editor::TILE_LAYOUT_Y, Map::TILE_SIZE, Map::TILE_SIZE }, { 0, 0, NULL }, _tileWindow.getRenderer());
 		}
 	}
-	else if (isNpcs == true) {
+	else if (chooseType == CHOOSE_NPCS) {
 		selectedTextureNpc.renderNoCamSprite(selectedRect, { 0, 0, NULL }, _tileWindow.getRenderer());
 
 		for (int i = 0; i < int(tileNpcMem.size()); i++) {
 			tileNpcMem[i].renderNoCamSprite({ i * Map::TILE_SIZE, Editor::TILE_LAYOUT_Y, Map::TILE_SIZE, Map::TILE_SIZE }, { 0, 0, NULL }, _tileWindow.getRenderer());
 		}
 	}
-	else if (isItems == true) {
+	else if (chooseType == CHOOSE_ITEMS) {
 		selectedTextureItem.renderNoCam(selectedRect, _tileWindow.getRenderer());
 
 		for (int i = 0; i < int(tileItemsMem.size()); i++) {
 			tileItemsMem[i].renderNoCam({ i * Map::TILE_SIZE, Editor::TILE_LAYOUT_Y, Map::TILE_SIZE, Map::TILE_SIZE }, _tileWindow.getRenderer());
+		}
+	}
+	else if (chooseType == CHOOSE_OBJECTS) {
+		selectedTextureObject.renderNoCam(selectedRect, _tileWindow.getRenderer());
+
+		for (int i = 0; i < int(tileObjectMem.size()); i++) {
+			tileObjectMem[i].renderNoCam({ i * Map::TILE_SIZE, Editor::TILE_LAYOUT_Y, Map::TILE_SIZE, Map::TILE_SIZE }, _tileWindow.getRenderer());
+		}
+	}
+	else if (chooseType == CHOOSE_NONE) {
+		if (selectType == SELECT_ENEMY) {
+			tileEnemyMem[enemies[selected].id].renderNoCamSprite(selectedRect, { 0, 0, NULL }, _tileWindow.getRenderer());
+		}
+		else if (selectType == SELECT_NPC) {
+			tileNpcMem[npcs[selected].id].renderNoCamSprite(selectedRect, { 0, 0, NULL }, _tileWindow.getRenderer());
+		}
+		else if (selectType == SELECT_ITEM) {
+			tileItemsMem[items[selected].id].renderNoCam(selectedRect, _tileWindow.getRenderer());
+		}
+		else if (selectType == SELECT_OBJECT) {
+			tileObjectMem[objects[selected].id].renderNoCam(selectedRect, _tileWindow.getRenderer());
 		}
 	}
 
@@ -265,12 +469,12 @@ int Editor::setCurrentTile() {
 
 	int widthPos = 0;
 	int heightPos = 0;
-	int width = 12;
+	int width = Editor::ROW_SIZE;
 	int n = 0;
 	int length = Map::TILE_SIZE;
 
-	widthPos = mouseX / length;
-	heightPos = (mouseY - Editor::TILE_LAYOUT_Y) / length;
+	widthPos = (mouseX - 6) / length;
+	heightPos = ((mouseY - 8) - Editor::TILE_LAYOUT_Y) / length;
 
 	if (widthPos > width * length || widthPos < 0) {
 		return 0;
@@ -283,15 +487,15 @@ int Editor::setCurrentTile() {
 		n = widthPos;
 	}
 	else {
-		n = (heightPos * map.width) + widthPos;
+		n = (heightPos * width) + widthPos;
 	}
 
-	if (n < Map::TOTAL_TEXTURES) {
+	if (n < int(mainMap.size())) {
 		selectedTextureTile.setPath(tileMap[n].getPath());
 	}
 
-	selectedRect.w = 32;
-	selectedRect.h = 32;
+	selectedRect.w = 64;
+	selectedRect.h = 64;
 
 	return n;
 }
@@ -416,10 +620,114 @@ Item Editor::setCurrentItem() {
 		temp.Init(0);
 	}
 
-	selectedRect.w = temp.pos.w;
-	selectedRect.h = temp.pos.h;
+	selectedRect.w = 64;
+	selectedRect.h = 64;
 
-	std::cout << temp.id << std::endl;
+	return temp;
+}
+
+void Editor::setCurrentWarp(SDL_Rect& rect) {
+	Options& options = options.Instance();
+	Input in;
+	bool isSetting = true;
+	bool keyDownLeft = true;
+
+	rect.x = mouseX + options.camX;
+	rect.y = mouseY + options.camY;
+	rect.w = 0;
+	rect.h = 0;
+
+	std::cout << "----------Selecting----------" << std::endl;
+	isWarpSelecting = true;
+
+	while (isSetting == true) {
+		isSetting = in.getQuit(_mainWindow.getWindow());
+
+		if (options.isCam == false && in.isPressed(SDL_SCANCODE_W) == true) {
+			options.camY -= options.camSpeed;
+		}
+		if (options.isCam == false && in.isPressed(SDL_SCANCODE_A) == true) {
+			options.camX -= options.camSpeed;
+		}
+		if (options.isCam == false && in.isPressed(SDL_SCANCODE_S) == true) {
+			options.camY += options.camSpeed;
+		}
+		if (options.isCam == false && in.isPressed(SDL_SCANCODE_D) == true) {
+			options.camX += options.camSpeed;
+		}
+
+		if (in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == false) {
+			keyDownLeft = false;
+		}
+		else if (keyDownLeft == false && in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == true) {
+			keyDownLeft = true;
+			isSetting = false;
+		}
+
+		rect.w = (mouseX + options.camX) - rect.x;
+		rect.h = (mouseY + options.camY) - rect.y;
+
+		display();
+		fps.calcFPS();
+	}
+
+	if (rect.w < 0) {
+		rect.x += rect.w;
+		rect.w = abs(rect.w);
+	}
+
+	if (rect.h < 0) {
+		rect.y += rect.h;
+		rect.h = abs(rect.h);
+	}
+
+
+	std::cout << "x: " << rect.x << std::endl;
+	std::cout << "y: " << rect.y << std::endl;
+	std::cout << "w: " << rect.w << std::endl;
+	std::cout << "h: " << rect.h << std::endl;
+
+	isWarpSelecting = false;
+}
+
+Object Editor::setCurrentObject() {
+	Options& options = options.Instance();
+
+	int widthPos = 0;
+	int heightPos = 0;
+	int width = 12;
+	int length = Map::TILE_SIZE;
+	int id = 0;
+	Object temp;
+
+	widthPos = mouseX / length;
+	heightPos = (mouseY - Editor::TILE_LAYOUT_Y) / length;
+
+	if (widthPos > width * length || widthPos < 0) {
+		temp.Init(id);
+	}
+	if (heightPos > (length * (int(tileMap.size()) / width)) || mouseY < Editor::TILE_LAYOUT_Y) {
+		temp.Init(id);
+	}
+
+	if (heightPos == 0) {
+		id = widthPos;
+		temp.Init(id);
+	}
+	else {
+		id = (heightPos * map.width) + widthPos;
+		temp.Init(id);
+	}
+
+	if (id < int(mainObjectMem.size()) && id >= 0) {
+		selectedTextureObject.setPath(mainObjectMem[id].getPath());
+	}
+	else {
+		temp.Init(0);
+	}
+
+	selectedRect.w = 86;
+	selectedRect.h = 86;
 
 	return temp;
 }
@@ -440,6 +748,7 @@ void Editor::placeTile() {
 	else if (widthPos < 0) {
 		widthPos = 0;
 	}
+
 	if (heightPos > map.height - 1) {
 		heightPos = map.height - 1;
 	}
@@ -474,42 +783,44 @@ void Editor::placeEntity() {
 	x = mouseX;
 	y = mouseY;
 
-	if (isEnemies == true) {
+	if (chooseType == CHOOSE_ENEMIES) {
 		if (widthPos > map.width - (currentE.pos.w / Map::TILE_SIZE) - 1) {
 			isValid = false;
 		}
+		if (heightPos > map.height - (currentE.pos.h / Map::TILE_SIZE) - 1) {
+			isValid = false;
+		}
 	}
-	else if (isNpcs == true) {
+	else if (chooseType == CHOOSE_NPCS) {
 		if (widthPos > map.width - (currentN.pos.w / Map::TILE_SIZE) - 1) {
+			isValid = false;
+		}
+		if (heightPos > map.height - (currentN.pos.h / Map::TILE_SIZE) - 1) {
 			isValid = false;
 		}
 	}
 	if (mouseX + options.camX < 0) {
 		isValid = false;
 	}
-	if (isEnemies == true) {
-		if (heightPos > map.height - (currentE.pos.h / Map::TILE_SIZE) - 1) {
-			isValid = false;
-		}
-	}
-	else if (isNpcs == true) {
-		if (heightPos > map.height - (currentN.pos.w / Map::TILE_SIZE) - 1) {
-			isValid = false;
-		}
-	}
 	if (mouseY + options.camY < 0) {
 		isValid = false;
 	}
 
 	if (isValid == true) {
-		if (isNpcs == true) {
-			currentN.pos.x = x + options.camX;
-			currentN.pos.y = y + options.camY;
+		if (chooseType == CHOOSE_NPCS) {
+			currentN.pos.x = x + options.camX - (currentN.pos.w / 2);
+			currentN.pos.y = y + options.camY - (currentN.pos.h / 2);
+			npcs.push_back(currentN);
+			placePath(currentN, paths);
+			npcs.pop_back();
 			npcs.push_back(currentN);
 		}
-		else if (isEnemies == true) {
-			currentE.pos.x = x + options.camX;
-			currentE.pos.y = y + options.camY;
+		else if (chooseType == CHOOSE_ENEMIES) {
+			currentE.pos.x = x + options.camX - (currentE.pos.w / 2);
+			currentE.pos.y = y + options.camY - (currentE.pos.h / 2);
+			enemies.push_back(currentE);
+			placePath(currentE, paths);
+			enemies.pop_back();
 			enemies.push_back(currentE);
 		}
 	}
@@ -532,43 +843,350 @@ void Editor::placeItem() {
 	x = mouseX;
 	y = mouseY;
 
-	if (isEnemies == true) {
-		if (widthPos > map.width - (currentE.pos.w / Map::TILE_SIZE) - 1) {
-			isValid = false;
-		}
-	}
-	else if (isNpcs == true) {
-		if (widthPos > map.width - (currentN.pos.w / Map::TILE_SIZE) - 1) {
-			isValid = false;
-		}
-	}
-	if (mouseX + options.camX < 0) {
+	if (widthPos > map.width - (32 / Map::TILE_SIZE) - 1) {
 		isValid = false;
 	}
-	if (isEnemies == true) {
-		if (heightPos > map.height - (currentE.pos.h / Map::TILE_SIZE) - 1) {
-			isValid = false;
-		}
+	else if (mouseX + options.camX < 0) {
+		isValid = false;
 	}
-	else if (isNpcs == true) {
-		if (heightPos > map.height - (currentN.pos.w / Map::TILE_SIZE) - 1) {
-			isValid = false;
-		}
+
+	if (heightPos > map.height - (32/ Map::TILE_SIZE) - 1) {
+			isValid = false;	
 	}
-	if (mouseY + options.camY < 0) {
+	else if (mouseY + options.camY < 0) {
 		isValid = false;
 	}
 
 	if (isValid == true) {
-		currentI.pos.x = x + options.camX;
-		currentI.pos.y = y + options.camY;
+		currentI.pos.x = x + options.camX - 16;
+		currentI.pos.y = y + options.camY - 16;
+		if (currentI.id == 2) {
+			int shards = 0;
+			std::cout << "Shards: ";
+			std::cin >> shards;
+			currentI.damage = shards;
+		}
 		items.push_back(currentI);
 	}
 
 }
 
+void Editor::placePath(Entity& e, std::vector<Path>& p) {
+	Input in;
+	Options& options = options.Instance();
+	bool keyDownLeft = true;
+	bool keyDownBack = true;
+	bool selecting = true;
+	isPathSelecting = true;
+
+	e.paths.clear();
+	p.clear();
+
+	while (selecting == true) {
+
+		if (in.getQuit(_mainWindow.getWindow()) == false) {
+			selecting = false;
+			isRunning = false;
+		}
+
+		if (options.isCam == false && in.isPressed(SDL_SCANCODE_W) == true) {
+			options.camY -= options.camSpeed;
+		}
+		if (options.isCam == false && in.isPressed(SDL_SCANCODE_A) == true) {
+			options.camX -= options.camSpeed;
+		}
+		if (options.isCam == false && in.isPressed(SDL_SCANCODE_S) == true) {
+			options.camY += options.camSpeed;
+		}
+		if (options.isCam == false && in.isPressed(SDL_SCANCODE_D) == true) {
+			options.camX += options.camSpeed;
+		}
+
+		if (in.isPressed(SDL_SCANCODE_BACKSPACE) == false) {
+			keyDownBack = false;
+		}
+		if (keyDownBack == false && in.isPressed(SDL_SCANCODE_BACKSPACE) == true) {
+			if (p.size() > 0) {
+				p.pop_back();
+				e.paths.pop_back();
+			}
+			keyDownBack = true;
+		}
+
+		if (in.isPressed(SDL_SCANCODE_SPACE) == true || in.isPressed(SDL_SCANCODE_ESCAPE) == true) {
+			selecting = false;
+		}
+
+		if (in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == false) {
+			keyDownLeft = false;
+		}
+
+		if (keyDownLeft == false && in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == true) {
+			Path temp;
+			temp.x = (mouseX - 10) + options.camX;
+			temp.y = (mouseY - 10) + options.camY;
+			temp.met = false;
+			p.push_back(temp);
+			e.paths.push_back(temp);
+			keyDownLeft = true;
+		}
+
+		display();
+
+		fps.calcFPS();
+	}
+	p.clear();
+
+	isPathSelecting = false;
+}
+
+void Editor::placePath(Npc& n, std::vector<Path>& p) {
+	Input in;
+	Options& options = options.Instance();
+	bool keyDownLeft = true;
+	bool keyDownBack = true;
+	bool selecting = true;
+	isPathSelecting = true;
+
+	n.paths.clear();
+	p.clear();
+
+	while (selecting == true) {
+
+		if (in.getQuit(_mainWindow.getWindow()) == false) {
+			selecting = false;
+			isRunning = false;
+		}
+
+		if (options.isCam == false && in.isPressed(SDL_SCANCODE_W) == true) {
+			options.camY -= options.camSpeed;
+		}
+		if (options.isCam == false && in.isPressed(SDL_SCANCODE_A) == true) {
+			options.camX -= options.camSpeed;
+		}
+		if (options.isCam == false && in.isPressed(SDL_SCANCODE_S) == true) {
+			options.camY += options.camSpeed;
+		}
+		if (options.isCam == false && in.isPressed(SDL_SCANCODE_D) == true) {
+			options.camX += options.camSpeed;
+		}
+
+		if (in.isPressed(SDL_SCANCODE_BACKSPACE) == false) {
+			keyDownBack = false;
+		}
+		if (keyDownBack == false && in.isPressed(SDL_SCANCODE_BACKSPACE) == true) {
+			if (p.size() > 0) {
+				p.pop_back();
+				n.paths.pop_back();
+			}
+			keyDownBack = true;
+		}
+
+		if (in.isPressed(SDL_SCANCODE_SPACE) == true || in.isPressed(SDL_SCANCODE_ESCAPE) == true) {
+			selecting = false;
+		}
+
+		if (in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == false) {
+			keyDownLeft = false;
+		}
+
+		if (keyDownLeft == false && in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == true) {
+			Path temp;
+			temp.x = (mouseX - 10) + options.camX;
+			temp.y = (mouseY - 10) + options.camY;
+			temp.met = false;
+			p.push_back(temp);
+			n.paths.push_back(temp);
+			keyDownLeft = true;
+		}
+
+		display();
+
+		fps.calcFPS();
+	}
+	p.clear();
+
+	isPathSelecting = false;
+}
+
+void Editor::placeWarp(SDL_Rect& rect) {
+	Options& options = options.Instance();
+
+	bool isValid = true;
+	int widthPos = 0;
+	int heightPos = 0;
+	int n = 0;
+	int x = 0;
+	int y = 0;
+
+	widthPos = (mouseX + options.camX) / Map::TILE_SIZE;
+	heightPos = (mouseY + options.camY) / Map::TILE_SIZE;
+
+	x = mouseX;
+	y = mouseY;
+
+	if (widthPos > map.width - (rect.w / Map::TILE_SIZE) - 1) {
+		isValid = false;
+	}
+	else if (mouseX + options.camX < 0) {
+		isValid = false;
+	}
+
+	if (heightPos > map.height - (rect.h / Map::TILE_SIZE) - 1) {
+		isValid = false;
+	}
+	else if (mouseY + options.camY < 0) {
+		isValid = false;
+	}
+
+	if (isValid == true) {
+		setCurrentWarp(rect);
+	}
+}
+
+void Editor::placeObject() {
+	Options& options = options.Instance();
+
+	bool isValid = true;
+	int widthPos = 0;
+	int heightPos = 0;
+	int n = 0;
+	int x = 0;
+	int y = 0;
+
+	widthPos = (mouseX + options.camX) / Map::TILE_SIZE;
+	heightPos = (mouseY + options.camY) / Map::TILE_SIZE;
+
+	x = mouseX;
+	y = mouseY;
+
+	if (widthPos > map.width - (currentO.pos.w / Map::TILE_SIZE) - 1) {
+		isValid = false;
+	}
+	else if (mouseX + options.camX < 0) {
+		isValid = false;
+	}
+
+	if (heightPos > map.height - (currentO.pos.h / Map::TILE_SIZE) - 1) {
+		isValid = false;
+	}
+	else if (mouseY + options.camY < 0) {
+		isValid = false;
+	}
+
+	if (isValid == true) {
+		currentO.pos.x = mouseX + options.camX - (currentO.pos.w / 2);
+		currentO.pos.y = mouseY + options.camY - (currentO.pos.h / 2);
+		objects.push_back(currentO);
+	}
+}
+
+void Editor::select() {
+	selected = collision(mouseX, mouseY, enemies);
+	if (selected != -1) {
+		selectType = SELECT_ENEMY;
+		selectedRect.w = enemies[selected].pos.w;
+		selectedRect.h = enemies[selected].pos.h; 
+		std::cout << "Enemy name: " << enemies[selected].name << std::endl;
+	}
+	else {
+		selected = collision(mouseX, mouseY, npcs);
+		if (selected != -1) {
+			selectType = SELECT_NPC;
+			selectedRect.w = npcs[selected].pos.w;
+			selectedRect.h = npcs[selected].pos.h;
+			std::cout << "Npc name: " << npcs[selected].name << std::endl;
+		}
+		else {
+			selected = collision(mouseX, mouseY, items);
+			if (selected != -1) {
+				selectType = SELECT_ITEM;
+				selectedRect.w = 64;
+				selectedRect.h = 64;
+				std::cout << "Item name: " << items[selected].name << std::endl;
+			}
+			else {
+				selected = collision(mouseX, mouseY, warps);
+				if (selected != -1) {
+					selectType = SELECT_WARP;
+					std::cout << "Warp teleID: " << warps[selected].teleID << std::endl;
+				}
+				else{
+					selected = collision(mouseX, mouseY, objects);
+					if (selected != -1) {
+						selectType = SELECT_OBJECT;
+						std::cout << "Object id: " << objects[selected].id << std::endl;
+					}
+					else {
+						selectType = NULL;
+					}
+				}
+			}
+		}
+	}
+}
+
+int Editor::collision(const int& x, const int& y, std::vector<Entity>& e) {
+	Options& options = options.Instance();
+	SDL_Rect mouse = { x - 15 + options.camX, y - 15 + options.camY, 30, 30 };
+	for (size_t i = 0; i < e.size(); i++) {
+		if (Collision::seperateAxis(mouse, e[i].pos) == true) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+int Editor::collision(const int& x, const int& y, std::vector<Npc>& n) {
+	Options& options = options.Instance();
+	SDL_Rect mouse = { x - 15 + options.camX, y - 15 + options.camY, 30, 30 };
+	for (size_t i = 0; i < n.size(); i++) {
+		if (Collision::seperateAxis(mouse, n[i].pos) == true) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+int Editor::collision(const int& x, const int& y, std::vector<Item>& it) {
+	Options& options = options.Instance();
+	SDL_Rect mouse = { x - 15 + options.camX, y - 15 + options.camY, 30, 30 };
+	for (size_t i = 0; i < it.size(); i++) {
+		if (Collision::seperateAxis(mouse, it[i].pos) == true) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+int Editor::collision(const int& x, const int& y, std::vector<Warp>& w) {
+	Options& options = options.Instance();
+	SDL_Rect mouse = { x - 15 + options.camX, y - 15 + options.camY, 30, 30 };
+	for (size_t i = 0; i < w.size(); i++) {
+		if (Collision::seperateAxis(mouse, w[i].pos) == true) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+int Editor::collision(const int& x, const int& y, std::vector<Object>& o) {
+	Options& options = options.Instance();
+	SDL_Rect mouse = { x - 15 + options.camX, y - 15 + options.camY, 30, 30 };
+	for (size_t i = 0; i < o.size(); i++) {
+		if (Collision::seperateAxis(mouse, o[i].pos) == true) {
+			return i;
+		}
+	}
+	return -1;
+}
+
 void Editor::save() {
 	std::ofstream file;
+	std::string tempESize = "";
+	std::string tempEntities = "";
+	std::string tempISize = "";
+	std::string tempItems = "";
 
 	if (map.id == 0) {
 		std::cout << "Enter Map Name" << std::endl;
@@ -590,23 +1208,61 @@ void Editor::save() {
 		file << std::to_string(map.map[i].id) + " ";
 	}
 
-	file << std::endl << "Entity Size - " << enemies.size() + npcs.size() << std::endl;
-	file << "Entities - ";
+	file << std::endl;
 
+	tempESize = "Entity Size - " + std::to_string(enemies.size() + npcs.size());
+	file << tempESize << std::endl;
+	tempEntities = "Entities - ";
 	for (size_t i = 0; i < enemies.size(); i++) {
-		file << std::to_string(enemies[i].type) + "|" + std::to_string(enemies[i].id) + "|" << std::to_string(enemies[i].pos.x) + "|" + std::to_string(enemies[i].pos.y) + " ";
+		tempEntities += std::to_string(enemies[i].type) + "|" + std::to_string(enemies[i].id) + "|" + std::to_string(enemies[i].pos.x) +
+			"|" + std::to_string(enemies[i].pos.y) + "|" + std::to_string(enemies[i].paths.size());
+		for (size_t k = 0; k < enemies[i].paths.size(); k++) {
+			tempEntities += "|" + std::to_string(enemies[i].paths[k].x) + "|" + std::to_string(enemies[i].paths[k].y) + "|" + std::to_string(enemies[i].paths[k].met);
+		}
+		tempEntities += " ";
 	}
 	for (size_t i = 0; i < npcs.size(); i++) {
-		file << std::to_string(npcs[i].type) + "|" + std::to_string(npcs[i].id) + "|" << std::to_string(npcs[i].pos.x) + "|" + std::to_string(npcs[i].pos.y) + " ";
+		tempEntities += std::to_string(npcs[i].type) + "|" + std::to_string(npcs[i].id) + "|" + std::to_string(npcs[i].pos.x) +
+			"|" + std::to_string(npcs[i].pos.y) + "|" + std::to_string(npcs[i].paths.size());
+		for (size_t k = 0; k < npcs[i].paths.size(); k++) {
+			tempEntities += "|" + std::to_string(npcs[i].paths[k].x) + "|" + std::to_string(npcs[i].paths[k].y) + "|" + std::to_string(npcs[i].paths[k].met);
+		}
+		tempEntities += " ";
+	}
+	file << tempEntities << std::endl;
+
+	tempISize = "Item Size - " + std::to_string(items.size());
+	file << tempISize << std::endl;
+	tempItems = "Items - ";
+	for (size_t i = 0; i < items.size(); i++) {
+		std::string tempShards = "0";
+		if (items[i].id == 2) {
+			tempShards = std::to_string(items[i].damage);
+		}
+		tempItems += std::to_string(items[i].id) + "|" + std::to_string(items[i].pos.x) + "|" + std::to_string(items[i].pos.y) + "|" + tempShards + " ";
+	}
+	file << tempItems << std::endl;
+
+	file << "Warp Size - " << warps.size() << std::endl;
+	file << "Warps - ";
+	for (size_t i = 0; i < warps.size(); i++) {
+		file << std::to_string(warps[i].teleID) + "|" + std::to_string(warps[i].pos.x) + "|" + std::to_string(warps[i].pos.y)
+			+ "|" + std::to_string(warps[i].pos.w) + "|" + std::to_string(warps[i].pos.h) + "|" + std::to_string(warps[i].dest.x) +
+				"|" + std::to_string(warps[i].dest.y) + "|" + std::to_string(warps[i].pos.w) + "|" + std::to_string(warps[i].dest.h) + " ";
 	}
 	file << std::endl;
 
-	file << "Item Size - " << items.size() << std::endl;
-	file << "Items - ";
-	for (size_t i = 0; i < items.size(); i++) {
-		file << std::to_string(items[i].id) + "|" + std::to_string(items[i].pos.x) + "|" + std::to_string(items[i].pos.y) + " ";
+	file << "Object Size - " << objects.size() << std::endl;
+	file << "Objects - ";
+	for (size_t i = 0; i < objects.size(); i++) {
+		file << std::to_string(objects[i].id) + "|" + std::to_string(objects[i].pos.x) + "|" + std::to_string(objects[i].pos.y) + " ";
 	}
 	file << std::endl;
+
+	file << tempESize << std::endl;
+	file << tempEntities << std::endl;
+	file << tempISize << std::endl;
+	file << tempItems << std::endl;
 
 	file.close();
 
@@ -615,8 +1271,9 @@ void Editor::save() {
 
 void Editor::load() {
 	map.id = getMapIDInput(NULL);
-
 	loadMap(map.id);
+	selected = -1;
+	selectType = NULL;
 }
 
 void Editor::create() {
@@ -677,7 +1334,7 @@ void Editor::create() {
 		std::cout << "Enter Base Tile" << std::endl;
 		std::cin >> baseTileID;
 
-		while (baseTileID < 0 || baseTileID > int(map.tiles.size())) {
+		while (baseTileID < 0 || baseTileID > int(mainMap.size())) {
 			std::cout << "Invalid ID" << std::endl;
 			std::cin >> baseTileID;
 		}
@@ -696,11 +1353,7 @@ void Editor::create() {
 }
 
 std::string Editor::getFileIDPath(const int& id) {
-	std::string path = "";
-
-	path = "Data/Maps/map" + std::to_string(id) + ".txt";
-
-	return path;
+	return "Data/Maps/map" + std::to_string(id) + ".txt";
 }
 
 int Editor::getMapIDInput(const int& type) {
@@ -715,22 +1368,25 @@ int Editor::getMapIDInput(const int& type) {
 		std::cin >> id;
 
 		path = getFileIDPath(id);
-		file.setPath(path);
+		file.read(path);
 
-		if (file.readStr(1) != "" && type == NEW) {
+		if (type == NEW && file.exists(path) != false) {
 			std::cout << "Map with that ID already exists" << std::endl;
 			valid = false;
 		}
-
+		else if (type == OLD && file.exists(path) != false) {
+			valid = true;
+		}
 	}
-
 	return id;
 }
 
 void Editor::loadMap(const int& id) {
 	map.Init(id);
+	Object::loadMapObjects(id, objects);
 	Editor::loadMapEntities(id, enemies, npcs);
 	Editor::loadMapItems(id, items);
+	Warp::loadWarps(id, warps);
 }
 
 void Editor::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std::vector<Npc>& npcs) {
@@ -743,14 +1399,14 @@ void Editor::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std
 	int data = 0;
 	int entitySize = 0;
 	int type = 0;
-	file.setPath("Data/Maps/map" + std::to_string(mapID) + ".txt");
+	file.read("Data/Maps/map" + std::to_string(mapID) + ".txt");
 	enemies.clear();
 	npcs.clear();
 
 	std::cout << "Loading Entities for map" << mapID << std::endl;
 
-	entitySize = file.readInt(5);
-	fileData = file.readStr(6);
+	entitySize = file.getInt(5);
+	fileData = file.getStr(6);
 	fileDataLength = int(fileData.length());
 
 	int p = 0;
@@ -758,17 +1414,18 @@ void Editor::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std
 	int dataType = 0;
 	for (int i = 0; i < entitySize; i++) {
 		dataType = 0;
-		while (dataType <= Entity::LOAD_DATA_SIZE) {
-			if (dataType >= 0 && dataType < Entity::LOAD_DATA_SIZE) {
+		while (dataType < Entity::LOAD_DATA_SIZE) {
+			if (dataType >= 0 && dataType < Entity::LOAD_DATA_SIZE - 1) {
 				while (fileData[p] != '|' && p <= fileDataLength) {
 					p++;
 				}
 			}
-			else if (dataType == 3) {
-				while (fileData[p] != ' ' && p <= fileDataLength) {
+			else if (dataType == Entity::LOAD_DATA_SIZE - 1) {
+				while (fileData[p] != ' ' && fileData[p] != '|' && p <= fileDataLength) {
 					p++;
 				}
 			}
+
 			entityData = fileData.substr(q, p - q);
 			data = std::stoi(entityData);
 
@@ -789,6 +1446,7 @@ void Editor::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std
 					case 1:		tempEnemy.id = data;		break;
 					case 2:		tempEnemy.pos.x = data;		break;
 					case 3:		tempEnemy.pos.y = data;		break;
+					case 4:		tempEnemy.loadPaths(data, fileData, fileDataLength, p, q);	break;
 					}
 				}
 				else if (type == NPC) {
@@ -796,6 +1454,7 @@ void Editor::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std
 					case 1:		tempNPC.id = data;			break;
 					case 2:		tempNPC.pos.x = data;		break;
 					case 3:		tempNPC.pos.y = data;		break;
+					case 4:		tempNPC.loadPaths(data, fileData, fileDataLength, p, q);	break;
 					}
 				}
 			}
@@ -824,13 +1483,13 @@ void Editor::loadMapItems(const int& mapID, std::vector<Item>& items) {
 	int data = 0;
 	int itemSize = 0;
 	int type = 0;
-	file.setPath("Data/Maps/map" + std::to_string(mapID) + ".txt");
+	file.read("Data/Maps/map" + std::to_string(mapID) + ".txt");
 	items.clear();
 
 	std::cout << "Loading Items for map" << mapID << std::endl;
 
-	itemSize = file.readInt(7);
-	fileData = file.readStr(8);
+	itemSize = file.getInt(7);
+	fileData = file.getStr(8);
 	fileDataLength = int(fileData.length());
 
 	int p = 0;
@@ -860,6 +1519,7 @@ void Editor::loadMapItems(const int& mapID, std::vector<Item>& items) {
 			case 0:		tempItem.Init(data);		break;
 			case 1:		tempItem.pos.x = data;		break;
 			case 2:		tempItem.pos.y = data;		break;
+			case 3:		if (tempItem.id == 2) { tempItem.damage = data; } break;
 			}
 
 			dataType++;

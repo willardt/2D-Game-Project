@@ -2,15 +2,17 @@
 
 void Npc::speech(TextBox& t, std::string s) {
 	t.isActive = true;
+	t.activeTime.tock(0);
 	t.print(s);
 }
 
 void Npc::speech(TextBox& t, u16string s) {
 	t.isActive = true;
+	t.activeTime.tock(0);
 	t.print(s);
 }
 
-void Npc::promptQuest(Quest& q, TextBox& t) {
+bool Npc::promptQuest(Quest& q, TextBox& t) {
 	t.setSpeaker(q.npcName, Text::WHITE);
 	if (quest.isEnd != true) {
 		if (q.isActive == false) {
@@ -24,6 +26,34 @@ void Npc::promptQuest(Quest& q, TextBox& t) {
 		else if (q.isActive == true && q.isComplete == true) {
 			speech(t, q.complete);
 			q.isEnd = true;
+			return true;
+		}
+	}
+	return false;
+}
+
+void Npc::collision(const int& dir, const int& dis, std::vector<Npc>& npcs, const int& selfIndex) {
+	int length = int(npcs.size());
+	for (int i = 0; i < length; i++) {
+		if (i == selfIndex) {
+			i++;
+			if (i >= length) {
+				break;
+			}
+		}
+
+		if (Collision::seperateAxis(pos, npcs[i].pos) == true) {
+			switch (dir) {
+			case UP:		move(DOWN, dis, false);			break;
+			case DOWN:		move(UP, dis, false);			break;
+			case RIGHT:		move(LEFT, dis, false);			break;
+			case LEFT:		move(RIGHT, dis, false);		break;
+			case UPRIGHT:	move(DOWNLEFT, dis, false);		break;
+			case DOWNLEFT:	move(UPRIGHT, dis, false);		break;
+			case UPLEFT:	move(DOWNRIGHT, dis, false);	break;
+			case DOWNRIGHT:	move(UPLEFT, dis, false);		break;
+			}
+			break;
 		}
 	}
 }
@@ -40,9 +70,9 @@ int Npc::collisionNPCSpeech(std::vector<Npc>& objs, SDL_Rect& pos) {
 
 void Npc::NPCInit() {
 	File file;
-	file.setPath("Data/Entities/Npcs/quests.txt");
+	file.read("Data/Entities/Npcs/quests.txt");
 
-	if (file.readInt(id) == 1) {
+	if (file.getInt(id) == 1) {
 		hasQuest = true;
 		quest.Init(id);
 	}

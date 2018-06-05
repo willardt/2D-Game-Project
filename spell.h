@@ -12,6 +12,7 @@ public:
 	enum {TOTAL_SPELL_TEXTURES = 1};
 
 	Sprite sprite;
+	SDL_Color color;
 
 	SDL_Rect pos;
 

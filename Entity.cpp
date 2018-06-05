@@ -2,20 +2,17 @@
 
 std::vector<Texture> Entity::memInit(const int& type) {
 	File file;
-	int total = 0;
 
 	switch (type) {
-	case ENEMY:		file.setPath("Data/Entities/Enemies/enemies.txt"); 
-					total = Entity::TOTAL_ENEMY_TEXTURES;					 break;
-	case NPC:		file.setPath("Data/Entities/Npcs/npcs.txt");
-					total = Entity::TOTAL_NPC_TEXTURE;						 break;
+	case ENEMY:		file.read("Data/Entities/Enemies/enemies.txt"); 				 break;
+	case NPC:		file.read("Data/Entities/Npcs/npcs.txt");						 break;
 	}
 
 	std::vector<Texture> tempVec;
 	Texture temp;
 
-	for (int i = 1; i <= total; i++) {
-		temp.setPath(file.readStr(i));
+	for (int i = 1; i <= file.getSize(); i++) {
+		temp.setPath(file.getStr(i));
 		tempVec.push_back(temp);
 	}
 
@@ -37,56 +34,71 @@ void Entity::Init(const int& ntype, const int& nid, const int& x, const int& y) 
 	path = findName(type, id);
 
 	switch (type) {
-	case PLAYER:	file.setPath("Data/Entities/player.txt");				    break;
-	case ENEMY:		file.setPath("Data/Entities/Enemies/" + path + ".txt");		break;
-	case NPC:		file.setPath("Data/Entities/Npcs/" + path + ".txt");		break;
+	case PLAYER:	file.read("Data/Entities/player.txt");						    break;
+	case ENEMY:		file.read("Data/Entities/Enemies/" + path + ".txt");			break;
+	case NPC:		file.read("Data/Entities/Npcs/" + path + ".txt");				break;
 	}
 
-	name = file.readStr(1);
+	name = file.getStr(1);
 	//	std::cout << texture.getPath() << std::endl;
-	pos.w = file.readInt(3);
-	pos.h = file.readInt(4);
-	ani.maxFrame = file.readInt(5);
-	ani.runFrame = file.readInt(6);
-	ani.minDown = file.readInt(7);
-	ani.maxDown = file.readInt(8);
-	ani.minUp = file.readInt(9);
-	ani.maxUp = file.readInt(10);
-	ani.minRight = file.readInt(11);
-	ani.maxRight = file.readInt(12);
-	ani.minLeft = file.readInt(13);
-	ani.maxLeft = file.readInt(14);
-	level = file.readInt(15);
-	exp = file.readInt(16);
-	maxHealth = file.readInt(17);
+	pos.w = file.getInt(3);
+	pos.h = file.getInt(4);
+	posWidthHalf = pos.w / 2;
+	posHeightHalf = pos.h / 2;
+	ani.maxFrame = file.getInt(5);
+	ani.runFrame = file.getInt(6);
+	ani.minDown = file.getInt(7);
+	ani.maxDown = file.getInt(8);
+	ani.minUp = file.getInt(9);
+	ani.maxUp = file.getInt(10);
+	ani.minRight = file.getInt(11);
+	ani.maxRight = file.getInt(12);
+	ani.minLeft = file.getInt(13);
+	ani.maxLeft = file.getInt(14);
+	level = file.getInt(15);
+	exp = file.getInt(16);
+	maxHealth = file.getInt(17);
 	health = maxHealth;
-	hps = file.readInt(18);
-	maxMana = file.readInt(19);
+	hps = file.getInt(18);
+	maxMana = file.getInt(19);
 	mana = maxMana;
-	mps = file.readInt(20);
-	damage = file.readInt(21);
-	defense = file.readInt(22);
-	leech = file.readInt(23);
-	drain = file.readInt(24);
-	luck = file.readInt(25);
-	speed = file.readInt(26);
-	shards = file.readInt(27);
-	spellAni.totalFrames = file.readInt(28);
-	spellAni.up = file.readInt(29);
-	spellAni.down = file.readInt(30);
-	spellAni.left = file.readInt(31);
-	spellAni.right = file.readInt(32);
-	spellAni.uright = file.readInt(33);
-	spellAni.uleft = file.readInt(34);
-	spellAni.dright = file.readInt(35);
-	spellAni.dleft = file.readInt(36);
-	spell.Init(file.readInt(37));
+	mps = file.getInt(20);
+	damage = file.getInt(21);
+	defense = file.getInt(22);
+	leech = file.getInt(23);
+	drain = file.getInt(24);
+	luck = file.getInt(25);
+	speed = file.getInt(26);
+	shards = file.getInt(27);
+	spellAni.totalFrames = file.getInt(28);
+	spellAni.up = file.getInt(29);
+	spellAni.down = file.getInt(30);
+	spellAni.left = file.getInt(31);
+	spellAni.right = file.getInt(32);
+	spellAni.uright = file.getInt(33);
+	spellAni.uleft = file.getInt(34);
+	spellAni.dright = file.getInt(35);
+	spellAni.dleft = file.getInt(36);
+	spell.Init(file.getInt(37));
 
+	combatRange.x = pos.x;
+	combatRange.y = pos.y;
+	combatRange.w = file.getInt(40);
+	combatRange.h = file.getInt(41);
+	combatRangeWidthHalf = combatRange.w / 2;
+	combatRangeHeightHalf = combatRange.h / 2;
+	
+	lootTable = loadLootTable(id, type);
+	
 	sprite = Texture::updateSprite(pos, sprite.frame);
 
+	fireRate = spell.fireRate - level;
+
+	combat.tock(0);
 	regen.tock(0);
 	casting.tock(0);
-
+	castingAni.tock(0);
+	
 	isCasting = false;
 	isCombat = false;
 	isDead = false;
@@ -94,14 +106,8 @@ void Entity::Init(const int& ntype, const int& nid, const int& x, const int& y) 
 }
 
 void Entity::update() {
-	//HEALTH BAR
-	if (isCombat == true) {
-		if (combatFrame > HEALTH_BAR_MAX_FRAME) {
-			isCombat = false;
-			combatFrame = 0;
-		}
-		combatFrame++;
-	}
+	
+	updateCombat();
 
 	//Regen
 	updateRegen();
@@ -110,6 +116,15 @@ void Entity::update() {
 	updateCasting();
 	updateCastingAni();
 	updateSpells();
+	updatePath();
+}
+
+void Entity::updateCombat() {
+	if (isCombat == true) {
+		if (combat.tick(HEALTH_BAR_MAX_FRAME)) {
+			isCombat = false;
+		}
+	}
 }
 
 void Entity::updateRegen() {
@@ -130,7 +145,6 @@ void Entity::updateRegen() {
 }
 
 void Entity::updateCasting() {
-	int fireRate = spell.fireRate - level;
 	if (isCastable == false) {
 		if (fireRate <= 0) {
 			isCastable = true;
@@ -160,47 +174,102 @@ void Entity::updateSpells() {
 	}
 }
 
-void Entity::move(const int& dir, const int& ndis, const bool& update) {
+void Entity::updatePath() {
+	for (size_t i = 0; i < paths.size(); i++) {
+		if (paths[i].met == false) {
+			activePath = i;
+			break;
+		}
+		if (i == paths.size() - 1 && paths.size() > 1) {
+			reversePath();
+		}
+	}
+}
+
+void Entity::updateCombat(SDL_Rect& player) {
+	combatRange.x = pos.x - combatRangeWidthHalf + posWidthHalf;
+	combatRange.y = pos.y - combatRangeHeightHalf + posHeightHalf;
+	if (Collision::seperateAxis(combatRange, player)) {
+		isCombat = true;
+		combat.tock(0);
+	}
+	else {
+		isCombat = false;
+	}
+
+	if (isCombat && isCastable) {
+		castSpell(player.x, player.y);
+	}
+}
+
+int Entity::getPathDir() {
+	if (paths.size() == 0) {
+		return NULL;
+	}
+	int width = pos.x + pos.w;
+	int height = pos.y + pos.h;
+
+	if (paths[activePath].y <= pos.y && paths[activePath].x >= width) {
+		return UPRIGHT;
+	}
+	if (paths[activePath].y >= height && paths[activePath].x >= width) {
+		return DOWNRIGHT;
+	}
+	if (paths[activePath].x <= pos.x && paths[activePath].y <= pos.y) {
+		return UPLEFT;
+	}
+	if (paths[activePath].x <= pos.x && paths[activePath].y >= height) {
+		return DOWNLEFT;
+	}
+	if (paths[activePath].x > pos.x && paths[activePath].x < width && paths[activePath].y < pos.y) {
+		return UP;
+	}
+	if (paths[activePath].y > pos.y && paths[activePath].y < height && paths[activePath].x > width) {
+		return RIGHT;
+	}
+	if (paths[activePath].x > pos.x && paths[activePath].x < width && paths[activePath].y > height) {
+		return DOWN;
+	}
+	if (paths[activePath].y > pos.y && paths[activePath].y < height && paths[activePath].x < pos.x) {
+		return LEFT;
+	}
+
+	paths[activePath].met = true;
+	return NULL;
+}
+
+void Entity::reversePath() {
+	std::vector<Path> temp;
+
+	for (int i = int(paths.size() - 1); i >= 0; i--) {
+		paths[i].met = false;
+		temp.push_back(paths[i]);
+	}
+	paths.clear();
+	paths = temp;
+	activePath = 0;
+}
+
+void Entity::move(const int& dir, int dis, const bool& update) {
 	Options& options = options.Instance();
-	int dis = ndis;
-	int disHalf = 0;
 
 	if (dis == NULL) {
 		dis = speed;
 	}
 
 	switch (dir) {
-	case UP:
-		pos.y -= dis;
-
-		if (type == PLAYER && (pos.y - options.camY) <= 0) {
-			options.camY -= dis;
-		}
-		break;
-	case DOWN:
-		pos.y += dis;
-
-		if (type == PLAYER && ((pos.y + pos.h) - options.camY) >= options.windowHeight) {
-			options.camY += dis;
-		}
-		break;
-	case LEFT:
-		pos.x -= dis;
-
-		if (type == PLAYER && (pos.x - options.camX) <= 0) {
-			options.camX -= dis;
-		}
-		break;
-	case RIGHT:
-		pos.x += dis;
-
-		if (type == PLAYER && ((pos.x + pos.w) - options.camX) >= options.windowWidth) {
-			options.camX += dis;
-		}
-		break;
-	case NULL:
-		break;
+	case UP:		pos.y -= dis;				break;
+	case DOWN:		pos.y += dis;				break;
+	case LEFT:		pos.x -= dis;				break;
+	case RIGHT:		pos.x += dis;				break;
+	case UPRIGHT:	pos.x += dis;	pos.y -= dis;	break;
+	case UPLEFT:	pos.x -= dis;	pos.y -= dis;	break;
+	case DOWNRIGHT:	pos.x += dis;	pos.y += dis;	break;
+	case DOWNLEFT:	pos.x -= dis;	pos.y += dis;	break;
+	case NULL:	break;
 	}
+
+	checkCam(type, dis);
 
 	if (pos.x < 0) {
 		pos.x = 0;
@@ -218,8 +287,8 @@ void Entity::move(const int& dir, const int& ndis, const bool& update) {
 
 	if (type == PLAYER) {
 		if (options.isCam == true) {
-			options.camX = pos.x + (pos.w / 2) - (options.windowWidth / 2);
-			options.camY = pos.y + (pos.h / 2) - (options.windowHeight / 2);
+			options.camX = pos.x + posWidthHalf - options.windowWidthHalf;
+			options.camY = pos.y + posHeightHalf - options.windowHeightHalf;
 
 			if (options.camX < 0) {
 				options.camX = 0;
@@ -238,9 +307,28 @@ void Entity::move(const int& dir, const int& ndis, const bool& update) {
 	}
 
 	if (update == true) {
-		if (isCasting == false) {
-			updateSprite(MOVE, dir);
-		}
+		updateSprite(MOVE, dir);
+	}
+
+}
+
+void Entity::checkCam(const int& type, const int& dis) {
+	if (type != PLAYER) {
+		return;
+	}
+	Options& options = options.Instance();
+
+	if ((pos.x - options.camX) <= 0) {
+		options.camX -= dis;
+	}
+	else if (((pos.x + pos.w) - options.camX) >= options.windowWidth) {
+		options.camX += dis;
+	}
+	if ((pos.y - options.camY) <= 0) {
+		options.camY -= dis;
+	}
+	else if (((pos.y + pos.h) - options.camY) >= options.windowHeight) {
+		options.camY += dis;
 	}
 }
 
@@ -250,30 +338,32 @@ void Entity::updateSprite(const int& type, const int& dir) {
 	if (type == NULL) {
 		sprite.frame = 0;
 	}
-	else if (type == MOVE) {
+	else if (type == MOVE && !isCasting) {
 
-		switch (dir) {
-		case UP:
+		if (dir == NULL) {
+			sprite.frame = 0;
+		}
+		else if (dir == UP) {
 			if (sprite.frame < ani.minUp || sprite.frame > ani.maxUp) {
 				sprite.frame = ani.minUp;
 			}
-			break;
-		case DOWN:
+		}
+		else if (dir == DOWN) {
 			if (sprite.frame < ani.minDown || sprite.frame > ani.maxDown) {
 				sprite.frame = ani.minDown;
 			}
-			break;
-		case RIGHT:
+		}
+		else if (dir == RIGHT || dir == UPRIGHT || dir == DOWNRIGHT) {
 			if (sprite.frame < ani.minRight || sprite.frame > ani.maxRight) {
 				sprite.frame = ani.minRight;
 			}
-			break;
-		case LEFT:
+		}
+		else if (dir == LEFT || dir == UPLEFT || dir == DOWNLEFT) {
 			if (sprite.frame < ani.minLeft || sprite.frame > ani.maxLeft) {
 				sprite.frame = ani.minLeft;
 			}
-			break;
 		}
+
 	}
 	else if (type == CAST) {
 		switch (dir) {
@@ -287,7 +377,7 @@ void Entity::updateSprite(const int& type, const int& dir) {
 		case DOWNLEFT:	sprite.frame = spellAni.dleft;			break;
 		}
 	}
-	else if (type == SPECIAL) {
+	else if (type == SPECIAL && !isCasting) {
 		if (sprite.frame < ani.specialFrame || sprite.frame > ani.specialFrame) {
 			sprite.frame = ani.specialFrame;
 		}
@@ -311,41 +401,32 @@ void Entity::collision(const int& dir, const int& dis, std::vector<Entity>& obj,
 
 		if (Collision::seperateAxis(pos, obj[i].pos) == true) {
 			switch (dir) {
-			case UP:
-				move(DOWN, dis, false);
-				break;
-			case DOWN:
-				move(UP, dis, false);
-				break;
-			case RIGHT:
-				move(LEFT, dis, false);
-				break;
-			case LEFT:
-				move(RIGHT, dis, false);
-				break;
+			case UP:		move(DOWN, dis, false);			break;
+			case DOWN:		move(UP, dis, false);			break;
+			case RIGHT:		move(LEFT, dis, false);			break;
+			case LEFT:		move(RIGHT, dis, false);		break;
+			case UPRIGHT:	move(DOWNLEFT, dis, false);		break;
+			case DOWNLEFT:	move(UPRIGHT, dis, false);		break;
+			case UPLEFT:	move(DOWNRIGHT, dis, false);	break;
+			case DOWNRIGHT:	move(UPLEFT, dis, false);		break;
 			}
 			break;
 		}
 	}
-
 }
 
 void Entity::collision(const int& dir, const int& dis, std::vector<Entity>& obj) {
 	for (size_t i = 0; i < obj.size(); i++) {
 		if (Collision::seperateAxis(pos, obj[i].pos) == true) {
 			switch (dir) {
-			case UP:
-				move(DOWN, dis, false);
-				break;
-			case DOWN:
-				move(UP, dis, false);
-				break;
-			case RIGHT:
-				move(LEFT, dis, false);
-				break;
-			case LEFT:
-				move(RIGHT, dis, false);
-				break;
+			case UP:		move(DOWN, dis, false);			break;
+			case DOWN:		move(UP, dis, false);			break;
+			case RIGHT:		move(LEFT, dis, false);			break;
+			case LEFT:		move(RIGHT, dis, false);		break;
+			case UPRIGHT:	move(DOWNLEFT, dis, false);		break;
+			case DOWNLEFT:	move(UPRIGHT, dis, false);		break;
+			case UPLEFT:	move(DOWNRIGHT, dis, false);	break;
+			case DOWNRIGHT:	move(UPLEFT, dis, false);		break;
 			}
 			break;
 		}
@@ -356,18 +437,14 @@ void Entity::collision(const int& dir, const int& dis, std::vector<Tile>& tile) 
 	for (size_t i = 0; i < tile.size(); i++) {
 		if (Collision::rectCollision(pos, tile[i].pos) == true) {
 			switch (dir) {
-			case UP:
-				move(DOWN, dis, false);
-				break;
-			case DOWN:
-				move(UP, dis, false);
-				break;
-			case RIGHT:
-				move(LEFT, dis, false);
-				break;
-			case LEFT:
-				move(RIGHT, dis, false);
-				break;
+			case UP:		move(DOWN, dis, false);			break;
+			case DOWN:		move(UP, dis, false);			break;
+			case RIGHT:		move(LEFT, dis, false);			break;
+			case LEFT:		move(RIGHT, dis, false);		break;
+			case UPRIGHT:	move(DOWNLEFT, dis, false);		break;
+			case DOWNLEFT:	move(UPRIGHT, dis, false);		break;
+			case UPLEFT:	move(DOWNRIGHT, dis, false);	break;
+			case DOWNRIGHT:	move(UPLEFT, dis, false);		break;
 			}
 			break;
 		}
@@ -404,18 +481,14 @@ int Entity::collision(std::vector<Item>& items) {
 void Entity::collision(const int& dir, const int& dis, Entity& obj) {
 	if (Collision::seperateAxis(pos, obj.pos) == true) {
 		switch (dir) {
-		case UP:
-			move(DOWN, dis, false);
-			break;
-		case DOWN:
-			move(UP, dis, false);
-			break;
-		case RIGHT:
-			move(LEFT, dis, false);
-			break;
-		case LEFT:
-			move(RIGHT, dis, false);
-			break;
+		case UP:		move(DOWN, dis, false);				break;
+		case DOWN:		move(UP, dis, false);				break;
+		case RIGHT:		move(LEFT, dis, false);				break;
+		case LEFT:		move(RIGHT, dis, false);			break;
+		case UPRIGHT:	move(DOWNLEFT, dis, false);			break;
+		case DOWNLEFT:	move(UPRIGHT, dis, false);			break;
+		case UPLEFT:	move(DOWNRIGHT, dis, false);		break;
+		case DOWNRIGHT:	move(UPLEFT, dis, false);			break;
 		}
 	}
 }
@@ -445,30 +518,54 @@ void Entity::applyDamage(const int& damage) {
 	combatFrame = 0;
 	health -= damage;
 	if (health <= 0) {
+		health = 0;
 		isDead = true;
 	}
 }
 
-void Entity::applyDamage(const int& damage, std::vector<Text>& t) {
+void Entity::applyDamage(const int& damage, std::vector<Text>& t, SDL_Color& color) {
 	applyDamage(damage);
 	int randX = rand() % Entity::RAND_DAMAGE_TEXT_X;
 	int randY = rand() % Entity::RAND_DAMAGE_TEXT_Y;
-	SDL_Rect newPos = { (pos.x + randX) - Entity::DAMAGE_TEXT_SPACEING_X, (pos.y - randY) - Entity::DAMAGE_TEXT_SPACEING_Y, NULL, Text::DAMAGE_SIZE_Y };
-	Text::printT(TEXT_DAMAGE, std::to_string(damage), newPos, t);
+	Text::printT(TEXT_DAMAGE, std::to_string(damage), { (pos.x + randX) - Entity::DAMAGE_TEXT_SPACEING_X, (pos.y - randY) - Entity::DAMAGE_TEXT_SPACEING_Y, NULL, Text::DAMAGE_SIZE_Y }, t, color);
 }
 
-int Entity::calcDamage(int d) {
-	return d + damage;
+int Entity::calcDamage(int d, int def, int lvl) {
+	int ndamage = d + damage;
+	ndamage -= def;
+	int nleech = leech - lvl;
+	int ndrain = drain - lvl;
+	if (nleech > 0) {
+		if (health < maxHealth) {
+			health += nleech;
+			if (health > maxHealth) {
+				health = maxHealth;
+			}
+		}
+	}
+	if (ndrain > 0) {
+		if (mana < maxMana) {
+			mana += ndrain;
+			if (mana > maxMana) {
+				mana = maxMana;
+			}
+		}
+	}
+
+	if ((rand() % 100 <= luck - 1)) {
+		ndamage = ndamage * 2;
+	}
+
+	return ndamage;
 }
 
-void Entity::castSpell(int mX, int mY) {
+void Entity::castSpellMouse(int mX, int mY) {
 	if (isCastable == true && mana >= spell.cost) {
 		Options& options = options.Instance();
-		Spell s;
+		Spell s = spell;
 
-		s.Init(spell.id);
-		s.pos.x = pos.x + (pos.w / 2);
-		s.pos.y = pos.y + (pos.h / 2);
+		s.pos.x = pos.x + posWidthHalf;
+		s.pos.y = pos.y + posHeightHalf;
 		s.x = float(s.pos.x);
 		s.y = float(s.pos.y);
 		s.dX = (options.camX + mX) - s.pos.x;
@@ -478,7 +575,8 @@ void Entity::castSpell(int mX, int mY) {
 		s.disInc = abs(s.speedX) + abs(s.speedY);
 
 		isCasting = true;
-		castDir = calcCastDir(mX, mY);
+		castingAni.tock(0);
+		castDir = calcCastDir(mX + options.camX, mY + options.camY);
 
 		spells.push_back(s);
 
@@ -487,12 +585,89 @@ void Entity::castSpell(int mX, int mY) {
 	}
 }
 
+void Entity::castSpell(int nX, int nY) {
+	if (isCastable == true && mana >= spell.cost) {
+		Spell s = spell;
+
+		s.pos.x = pos.x + posWidthHalf;
+		s.pos.y = pos.y + posHeightHalf;
+		s.x = float(s.pos.x);
+		s.y = float(s.pos.y);
+		s.dX = nX - s.pos.x;
+		s.dY = nY - s.pos.y;
+		s.speedX = s.dX * s.speed;
+		s.speedY = s.dY * s.speed;
+		s.disInc = abs(s.speedX) + abs(s.speedY);
+
+		isCasting = true;
+		castingAni.tock(0);
+		castDir = calcCastDir(nX, nY);
+
+		spells.push_back(s);
+
+		isCastable = false;
+		mana -= spell.cost;
+	}
+}
+
+void Entity::addExp(int xp, TextBox& t) {
+	exp += xp;
+	while (exp >= 100) {
+		Options& options = options.Instance();
+		File file;
+		if (options.lang == ENGLISH) {
+			file.uread("Data/Messages/En/messages.txt");
+		}
+		else if (options.lang == RUSSIAN) {
+			file.uread("Data/Messages/Ru/messages.txt");
+		}
+		
+		t.print(file.getU16(1));
+		t.isActive = true;
+
+		level++;
+		damage += 2;
+		defense++;
+		health += 10;
+		maxHealth += 10;
+		mana += 20;
+		maxMana += 20;
+		hps++;
+		mps += 2;
+		if (level % 5 == 0) {
+			speed++;
+			luck++;
+		}
+		if (level % 10 == 0) {
+			leech++;
+			drain++;
+		}
+		exp -= 100;
+	}
+	fireRate = spell.fireRate - level;
+}
+
+void Entity::dropLoot(std::vector<Item>& items) {
+	Item temp;
+	temp.Init(2);
+	temp.pos.x = pos.x;
+	temp.pos.y = pos.y;
+	temp.damage = shards;
+	items.push_back(temp);
+
+	for (size_t i = 0; i < lootTable.size(); i++) {
+		if (rand() % 100 <= lootTable[i].dropChance) {
+			lootTable[i].pos.x = pos.x - 20 + rand() % 40;
+			lootTable[i].pos.y = pos.y - 20 + rand() % 40;
+			items.push_back(lootTable[i]);
+		}
+	}
+}
+
 int Entity::calcCastDir(int mX, int mY) {
 	Options& options = options.Instance();
 	int width = pos.x + pos.w;
 	int height = pos.y + pos.h;
-	mX += options.camX;
-	mY += options.camY;
 
 	if (mY <= pos.y && mX >= width) {
 		return UPRIGHT;
@@ -519,6 +694,94 @@ int Entity::calcCastDir(int mX, int mY) {
 		return LEFT;
 	}
 	return UP;
+}
+
+std::vector<Item> Entity::loadLootTable(const int& id, const int& type) {
+	File file;
+	Item tempItem;
+	std::string fileData = " ";
+	std::string itemData = " ";
+	std::vector<Item> lootTable;
+	int fileDataLength = 0;
+	int data = 0;
+	int lootSize = 0;
+
+	if (type == ENEMY) {
+		file.read("Data/Entities/Enemies/" + findName(type, id) + ".txt");
+	}
+	else if (type == NPC) {
+		file.read("Data/Entities/Npcs/" + findName(type, id) + ".txt");
+	}
+	else {
+		file.read("Data/Entities/player.txt");
+	}
+
+	lootSize = file.getInt(38);
+	fileData = file.getStr(39);
+	fileDataLength = int(fileData.length());
+
+	int p = 0;
+	int q = 0;
+
+	for (int i = 0; i < lootSize; i++) {
+		while (p <= fileDataLength && fileData[p] != ' ') {
+			p++;
+		}
+
+		itemData = fileData.substr(q, p - q);
+		data = std::stoi(itemData);
+
+		q = p + 1;
+		p = q;
+
+		tempItem.Init(data);
+
+		lootTable.push_back(tempItem);
+	}
+
+	return lootTable;
+}
+
+void Entity::loadPaths(int& size, std::string& fileData, const int& fileDataLength, int& p, int& q) {
+	Path tempPath;
+	std::string pathData = "";
+	int data = 0;
+	int dataType = 0;
+	paths.clear();
+
+	for (int i = 0; i < size; i++) {
+		dataType = 0;
+		while (dataType < PATH_LOAD_DATA_SIZE) {
+			if (i == size - 1 && dataType == PATH_LOAD_DATA_SIZE - 1) {
+				while (p <= fileDataLength && fileData[p] != ' ') {
+					p++;
+				}
+			}
+			else {
+				while (p <= fileDataLength && fileData[p] != '|') {
+					p++;
+				}
+			}
+
+
+			pathData = fileData.substr(q, p - q);
+			data = std::stoi(pathData);
+
+			q = p + 1;
+			p = q;
+
+			switch (dataType) {
+			case 0:		tempPath.x = data;			break;
+			case 1:		tempPath.y = data;			break;
+			case 2:		tempPath.met = bool(data);	break;
+			}
+
+			dataType++;
+		}
+
+		paths.push_back(tempPath);
+	}
+	activePath = 0;
 }
 
 std::string Entity::findName(const int& type, const int& id) {

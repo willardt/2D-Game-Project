@@ -4,32 +4,33 @@ void Quest::Init(const int& npcID) {
 	Options& options = options.Instance();
 	File file;
 	File fileDialoge;
-	file.setPath("Data/Quests/En/" + std::to_string(npcID) + ".txt");
+	file.read("Data/Quests/En/" + std::to_string(npcID) + ".txt");
 	switch (options.lang) {
 	case ENGLISH:
-		fileDialoge.setPath("Data/Quests/En/" + std::to_string(npcID) + "dialoge.txt");
+		fileDialoge.uread("Data/Quests/En/" + std::to_string(npcID) + "dialoge.txt");
 		break;
 	case RUSSIAN:
-		fileDialoge.setPath("Data/Quests/Ru/" + std::to_string(npcID) + "dialoge.txt");
+		fileDialoge.uread("Data/Quests/Ru/" + std::to_string(npcID) + "dialoge.txt");
 		break;
 	}
 	size_t find = 0;
 
-	id = file.readInt(1);
-	type = file.readInt(2);
-	name = file.readStr(3);
+	id = file.getInt(1);
+	type = file.getInt(2);
+	name = file.getStr(3);
 	count = 0;
-	total = file.readInt(4);
-	targetID = file.readInt(5);
-	targetName = file.readStr(6);
+	total = file.getInt(4);
+	targetID = file.getInt(5);
+	targetName = file.getStr(6);
+	rewardID = file.getInt(7);
 	isComplete = false;
 	isActive = false;
 	isEnd = false;
-	question = fileDialoge.readUnicodeStr(1);
-	active = fileDialoge.readUnicodeStr(2);
+	question = fileDialoge.getU16(1);
+	active = fileDialoge.getU16(2);
 	activeCount = std::to_string(count) + " / " + std::to_string(total);
-	complete = fileDialoge.readUnicodeStr(3);
-	npcName = fileDialoge.readUnicodeStr(4);
+	complete = fileDialoge.getU16(3);
+	npcName = fileDialoge.getU16(4);
 }
 
 void Quest::addCount(const int& enemyID) {

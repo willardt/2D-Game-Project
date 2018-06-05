@@ -20,9 +20,9 @@
 
 class Item {
 private:
-	enum { TOTAL_TEXTURES = 2 };
 public:
-	enum {LOAD_DATA_SIZE = 2};
+	enum {LOAD_DATA_SIZE = 3};
+	enum {RARE_GRAY = 50, RARE_GREEN = 30, RARE_BLUE = 15, RARE_PURPLE = 7, RARE_ORANGE = 1};
 	SDL_Rect pos;
 	std::string name;
 	u16string uName;
@@ -30,13 +30,13 @@ public:
 	int id;
 	int type;
 
-	int damage, defense, health, hps, mana, mps, leech, drain, luck, speed;
-
+	int damage, defense, health, hps, mana, mps, leech, drain, luck, speed, dropChance, price;
 	bool isEquipped;
 
 	void Init(const int& nid);
 
 	static std::vector<Texture> memInit();
+	static SDL_Color getRarity(int& dropChance);
 };
 
 #endif

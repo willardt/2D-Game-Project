@@ -2,22 +2,28 @@
 
 void Options::Init() {
 	File file;
-	file.setPath(OPTIONS_FILE);
+	file.read("Data/options.txt");
 
-	isCam = file.readInt(1);
-	camX = file.readInt(2);
-	camY = file.readInt(3);
-	camSpeed = file.readInt(4);
+	showPaths = false;
+	showWarps = false;
+	showCombatRange = false;
 
-	fpsLimit = file.readInt(5);
+	isCam = file.getInt(1);
+	camX = file.getInt(2);
+	camY = file.getInt(3);
+	camSpeed = file.getInt(4);
 
-	windowWidth = file.readInt(6);
-	windowHeight = file.readInt(7);
-	windowX = file.readInt(8);
-	windowY = file.readInt(9);
+	fpsLimit = file.getInt(5);
+
+	windowWidth = file.getInt(6);
+	windowHeight = file.getInt(7);
+	windowWidthHalf = windowWidth / 2;
+	windowHeightHalf = windowHeight / 2;
+	windowX = file.getInt(8);
+	windowY = file.getInt(9);
 
 	mapX = 0;
 	mapY = 0;
 
-	lang = file.readInt(10);
+	lang = file.getInt(10);
 }

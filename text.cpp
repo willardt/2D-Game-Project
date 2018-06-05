@@ -3,13 +3,14 @@
 const std::string Text::_NORMAL_FONT_PATH = "Data/Fonts/normalfont.ttf";
 const std::string Text::_DAMAGE_FONT_PATH = "Data/Fonts/damagefont.ttf";
 const std::string Text::_RUSSIAN_FONT_PATH = "Data/Fonts/russianfont.ttf";
-const SDL_Color Text::RED = { 255, 0, 0, 255 };
-const SDL_Color Text::BLUE = { 0, 0, 255, 255 };
-const SDL_Color Text::GREEN = { 0, 255, 0, 255 };
+const SDL_Color Text::RED = { 255, 0, 0, 150 };
+const SDL_Color Text::BLUE = { 0, 0, 255, 150 };
+const SDL_Color Text::GREEN = { 50, 250, 50, 150 };
 const SDL_Color Text::BLACK = { 0, 0, 0, 255 };
 const SDL_Color Text::WHITE = { 255, 255, 255, 255 };
+const SDL_Color Text::PURPLE = { 200, 25, 225, 150 };
 const SDL_Color Text::NORMAL_COLOR = { 255, 255, 255, 255 };
-const SDL_Color Text::DAMAGE_COLOR = { 255, 60, 60, 255 };
+const SDL_Color Text::DAMAGE_COLOR = { 50, 150, 200, 255 };
 
 // Create a texture from a string, called in .render()
 bool Text::load(std::string text, SDL_Renderer* renderer) {
@@ -273,7 +274,7 @@ TTF_Font* Text::getFontType() {
 }
 
 // Adds a text object to a vector of type 'Text'
-void Text::printT(const int& ntype,std::string text, SDL_Rect npos, std::vector<Text>& texts) {
+void Text::printT(const int& ntype, std::string text, SDL_Rect npos, std::vector<Text>& texts) {
 	Text temp;
 	temp.type = ntype;
 	temp.setText(text);
@@ -342,6 +343,34 @@ void Text::printT(const int& ntype, u16string utext, SDL_Rect npos, std::vector<
 	texts.push_back(temp);
 }
 
+void Text::printT(const int& ntype, u16string utext, SDL_Rect npos, std::vector<Text>& texts, bool spacing) {
+	Text temp;
+	temp.type = ntype;
+	temp.setUText(utext);
+	temp.pos = npos;
+	temp.isLoaded = false;
+	temp.isEnd = false;
+	temp.isUnicode = true;
+	temp.texture = nullptr;
+	temp.oTexture = nullptr;
+	temp.frame = 0;
+
+	switch (temp.type) {
+	case TEXT_NORMAL:
+		temp.color = NORMAL_COLOR;
+		break;
+	case TEXT_DAMAGE:
+		temp.color = DAMAGE_COLOR;
+		break;
+	}
+
+	if (spacing != true) {
+		temp.setSpacing();
+	}
+
+	texts.push_back(temp);
+}
+
 void Text::printT(const int& ntype, u16string utext, SDL_Rect npos, std::vector<Text>& texts, SDL_Color ncolor) {
 	Text temp;
 	temp.type = ntype;
@@ -355,6 +384,25 @@ void Text::printT(const int& ntype, u16string utext, SDL_Rect npos, std::vector<
 	temp.texture = nullptr;
 	temp.oTexture = nullptr;
 	temp.setSpacing();
+
+	texts.push_back(temp);
+}
+
+void Text::printT(const int& ntype, u16string utext, SDL_Rect npos, std::vector<Text>& texts, SDL_Color ncolor, bool spacing) {
+	Text temp;
+	temp.type = ntype;
+	temp.setUText(utext);
+	temp.pos = npos;
+	temp.color = ncolor;
+	temp.isLoaded = false;
+	temp.isEnd = false;
+	temp.isUnicode = true;
+	temp.frame = 0;
+	temp.texture = nullptr;
+	temp.oTexture = nullptr;
+	if (spacing != false) {
+		temp.setSpacing();
+	}
 
 	texts.push_back(temp);
 }
@@ -392,6 +440,13 @@ Text Text::printT(const int& ntype, u16string utext, SDL_Rect npos, SDL_Color nc
 	temp.setSpacing();
 
 	return temp;
+}
+
+void Text::clear(std::vector<Text>& texts) {
+	for (int i = 0; i < texts.size(); i++) {
+		texts[i].destroy();
+	}
+	texts.clear();
 }
 
 void Text::destroy() {

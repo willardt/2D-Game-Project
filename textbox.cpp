@@ -4,6 +4,11 @@ const SDL_Rect TextBox::_pos = { _BOX_X, _BOX_Y, _BOX_WIDTH, _BOX_HEIGHT };
 const SDL_Rect TextBox::_namepos = { _NAME_X, _NAME_Y, _NAME_WIDTH, _NAME_HEIGHT };
 const SDL_Color TextBox::_color = { 0, 0, 0, 100 };
 
+void TextBox::Init() {
+	isActive = false;
+	activeTime.tick(0);
+}
+
 // Display the textbox on the screen
 void TextBox::display(SDL_Renderer* renderer) {
 	Options& options = options.Instance();
@@ -16,6 +21,12 @@ void TextBox::display(SDL_Renderer* renderer) {
 		for (size_t i = 0; i < _lines.size(); i++) {
 			_lines[i].renderNoCam(renderer);
 		}
+	}
+}
+
+void TextBox::update() {
+	if (isActive == true && activeTime.tick(ACTIVE_TIME) == true) {
+		isActive = false;
 	}
 }
 
@@ -32,18 +43,15 @@ void TextBox::print(std::string line) {
 	}
 
 	while (line.size() > _MAX_LINE_LENGTH) {
+		temp = line.substr(0, _MAX_LINE_LENGTH);
+		find = temp.find_last_of(' ');
 		if (lines == 1) {
-			temp = line.substr(0, _MAX_LINE_LENGTH);
-			find = temp.find_last_of(' ');
 			nlines.push_back(line.substr(0, find));
-			line.erase(0, find);
 		}
 		else {
-			temp = line.substr(0, _MAX_LINE_LENGTH);
-			find = temp.find_last_of(' ');
 			nlines.push_back(line.substr(1, find));
-			line.erase(0, find);
 		}
+		line.erase(0, find);
 		lines++;
 	}
 
@@ -64,7 +72,7 @@ void TextBox::print(std::string line) {
 	}
 
 	while (lines >= 1) {
-		Text::printT(TEXT_BOX, nlines[lines - 1], { _BOX_X, _LINE_Y, NULL, _LINE_HEIGHT }, _lines, Text::WHITE);
+		Text::printT(TEXT_BOX, nlines[lines - 1], { _BOX_X, _LINE_Y + _LINE_SPACING_Y * int(lines - 1), NULL, _LINE_HEIGHT }, _lines, Text::WHITE);
 		lines--;
 	}
 }
@@ -81,18 +89,15 @@ void TextBox::print(std::string line, SDL_Color color) {
 	}
 
 	while (line.size() > _MAX_LINE_LENGTH) {
+		temp = line.substr(0, _MAX_LINE_LENGTH);
+		find = temp.find_last_of(' ');
 		if (lines == 1) {
-			temp = line.substr(0, _MAX_LINE_LENGTH);
-			find = temp.find_last_of(' ');
 			nlines.push_back(line.substr(0, find));
-			line.erase(0, find);
 		}
 		else {
-			temp = line.substr(0, _MAX_LINE_LENGTH);
-			find = temp.find_last_of(' ');
 			nlines.push_back(line.substr(1, find));
-			line.erase(0, find);
 		}
+		line.erase(0, find);
 		lines++;
 	}
 
@@ -113,7 +118,7 @@ void TextBox::print(std::string line, SDL_Color color) {
 	}
 
 	while (lines >= 1) {
-		Text::printT(TEXT_BOX, nlines[lines - 1], { _BOX_X, _LINE_Y, NULL, _LINE_HEIGHT }, _lines, color);
+		Text::printT(TEXT_BOX, nlines[lines - 1], { _BOX_X, _LINE_Y + _LINE_SPACING_Y * int(lines - 1), NULL, _LINE_HEIGHT }, _lines, color);
 		lines--;
 	}
 }
@@ -123,25 +128,22 @@ void TextBox::print(u16string uline) {
 	std::vector<u16string> nlines;
 	size_t lines = 1;
 	size_t find = 0;
-	u16string temp; // this may break dont know how to initilize this to NULL
+	u16string temp = { 0x00 };
 
 	if (uline.size() <= _MAX_LINE_LENGTH) {
 		nlines.push_back(uline);
 	}
 
 	while (uline.size() > _MAX_LINE_LENGTH) {
+		temp = uline.substr(0, _MAX_LINE_LENGTH);
+		find = temp.find_last_of(L' ');
 		if (lines == 1) {
-			temp = uline.substr(0, _MAX_LINE_LENGTH);
-			find = temp.find_last_of(L' ');
 			nlines.push_back(uline.substr(0, find));
-			uline.erase(0, find);
 		}
 		else {
-			temp = uline.substr(0, _MAX_LINE_LENGTH);
-			find = temp.find_last_of(L' ');
 			nlines.push_back(uline.substr(1, find));
-			uline.erase(0, find);
 		}
+		uline.erase(0, find);
 		lines++;
 	}
 
@@ -162,7 +164,7 @@ void TextBox::print(u16string uline) {
 	}
 
 	while (lines >= 1) {
-		Text::printT(TEXT_BOX, nlines[lines - 1], { _BOX_X, _LINE_Y, NULL, _LINE_HEIGHT }, _lines, Text::WHITE);
+		Text::printT(TEXT_BOX, nlines[lines - 1], { _BOX_X, _LINE_Y + _LINE_SPACING_Y * int(lines - 1), NULL, _LINE_HEIGHT }, _lines, Text::WHITE);
 		lines--;
 	}
 
@@ -181,18 +183,15 @@ void TextBox::print(u16string uline, SDL_Color color) {
 	}
 
 	while (uline.size() > _MAX_LINE_LENGTH) {
+		temp = uline.substr(0, _MAX_LINE_LENGTH);
+		find = temp.find_last_of(L' ');
 		if (lines == 1) {
-			temp = uline.substr(0, _MAX_LINE_LENGTH);
-			find = temp.find_last_of(L' ');
 			nlines.push_back(uline.substr(0, find));
-			uline.erase(0, find);
 		}
 		else {
-			temp = uline.substr(0, _MAX_LINE_LENGTH);
-			find = temp.find_last_of(L' ');
 			nlines.push_back(uline.substr(1, find));
-			uline.erase(0, find);
 		}
+		uline.erase(0, find);
 		lines++;
 	}
 
@@ -213,7 +212,7 @@ void TextBox::print(u16string uline, SDL_Color color) {
 	}
 
 	while (lines >= 1) {
-		Text::printT(TEXT_BOX, nlines[lines - 1], { _BOX_X, _LINE_Y, NULL, _LINE_HEIGHT }, _lines, color);
+		Text::printT(TEXT_BOX, nlines[lines - 1], { _BOX_X, _LINE_Y + _LINE_SPACING_Y * int(lines - 1), NULL, _LINE_HEIGHT }, _lines, color);
 		lines--;
 	}
 

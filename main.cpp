@@ -12,6 +12,8 @@
 #include "file.h"
 
 int main(int args, char* argc[]) {
+	Options& options = options.Instance();
+	options.Init();
 
 	srand(time(NULL));
 
@@ -24,23 +26,39 @@ int main(int args, char* argc[]) {
 		std::cout << "SDL_TTF LOADED" << std::endl;
 	}
 
-	Options& options = options.Instance();
-	options.Init();
+	char in;
+	std::cin >> in;
 
-	File file;
-	file.setPath("Data/temp.txt");
-	int c = file.readInt(1);
-
-	if (c == 1) {
+	if (in != '1') {
 		Game game;
 		game.Init();
 		game.begin();
 	}
-	else if (c == 0) {
+	else {
 		Editor editor;
 		editor.Init();
 		editor.begin();
 	}
+
+	/*
+	if (args > 1) {
+		if (argc[1] == std::string("-Editor")) {
+			Editor editor;
+			editor.Init();
+			editor.begin();
+		}
+		else {
+			Game game;
+			game.Init();
+			game.begin();
+		}
+	}
+	else {
+		Game game;
+		game.Init();
+		game.begin();
+	}
+	*/
 
 	TTF_Quit();
 	SDL_Quit();

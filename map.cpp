@@ -1,19 +1,16 @@
 #include "map.h"
 
-const int Map::solidTiles[Map::SOLID_TILES] = { 3, 4 };
-const int Map::enviromentTiles[Map::ENVIROMENT_TILES] = { -1 };
-
 std::vector<Texture> Map::memInit() {
 	File file;
 
-	file.setPath("Data/Maps/Tiles/tiles.txt");
+	file.read("Data/Maps/Tiles/tiles.txt");
 	
 	std::vector<Texture> tempVect;
 	Texture temp;
 
-	for (int i = 1; i <= Map::TOTAL_TEXTURES; i++) {
+	for (int i = 1; i <= file.getSize(); i++) {
 
-		temp.setPath(file.readStr(i));
+		temp.setPath(file.getStr(i));
 
 		tempVect.push_back(temp);
 	}
@@ -24,7 +21,9 @@ std::vector<Texture> Map::memInit() {
 void Map::Init(const int& nid) {
 	id = nid;
 	map.clear();
+	solids.clear();
 	Options& options = options.Instance();
+	File mapSolidsFile;
 	File file;
 	Tile tempTile;
 	std::string tileData = "";
@@ -37,19 +36,16 @@ void Map::Init(const int& nid) {
 	int q = 0;
 	int p = 0;
 
-	if (isTileLoaded != true) {
-		tiles = Map::memInit();
-		isTileLoaded = true;
-	}
-
 	std::string path = "Data/Maps/map" + std::to_string(id) + ".txt";
 
-	file.setPath(path);
+	mapSolidsFile.read("Data/Maps/Tiles/solids.txt");
 
-	name = file.readStr(1);
-	width = file.readInt(2);
-	height = file.readInt(3);
-	tileData = file.readStr(4);
+	file.read(path);
+
+	name = file.getStr(1);
+	width = file.getInt(2);
+	height = file.getInt(3);
+	tileData = file.getStr(4);
 
 	tileDataLength = tileData.length();
 
@@ -57,7 +53,7 @@ void Map::Init(const int& nid) {
 	options.mapX = width;
 	options.mapY = height;
 
-	std::cout << "Loading " + path << std::endl;
+	std::cout << "Loading Map " + path << std::endl;
 
 	for (int i = 0; i < area; i++) {
 		//SETTING TILE ID
@@ -81,36 +77,16 @@ void Map::Init(const int& nid) {
 		tempTile.pos.x = m * Map::TILE_SIZE;
 		tempTile.pos.w = Map::TILE_SIZE;
 		tempTile.pos.h = Map::TILE_SIZE;
+		tempTile.isSolid = bool(mapSolidsFile.getInt(tempTile.id + 1));
+
+		if (tempTile.isSolid) {
+			solids.push_back(tempTile);
+		}
 
 		map.push_back(tempTile);
-
-		for (int i = 0; i < Map::SOLID_TILES; i++) {
-			if (tempTile.id == solidTiles[i]) {
-				solids.push_back(tempTile);
-				break;
-			}
-		}
-		for (int i = 0; i < Map::ENVIROMENT_TILES; i++) {
-			if (tempTile.id == enviromentTiles[i]) {
-				enviroments.push_back(tempTile);
-				break;
-			}
-		}
 
 		m++;
 	}
 
-	std::cout << "Loaded " + path << std::endl;
-}
-
-bool Map::isPassable(const int& nid) {
-	bool found = false;
-
-	for (int i = 0; i < Map::SOLID_TILES; i++) {
-		if (solidTiles[i] == nid) {
-			return true;
-		}
-	}
-	return false;
-
+	std::cout << "Map Loaded " + path << std::endl;
 }

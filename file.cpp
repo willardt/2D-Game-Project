@@ -1,206 +1,123 @@
 ﻿#include "file.h"
 
-std::string File::readStr(const int& filenum, const int& linenum) {
-	std::ifstream file;
-	std::string returnString = " ";
+void File::read() {
+	_data.clear();
+	std::ifstream file(_filepath);
+	std::string temp;
 	size_t find = 0;
 
-	setPath(filenum);
-
-	file.open(_filepath.c_str());
-
-	for (int i = 0; i < linenum; i++) {
-		std::getline(file, returnString);
+	while (std::getline(file, temp)) {
+		find = temp.find('-');
+		temp.erase(0, find + 2);
+		_data.push_back(temp);
 	}
 
 	file.close();
-
-	find = returnString.find('-');
-
-	returnString.erase(0, find + 2);
-
-	return returnString;
 }
 
-std::string File::readStr(const int& linenum) {
-	std::ifstream file;
-	std::string returnString = " ";
+void File::read(std::string path) {
+	_data.clear();
+	_setPath(path);
+	std::ifstream file(path);
+	std::string temp;
 	size_t find = 0;
 
-	file.open(_filepath.c_str());
-
-	for (int i = 0; i < linenum; i++) {
-		std::getline(file, returnString);
+	while (std::getline(file, temp)) {
+		find = temp.find('-');
+		temp.erase(0, find + 2);
+		_data.push_back(temp);
 	}
 
 	file.close();
-
-	find = returnString.find('-');
-
-	returnString.erase(0, find + 2);
-
-	return returnString;
 }
 
-u16string File::readUnicodeStr(const int& linenum) {
+void File::uread() {
+	_udata.clear();
 	std::wifstream file(_filepath, std::ios::binary);
 	std::wstring wstr = L"";
 	size_t find = 0;
 	file.imbue(std::locale(file.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::consume_header>));
-	
-	for (int i = 0; i < linenum; i++) {
-		std::getline(file, wstr);
+
+	while (std::getline(file, wstr)) {
+		find = wstr.find('-');
+		wstr.erase(0, find + 2);
+		u16string utext(wstr.begin(), wstr.end());
+		_udata.push_back(utext);
 	}
 
 	file.close();
-
-	find = wstr.find('-');
-
-	wstr.erase(0, find + 2);
-	
-	std::wcout << wstr << std::endl;
-
-	u16string utext(wstr.begin(), wstr.end());
-
-	return utext;
 }
 
-int File::readInt(const int& filenum, const int& linenum) {
-	std::ifstream file;
-	std::string returnString;
+void File::uread(std::string path) {
+	_udata.clear();
+	_setPath(path);
+	std::wifstream file(path, std::ios::binary);
+	std::wstring wstr = L"";
 	size_t find = 0;
-	int fileInt = 0;
+	file.imbue(std::locale(file.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::consume_header>));
 
-	setPath(filenum);
-
-	file.open(_filepath.c_str());
-
-	for (int i = 0; i < linenum; i++) {
-		std::getline(file, returnString);
+	while (std::getline(file, wstr)) {
+		find = wstr.find('-');
+		wstr.erase(0, find + 2);
+		u16string utext(wstr.begin(), wstr.end());
+		_udata.push_back(utext);
 	}
 
 	file.close();
-
-	find = returnString.find('-');
-
-	returnString.erase(0, find + 2);
-
-	std::istringstream iss(returnString);
-
-	iss >> fileInt;
-
-	return fileInt;
 }
 
-int File::readInt(const int& linenum) {
-	std::ifstream file;
-	std::string returnString;
-	size_t find = 0;
-	int fileInt = 0;
 
-	file.open(_filepath.c_str());
-
-	for (int i = 0; i < linenum; i++) {
-		std::getline(file, returnString);
-	}
-
-	file.close();
-
-	find = returnString.find('-');
-
-	returnString.erase(0, find + 2);
-
-	std::istringstream iss(returnString);
-
-	iss >> fileInt;
-
-	return fileInt;
-}
-
-float File::readFloat(const int& linenum) {
-	std::ifstream file;
-	std::string returnString;
-	size_t find = 0;
-	float fileFloat = 0;
-
-	file.open(_filepath.c_str());
-
-	for (int i = 0; i < linenum; i++) {
-		std::getline(file, returnString);
-	}
-
-	file.close();
-
-	find = returnString.find('-');
-
-	returnString.erase(0, find + 2);
-
-	std::istringstream iss(returnString);
-
-	iss >> fileFloat;
-
-	return fileFloat;
-}
-
-/*
-void File::writeInt(const int& num, const int& linenum) {
-	std::fstream file;
-	std::string returnString = "";
-	std::string writeString = "";
-	std::string totalString = "";
-	std::string value = std::to_string(num) + "\n";
-	size_t find = 0;
-	size_t size = 0;
-	
-	file.open(_filepath.c_str(), std::fstream::in | std::fstream::out);
-
-
-	int i = 0;
-	while (!file.eof()) {
-		std::getline(file, returnString);
-		std::cout << "Next line: " << returnString << std::endl;
-
-		if (i < linenum - 1) {
-			size += returnString.length() + 2;
-			std::cout << "Size: " << size << std::endl;
-		}
-		else if (i == linenum - 1) {
-			writeString = returnString;
-		}
-		else if (i >= linenum) {
-			totalString += returnString + "\n";
-		}
-
-		i++;
-	}
-
-	/*
-	for (int i = 0; i < linenum; i++) {
-		std::getline(file, returnString);
-		std::cout << returnString << std::endl;
-		if (i < linenum - 1) {
-			size += returnString.length() + 2;
-			totalString += returnString + "\n";
+int File::getInt(int line) {
+	line -= 1;
+	if (line < int(_data.size()) && line >= 0) {
+		if (_data[line] != "") {
+			return std::stoi(_data[line]);
 		}
 	}
-
-	std::cout << totalString << std::endl;
-
-	find = writeString.find('-');
-
-	std::cout << find << std::endl;
-
-	file.seekp(size + find + 2);
-
-	std::cout << size + find + 2 << std::endl;
-
-	file.write(value.c_str(), value.length());
-
-	file.close();
+	std::cout << "line: " << line << " doesn't exist in " << _filepath << std::endl;
+	return 0;
 }
-*/
 
-void File::setPath(const int& filenum) {
+float File::getFloat(int line) {
+	line -= 1;
+	if (line < int(_data.size()) && line >= 0) {
+		return std::stof(_data[line]);
+	}
+	std::cout << "line: " << line << " doesn't exist in " << _filepath << std::endl;
+	return 0;
+}
+
+std::string File::getStr(int line) {
+	line -= 1;
+	if (line < int(_data.size()) && line >= 0) {
+		return _data[line];
+	}
+	std::cout << "line: " << line << " doesn't exist in " << _filepath << std::endl;
+	return "";
+}
+
+u16string File::getU16(int line) {
+	line -= 1;
+	if (line < int(_udata.size()) && line >= 0) {
+		return _udata[line];
+	}
+	std::cout << "line: " << line << " doesn't exist in " << _filepath << std::endl;
+	return { 0x00 };
+}
+
+bool File::exists(std::string path) {
+	std::ifstream file(path);
+	if (!file) {
+		return false;
+	}
+	return true;
+}
+
+int File::getSize() {
+	return _data.size();
+}
+
+void File::_setPath(const int& filenum) {
 	switch (filenum) {
 	case OPTIONS_FILE:
 		_filepath = "Data/options.txt";
@@ -211,6 +128,6 @@ void File::setPath(const int& filenum) {
 	}
 }
 
-void File::setPath(std::string filepath) {
+void File::_setPath(std::string filepath) {
 	_filepath = filepath;
 }

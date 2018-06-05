@@ -146,6 +146,16 @@ void Texture::drawRectNoCam(const SDL_Rect& rect, const SDL_Color& color, SDL_Re
 	SDL_RenderFillRect(renderer, &rect);
 }
 
+void Texture::drawRectTrans(const SDL_Rect& rect, const SDL_Color& color, SDL_Renderer* renderer) {
+	Options& options = options.Instance();
+	SDL_Rect position = { rect.x - options.camX, rect.y - options.camY, rect.w, rect.h };
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderDrawRect(renderer, &position);
+	SDL_RenderFillRect(renderer, &position);
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+}
+
 // Draws a transparent rectangle at position 'rect' with no camera offset, transparency is passed throught color.a
 void Texture::drawRectTransNoCam(const SDL_Rect& rect, const SDL_Color& color, SDL_Renderer* renderer) {
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -155,24 +165,9 @@ void Texture::drawRectTransNoCam(const SDL_Rect& rect, const SDL_Color& color, S
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 }
 
-// Draws a rectangle based on maxH and h at position 'rect' 
-void Texture::drawBar(SDL_Rect& rect, int height, const int& maxH, const int& h, SDL_Color front, SDL_Color back, SDL_Renderer* renderer) {
-	float percent = 0;
-	SDL_Rect newPos = { NULL, NULL, NULL, NULL };
-	int width = rect.w + (BAR_SPACING_X * 2);
-
-	if (maxH == 0) {
-		percent = 0;
-	}
-	else {
-		percent = (float(h) / float(maxH));
-	}
-
-	newPos = { rect.x - BAR_SPACING_X, rect.y - BAR_SPACING_Y - height, width, BAR_H };
-
-	Texture::drawRect(newPos, back, renderer);
-	newPos.w = newPos.w * percent;
-	Texture::drawRect(newPos, front, renderer);
+void Texture::drawRectOutline(SDL_Rect rect, SDL_Color color, SDL_Renderer* renderer) {
+	SDL_SetRenderDrawColor(renderer, color.a, color.g, color.b, color.a);
+	SDL_RenderDrawRect(renderer, &rect);
 }
 
 // Updates the sprite frame and position
