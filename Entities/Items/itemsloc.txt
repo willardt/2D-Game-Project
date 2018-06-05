@@ -1,3 +1,0 @@
-0 - dagger.txt
-1 - ring.txt
-2 - shards.txt
