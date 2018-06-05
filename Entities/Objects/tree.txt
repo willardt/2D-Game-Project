@@ -1,5 +1,0 @@
-id - 8
-name - Tree
-Width - 150
-Height - 150
-Solid - 1
