@@ -1,5 +1,0 @@
-id - 2
-name - Red House
-Width - 150
-Height - 200
-Solid - 1
