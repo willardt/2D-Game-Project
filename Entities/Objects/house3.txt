@@ -1,5 +1,0 @@
-id - 4
-name - Pink House
-Width - 150
-Height - 200
-Solid - 1
