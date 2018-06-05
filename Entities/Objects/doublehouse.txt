@@ -1,5 +1,0 @@
-id - 0
-name - Blue Double House
-Width - 400
-Height - 200
-Solid - 1
