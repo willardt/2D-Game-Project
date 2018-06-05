@@ -1,3 +1,0 @@
-Player - Data/Textures/player.png
-Dummy - Data/Textures/player.png
-Link - Data/Textures/link.png
