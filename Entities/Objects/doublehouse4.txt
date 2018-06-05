@@ -1,5 +1,0 @@
-id - 7
-name - Yellow Double House
-Width - 400
-Height - 200
-Solid - 1
