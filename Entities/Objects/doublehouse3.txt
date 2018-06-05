@@ -1,5 +1,0 @@
-id - 5
-name - Pink Double House
-Width - 400
-Height - 200
-Solid - 1
