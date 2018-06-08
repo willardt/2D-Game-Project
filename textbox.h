@@ -9,7 +9,7 @@
 class TextBox {
 private:
 	enum {_BOX_WIDTH = 900, _BOX_HEIGHT = 180, _BOX_X = 100, _BOX_Y = 620, _LINE_Y = 619, _LINE_SPACING_Y = 30, _LINE_HEIGHT = 35, _MAX_LINES = 6, _MAX_LINE_LENGTH = 45,
-	   	_NAME_WIDTH = 250, _NAME_HEIGHT = 50, _NAME_X = 100, _NAME_Y = _BOX_Y - _NAME_HEIGHT, ACTIVE_TIME = 200};
+	   	_NAME_WIDTH = 350, _NAME_HEIGHT = 50, _NAME_X = 100, _NAME_Y = _BOX_Y - _NAME_HEIGHT, ACTIVE_TIME = 300};
 	const static SDL_Rect _pos;
 	const static SDL_Rect _namepos;
 	const static SDL_Color _color;

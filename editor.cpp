@@ -323,6 +323,12 @@ void Editor::input() {
 }
 
 void Editor::update() {
+	Options& options = options.Instance();
+
+	std::string windowTitle = "Level: " + map.name + " id: " + std::to_string(map.id) + " x: " + std::to_string((mouseX + options.camX) / Map::TILE_SIZE) +
+		" y: " + std::to_string((mouseY + options.camY) / Map::TILE_SIZE);
+
+	SDL_SetWindowTitle(_mainWindow.getWindow(), windowTitle.c_str());
 }
 
 void Editor::display() {
@@ -460,6 +466,8 @@ void Editor::display() {
 		}
 	}
 
+	selectedName.renderNoCam(_tileWindow.getRenderer());
+
 	_mainWindow.render();
 	_tileWindow.render();
 }
@@ -496,6 +504,7 @@ int Editor::setCurrentTile() {
 
 	selectedRect.w = 64;
 	selectedRect.h = 64;
+	selectedName = Text::printT(TEXT_NORMAL, "Tile", { 50, 50, NULL, 35 }, Text::WHITE);
 
 	return n;
 }
@@ -538,6 +547,7 @@ Entity Editor::setCurrentEntity() {
 
 	selectedRect.w = temp.pos.w;
 	selectedRect.h = temp.pos.h;
+	selectedName = Text::printT(TEXT_NORMAL, temp.name, { 50, 50, NULL, 35 }, Text::WHITE);
 
 	return temp;
 }
@@ -580,6 +590,7 @@ Npc Editor::setCurrentNpc() {
 
 	selectedRect.w = temp.pos.w;
 	selectedRect.h = temp.pos.h;
+	selectedName = Text::printT(TEXT_NORMAL, temp.name, { 50, 50, NULL, 35 }, Text::WHITE);
 
 	return temp;
 }
@@ -622,6 +633,7 @@ Item Editor::setCurrentItem() {
 
 	selectedRect.w = 64;
 	selectedRect.h = 64;
+	selectedName = Text::printT(TEXT_NORMAL, temp.name, { 50, 50, NULL, 35 }, Text::WHITE);
 
 	return temp;
 }
@@ -728,6 +740,7 @@ Object Editor::setCurrentObject() {
 
 	selectedRect.w = 86;
 	selectedRect.h = 86;
+	selectedName = Text::printT(TEXT_NORMAL, temp.name, { 50, 50, NULL, 35 }, Text::WHITE);
 
 	return temp;
 }
@@ -1287,7 +1300,16 @@ void Editor::create() {
 	bool valid = false;
 	File file;
 
+	if (map.id != 0) {
+		save();
+	}
+
 	map.map.clear();
+	enemies.clear();
+	npcs.clear();
+	warps.clear();
+	objects.clear();
+	items.clear();
 
 	std::cout << "1 - Load Map" << std::endl;
 	std::cout << "2 - Create New Map" << std::endl;
@@ -1384,12 +1406,12 @@ int Editor::getMapIDInput(const int& type) {
 void Editor::loadMap(const int& id) {
 	map.Init(id);
 	Object::loadMapObjects(id, objects);
-	Editor::loadMapEntities(id, enemies, npcs);
-	Editor::loadMapItems(id, items);
+	Editor::loadMapEntities(id, enemies, npcs, true);
+	Editor::loadMapItems(id, items, true);
 	Warp::loadWarps(id, warps);
 }
 
-void Editor::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std::vector<Npc>& npcs) {
+void Editor::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std::vector<Npc>& npcs, bool isFresh) {
 	File file;
 	Entity tempEnemy;
 	Npc tempNPC;
@@ -1405,8 +1427,14 @@ void Editor::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std
 
 	std::cout << "Loading Entities for map" << mapID << std::endl;
 
-	entitySize = file.getInt(5);
-	fileData = file.getStr(6);
+	if (isFresh == false) {
+		entitySize = file.getInt(5);
+		fileData = file.getStr(6);
+	}
+	else {
+		entitySize = file.getInt(13);
+		fileData = file.getStr(14);
+	}
 	fileDataLength = int(fileData.length());
 
 	int p = 0;
@@ -1431,6 +1459,7 @@ void Editor::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std
 
 			q = p + 1;
 			p = q;
+
 
 			if (dataType == 0) {
 				switch (data) {
@@ -1467,6 +1496,7 @@ void Editor::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std
 			enemies.push_back(tempEnemy);
 			break;
 		case NPC:		tempNPC.Init(tempNPC.type, tempNPC.id, tempNPC.pos.x, tempNPC.pos.y);
+			tempNPC.NPCInit();
 			npcs.push_back(tempNPC);
 			break;
 		}
@@ -1474,7 +1504,7 @@ void Editor::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std
 	std::cout << "Entities Loaded for map" << mapID << std::endl;
 }
 
-void Editor::loadMapItems(const int& mapID, std::vector<Item>& items) {
+void Editor::loadMapItems(const int& mapID, std::vector<Item>& items, bool isFresh) {
 	File file;
 	Item tempItem;
 	std::string fileData = " ";
@@ -1488,8 +1518,14 @@ void Editor::loadMapItems(const int& mapID, std::vector<Item>& items) {
 
 	std::cout << "Loading Items for map" << mapID << std::endl;
 
-	itemSize = file.getInt(7);
-	fileData = file.getStr(8);
+	if (isFresh == false) {
+		itemSize = file.getInt(7);
+		fileData = file.getStr(8);
+	}
+	else {
+		itemSize = file.getInt(15);
+		fileData = file.getStr(16);
+	}
 	fileDataLength = int(fileData.length());
 
 	int p = 0;
@@ -1516,9 +1552,9 @@ void Editor::loadMapItems(const int& mapID, std::vector<Item>& items) {
 			p = q;
 
 			switch (dataType) {
-			case 0:		tempItem.Init(data);		break;
-			case 1:		tempItem.pos.x = data;		break;
-			case 2:		tempItem.pos.y = data;		break;
+			case 0:		tempItem.Init(data);			break;
+			case 1:		tempItem.pos.x = data;			break;
+			case 2:		tempItem.pos.y = data;			break;
 			case 3:		if (tempItem.id == 2) { tempItem.damage = data; } break;
 			}
 

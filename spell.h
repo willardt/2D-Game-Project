@@ -9,8 +9,6 @@
 class Spell {
 private:
 public:
-	enum {TOTAL_SPELL_TEXTURES = 1};
-
 	Sprite sprite;
 	SDL_Color color;
 

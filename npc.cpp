@@ -32,6 +32,11 @@ bool Npc::promptQuest(Quest& q, TextBox& t) {
 	return false;
 }
 
+void Npc::promptDialoge(TextBox& t) {
+	t.setSpeaker(quest.npcName, Text::WHITE);
+	speech(t, quest.question);
+}
+
 void Npc::collision(const int& dir, const int& dis, std::vector<Npc>& npcs, const int& selfIndex) {
 	int length = int(npcs.size());
 	for (int i = 0; i < length; i++) {
@@ -72,12 +77,6 @@ void Npc::NPCInit() {
 	File file;
 	file.read("Data/Entities/Npcs/quests.txt");
 
-	if (file.getInt(id) == 1) {
-		hasQuest = true;
-		quest.Init(id);
-	}
-	else {
-		hasQuest = false;
-	}
-
+	hasQuest = bool(file.getInt(id + 1));
+	quest.Init(id);
 }

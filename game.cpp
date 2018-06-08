@@ -469,23 +469,28 @@ void Game::interactNPC() {
 	int qIndex = 0;
 	nIndex = Npc::collisionNPCSpeech(npcs, player.pos);
 	if (nIndex != -1) {
-		qIndex = player.findQuestNpc(npcs[nIndex].id);
-		if (qIndex != -1) {
-			if (npcs[nIndex].promptQuest(player.quests[qIndex], textBox) == true) {
-				if (player.quests[qIndex].rewardID != 2) {
-					Item reward;
-					reward.Init(player.quests[nIndex].rewardID);
-					player.items.push_back(reward);
-				}
-				else {
-					player.shards += npcs[nIndex].shards;
+		if (npcs[nIndex].hasQuest) {
+			qIndex = player.findQuestNpc(npcs[nIndex].id);
+			if (qIndex != -1) {
+				if (npcs[nIndex].promptQuest(player.quests[qIndex], textBox) == true) {
+					if (player.quests[qIndex].rewardID != 2) {
+						Item reward;
+						reward.Init(player.quests[nIndex].rewardID);
+						player.items.push_back(reward);
+					}
+					else {
+						player.shards += npcs[nIndex].shards;
+					}
 				}
 			}
+			else if (qIndex == -1 && npcs[nIndex].hasQuest == true) {
+				player.quests.push_back(npcs[nIndex].quest);
+				qIndex = player.quests.size() - 1;
+				npcs[nIndex].promptQuest(player.quests[qIndex], textBox);
+			}
 		}
-		else if (qIndex == -1 && npcs[nIndex].hasQuest == true) {
-			player.quests.push_back(npcs[nIndex].quest);
-			qIndex = player.quests.size() - 1;
-			npcs[nIndex].promptQuest(player.quests[qIndex], textBox);
+		else {
+			npcs[nIndex].promptDialoge(textBox);
 		}
 	}
 }
@@ -655,8 +660,9 @@ void Game::warpCollision() {
 			int destY = warps[i].dest.y + (warps[i].dest.h / 2);
 			saveMap(map.id);
 			loadMap(warps[i].teleID, NULL);
-			player.pos.x = destX;
-			player.pos.y = destY;
+			player.pos.x = destX - player.posWidthHalf;
+			player.pos.y = destY - player.posHeightHalf;
+			player.centerCamera(map.width, map.height);
 			break;
 		}
 	}
@@ -697,6 +703,8 @@ void Game::loadMap(const int& id, int type) {
 						
 	}
 	Warp::loadWarps(id, warps);
+
+	player.move(NULL, NULL, false);
 }
 
 

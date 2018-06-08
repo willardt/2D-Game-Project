@@ -15,6 +15,7 @@ public:
 	void speech(TextBox& t, u16string s);
 	//Returns true if complete
 	bool promptQuest(Quest& q, TextBox& t);
+	void promptDialoge(TextBox& t);
 
 	void collision(const int& dir, const int& dis, std::vector <Npc>& npcs, const int& selfIndex);
 

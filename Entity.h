@@ -116,6 +116,7 @@ public:
 
 	void move(const int& dir, int dis, const bool& update);
 	void checkCam(const int& type, const int& dis);
+	void centerCamera(const int& mapWidth, const int& mapHeight);
 	void updateSprite(const int& type, const int& dir);
 	void collision(const int& dir, const int& dis, std::vector<Entity>& obj, const int& selfIndex);
 	void collision(const int& dir, const int& dis, std::vector<Entity>& obj);

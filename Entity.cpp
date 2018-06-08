@@ -21,6 +21,7 @@ std::vector<Texture> Entity::memInit(const int& type) {
 
 void Entity::Init(const int& ntype, const int& nid, const int& x, const int& y) {
 	File file;
+	File locFile;
 	std::string path = "";
 	pos.x = x;
 	pos.y = y;
@@ -31,12 +32,15 @@ void Entity::Init(const int& ntype, const int& nid, const int& x, const int& y) 
 
 	type = ntype;
 
-	path = findName(type, id);
-
 	switch (type) {
-	case PLAYER:	file.read("Data/Entities/player.txt");						    break;
-	case ENEMY:		file.read("Data/Entities/Enemies/" + path + ".txt");			break;
-	case NPC:		file.read("Data/Entities/Npcs/" + path + ".txt");				break;
+	case PLAYER:	file.read("Data/Entities/player.txt");
+					break;
+	case ENEMY:		locFile.read("Data/Entities/Enemies/enemiesloc.txt");
+					file.read("Data/Entities/Enemies/" + locFile.getStr(id + 1));
+					break;
+	case NPC:		locFile.read("Data/Entities/Npcs/npcsloc.txt");	
+					file.read("Data/Entities/Npcs/" + locFile.getStr(id + 1)); 
+					break;
 	}
 
 	name = file.getStr(1);
@@ -193,9 +197,6 @@ void Entity::updateCombat(SDL_Rect& player) {
 		isCombat = true;
 		combat.tock(0);
 	}
-	else {
-		isCombat = false;
-	}
 
 	if (isCombat && isCastable) {
 		castSpell(player.x, player.y);
@@ -329,6 +330,27 @@ void Entity::checkCam(const int& type, const int& dis) {
 	}
 	else if (((pos.y + pos.h) - options.camY) >= options.windowHeight) {
 		options.camY += dis;
+	}
+}
+
+void Entity::centerCamera(const int& mapWidth, const int& mapHeight) {
+	Options& options = options.Instance();
+	options.camX = pos.x - options.windowWidthHalf;
+	options.camY = pos.y - options.windowHeightHalf;
+	int nmapWidth = mapWidth * Map::TILE_SIZE;
+	int nmapHeight = mapHeight * Map::TILE_SIZE;
+
+	if (options.camX < 0) {
+		options.camX = 0;
+	}
+	else if (options.camX > (nmapWidth - options.windowWidth)) {
+		options.camX = nmapWidth - options.windowWidth;
+	}
+	if (options.camY < 0) {
+		options.camY = 0;
+	}
+	else if (options.camY > (nmapHeight - options.windowHeight)) {
+		options.camY = nmapHeight - options.windowHeight;
 	}
 }
 
@@ -533,6 +555,9 @@ void Entity::applyDamage(const int& damage, std::vector<Text>& t, SDL_Color& col
 int Entity::calcDamage(int d, int def, int lvl) {
 	int ndamage = d + damage;
 	ndamage -= def;
+	if (ndamage < 0) {
+		ndamage = 0;
+	}
 	int nleech = leech - lvl;
 	int ndrain = drain - lvl;
 	if (nleech > 0) {
@@ -648,12 +673,14 @@ void Entity::addExp(int xp, TextBox& t) {
 }
 
 void Entity::dropLoot(std::vector<Item>& items) {
-	Item temp;
-	temp.Init(2);
-	temp.pos.x = pos.x;
-	temp.pos.y = pos.y;
-	temp.damage = shards;
-	items.push_back(temp);
+	if (shards > 0) {
+		Item temp;
+		temp.Init(2);
+		temp.pos.x = pos.x;
+		temp.pos.y = pos.y;
+		temp.damage = shards;
+		items.push_back(temp);
+	}
 
 	for (size_t i = 0; i < lootTable.size(); i++) {
 		if (rand() % 100 <= lootTable[i].dropChance) {
@@ -698,6 +725,7 @@ int Entity::calcCastDir(int mX, int mY) {
 
 std::vector<Item> Entity::loadLootTable(const int& id, const int& type) {
 	File file;
+	File locFile;
 	Item tempItem;
 	std::string fileData = " ";
 	std::string itemData = " ";
@@ -707,10 +735,12 @@ std::vector<Item> Entity::loadLootTable(const int& id, const int& type) {
 	int lootSize = 0;
 
 	if (type == ENEMY) {
-		file.read("Data/Entities/Enemies/" + findName(type, id) + ".txt");
+		locFile.read("Data/Entities/Enemies/enemiesloc.txt");
+		file.read("Data/Entities/Enemies/" + locFile.getStr(id + 1));
 	}
 	else if (type == NPC) {
-		file.read("Data/Entities/Npcs/" + findName(type, id) + ".txt");
+		locFile.read("Data/Entities/Npcs/npcsloc.txt");
+		file.read("Data/Entities/Npcs/" + locFile.getStr(id + 1));
 	}
 	else {
 		file.read("Data/Entities/player.txt");

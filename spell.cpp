@@ -16,6 +16,7 @@ std::vector<Texture> Spell::memInit() {
 
 void Spell::Init(int nid) {
 	File file;
+	File locFile;
 	std::string path = "";
 	isActive = true;
 	isEnd = false;
@@ -23,13 +24,8 @@ void Spell::Init(int nid) {
 	sprite.frame = 0;
 	frame = 0;
 
-	switch (id) {
-	case 0:
-		path = "fireball";
-		break;
-	}
-
-	file.read("Data/Entities/Spells/" + path + ".txt");
+	locFile.read("Data/Entities/Spells/spellsloc.txt");
+	file.read("Data/Entities/Spells/" + locFile.getStr(id + 1));
 	
 	name = file.getStr(1);
 	pos.w = file.getInt(3);

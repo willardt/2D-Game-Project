@@ -34,6 +34,10 @@
 #define SELECT_WARP 63
 #define SELECT_OBJECT 64
 
+#define FRESH  40
+#define FRESH_ENTITIES 41
+#define FRESH_ITEMS 42
+
 class Editor {
 private:
 	Window _mainWindow;
@@ -75,6 +79,8 @@ public:
 	std::vector<Path> paths;
 	std::vector<Warp> warps;
 	std::vector<Object> objects;
+
+	Text selectedName;
 
 	bool isRunning;
 	bool isWarpSelecting;
@@ -127,8 +133,8 @@ public:
 	void create();
 
 	void loadMap(const int& id);
-	void Editor::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std::vector<Npc>& npcs);
-	void Editor::loadMapItems(const int& mapID, std::vector<Item>& items);
+	void Editor::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std::vector<Npc>& npcs, bool isFresh);
+	void Editor::loadMapItems(const int& mapID, std::vector<Item>& items, bool isFresh);
 
 	std::string getFileIDPath(const int& id);
 	int getMapIDInput(const int& type);
