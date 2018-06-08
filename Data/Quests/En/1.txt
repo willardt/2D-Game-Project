@@ -1,6 +1,7 @@
 Quest ID - 1
 Quest Type - 1
-Quest Name - Do Something For Me
-Total Kills - 20
-Target ID - 2
-Target Name - Link
+Quest Name - Kill Bushkis
+Total Kills - 10
+Target id - 3
+Target Name - Bushki
+Reward id - 2

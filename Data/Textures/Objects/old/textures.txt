@@ -1,0 +1,5 @@
+Player - Data/Textures/player.png
+Dummy - Data/Textures/player.png
+Link - Data/Textures/link.png
+Greg - Data/Textures/greg.png
+Bushki - Data/Textures/bushki.png

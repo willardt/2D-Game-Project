@@ -1,0 +1,7 @@
+Quest ID - 0
+Quest Type - 0
+Quest Name - 
+Total Kills - 0
+Target id - 0
+Target Name - 
+Reward id - 0
