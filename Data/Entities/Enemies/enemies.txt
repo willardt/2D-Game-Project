@@ -1,3 +1,4 @@
 Player - Data/Textures/player.png
 Dummy - Data/Textures/player.png
-Link - Data/Textures/link.png
+Link - Data/Textures/Enemies/link.png
+Bushki - Data/Textures/Enemies/bushki.png

@@ -1,0 +1,41 @@
+Name - Bushki
+Texture - Data/Textures/Enemies/bushki.png
+Width - 32
+Height - 32
+Total Frames - 7
+Run Frame - 6
+Min Down - 1
+Max Down - 6
+Min Up - 1
+Max Up - 6
+Min Right - 1
+Max Right - 6
+Min Left - 1
+Max Left - 6
+Level - 1
+Exp - 5
+Health - 50
+Health Regen - 0
+Mana - 50
+Mana Regen - 3
+Damage - 2
+Defense - 0
+Leech - 0
+Drain - 0
+Luck - 0
+Speed - 1
+Shards - 0
+Total Cast Frames - 1
+Up - 7
+Down - 7
+Left - 7
+Right - 7
+Up Right - 7
+Up Left - 7
+Down Right - 7
+Down Left - 7
+Spell ID - 1
+Loot Size - 1
+Loot Table - 3
+Combat Range w - 300
+Combat Range h - 300

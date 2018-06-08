@@ -1,1 +1,2 @@
-Fireball - Data/Textures/fireball.png
+Fireball - Data/Textures/Spells/fireball.png
+Bushki Attack - Data/Textures/Spells/bushki attack.png

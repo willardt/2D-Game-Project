@@ -1,1 +1,8 @@
 0 - house.txt
+1 - tree.txt
+2 - tree2.txt
+3 - tree3.txt
+4 - tree4.txt
+5 - tree5.txt
+6 - tree6.txt
+7 - bush.txt

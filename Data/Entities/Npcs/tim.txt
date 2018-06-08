@@ -1,4 +1,4 @@
-Name - Greg
+Name - Tim
 Texture - Data/Textures/player.png
 Width - 32
 Height - 64
@@ -24,7 +24,7 @@ Leech - 0
 Drain - 0
 Luck - 0
 Speed - 1
-Shards - 20
+Shards - 0
 Total Cast Frames - 0
 Up - 0
 Down - 0

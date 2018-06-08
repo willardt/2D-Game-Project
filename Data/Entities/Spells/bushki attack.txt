@@ -1,0 +1,13 @@
+Name - Bushki Attack
+Texture - Data/Textures/Spells/bushki attack.png
+Width - 15
+Height - 15
+Speed - .01
+Max Distance - 300
+Damage - 3
+End Frame - 25
+Fire Rate - 80
+Mana Cost - 0
+Color r - 121
+Color g - 202
+Color b - 32

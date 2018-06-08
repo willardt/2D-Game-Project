@@ -1,0 +1,4 @@
+0 - player.txt
+1 - dummy.txt
+2 - link.txt
+3 - bushki.txt

@@ -1,3 +1,4 @@
 0 dagger - Data/Textures/Items/dagger.png
 1 ring - Data/Textures/Items/ring.png
 2 shards - Data/Textures/Items/shards.png
+3 stick - Data/Textures/Items/stick.png

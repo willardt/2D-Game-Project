@@ -1,4 +1,4 @@
-Name - Greg
+Name - Old Man
 Texture - Data/Textures/player.png
 Width - 32
 Height - 64

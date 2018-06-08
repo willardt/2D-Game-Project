@@ -1,0 +1,5 @@
+id - 7
+name - Bush
+Width - 50
+Height - 50
+Solid - 1

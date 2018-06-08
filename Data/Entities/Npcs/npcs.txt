@@ -1,2 +1,4 @@
 Player - Data/Textures/player.png
-Greg - Data/Textures/greg.png
+Greg - Data/Textures/player.png
+Old Man - Data/Textures/player.png
+Tim - Data/Textures/player.png

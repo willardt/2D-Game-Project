@@ -1,0 +1,5 @@
+id - 6
+name - Tree
+Width - 150
+Height - 275
+Solid - 1

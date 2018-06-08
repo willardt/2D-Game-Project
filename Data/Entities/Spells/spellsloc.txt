@@ -1,0 +1,2 @@
+0 - fireball.txt
+1 - bushki attack.txt

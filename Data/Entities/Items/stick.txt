@@ -1,0 +1,15 @@
+id - 3
+type - 0
+name - Stick
+Damage - 2
+Defense - 0
+Health - 0
+Hps - 0
+Mana - 0
+Mps - 0
+Leech - 0
+Drain - 0
+Luck - 0
+Speed - 0
+Drop Chance - 40
+Price - 3
