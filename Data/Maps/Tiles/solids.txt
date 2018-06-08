@@ -11,6 +11,10 @@ Water6 - 1
 Water7 - 1
 Water8 - 1
 Water9 - 1
+Water10 - 1
+Water11 - 1
+Water12 - 1
+Water13 - 1
 Pebbles - 0
 Pebbles2 - 0
 Pebbles3 - 0
@@ -23,7 +27,11 @@ path6 - 0
 path7 - 0
 path8 - 0
 path9 - 0
-path10 -0
+path10 - 0
 path11 - 0
 path12 - 0
 path13 - 0
+Red Flowers - 0
+Red Flowers2 - 0
+Red Flowers3 - 0
+House Tile - 0

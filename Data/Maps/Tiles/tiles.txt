@@ -11,6 +11,10 @@ Water6 - Data/Maps/Tiles/water6.png
 Water7 - Data/Maps/Tiles/water7.png
 Water8 - Data/Maps/Tiles/water8.png
 Water9 - Data/Maps/Tiles/water9.png
+Water10 - Data/Maps/Tiles/water10.png
+Water11 - Data/Maps/Tiles/water11.png
+Water12 - Data/Maps/Tiles/water12.png
+Water13 - Data/Maps/Tiles/water13.png
 Pebbles - Data/Maps/Tiles/pebbles.png
 Pebbles2 - Data/Maps/Tiles/pebbles2.png
 Pebbles3 - Data/Maps/Tiles/pebbles3.png
@@ -27,3 +31,7 @@ path10 - Data/Maps/Tiles/path10.png
 path11 - Data/Maps/Tiles/path11.png
 path12 - Data/Maps/Tiles/path12.png
 path13 - Data/Maps/Tiles/path13.png
+Red Flowers - Data/Maps/Tiles/red flowers.png
+Red Flowers2 - Data/Maps/Tiles/red flowers2.png
+Red Flowers3 - Data/Maps/Tiles/red flowers3.png
+House Tile - Data/Maps/Tiles/house tile.png
