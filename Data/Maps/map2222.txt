@@ -1,0 +1,18 @@
+Name - asd
+Width - 12
+Height - 12
+Tiles - 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+Entity Size - 0
+Entities - 
+Item Size - 0
+Items - 
+Warp Size - 0
+Warps - 
+Object Size - 0
+Objects - 
+Effect Size - 0
+Effects - 
+Entity Size - 0
+Entities - 
+Item Size - 0
+Items - 

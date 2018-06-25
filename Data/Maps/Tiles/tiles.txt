@@ -35,3 +35,7 @@ Red Flowers - Data/Maps/Tiles/red flowers.png
 Red Flowers2 - Data/Maps/Tiles/red flowers2.png
 Red Flowers3 - Data/Maps/Tiles/red flowers3.png
 House Tile - Data/Maps/Tiles/house tile.png
+Tent Tile - Data/Maps/Tiles/tent tile.png
+Tent Tile2 - Data/Maps/Tiles/tent tile2.png
+Tent Tile3 - Data/Maps/Tiles/tent tile3.png
+None - Data/Maps/Tiles/none.png

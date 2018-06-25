@@ -35,3 +35,7 @@ Red Flowers - 0
 Red Flowers2 - 0
 Red Flowers3 - 0
 House Tile - 0
+Tent Tile - 0
+Tent Tile2 - 1
+Tent Tile3 - 0
+None - 1

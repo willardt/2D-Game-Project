@@ -8,8 +8,6 @@ Item Size - 0
 Items - 
 Warp Size - 0
 Warps - 
-Effect Size - 0
-Effects - 
 Entity Size - 0
 Entities - 
 Item Size - 0
