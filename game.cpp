@@ -19,6 +19,7 @@ void Game::Init() {
 	spellsMem = Spell::memInit();
 	itemsMem = Item::memInit();
 	objectsMem = Object::memInit();
+	effectsMem = Effect::memInit();
 
 	textBox.Init();
 
@@ -40,26 +41,12 @@ void Game::begin() {
 }
 
 void Game::input() {
-	static Input in;
+	isRunning = in.get(_mainWindow.getWindow());
 
-	static bool keyDownO = true;
-	static bool keyDownP = true;
-	static bool keyDownI = true;
-	static bool keyDownE = true;
-	static bool keyDownC = true;
-	static bool keyDownQ = true;
-	static bool keyDownV = true;
-	static bool keyDownB = true;
-	static bool keyDownN = true;
-	static bool keyDown0 = true;
-	static bool keyDownSpace = true;
-
-	isRunning = in.getQuit(_mainWindow.getWindow());
-
-	bool up = in.isPressed(SDL_SCANCODE_W);
-	bool down = in.isPressed(SDL_SCANCODE_S);
-	bool left = in.isPressed(SDL_SCANCODE_A);
-	bool right = in.isPressed(SDL_SCANCODE_D);
+	bool up = in.isHeld(options.up);
+	bool down = in.isHeld(options.down);
+	bool left = in.isHeld(options.left);
+	bool right = in.isHeld(options.right);
 
 	if (up && !left && !right && !down) {
 		move(player, UP, NULL, true);
@@ -108,52 +95,37 @@ void Game::input() {
 		move(player, RIGHT, NULL, true);
 	}
 
-	if (!options.isCam && in.isPressed(SDL_SCANCODE_Y)) {
+	if (!options.isCam && in.isHeld(SDL_SCANCODE_Y)) {
 		options.camY -= options.camSpeed;
 	}
-	if (!options.isCam && in.isPressed(SDL_SCANCODE_G)) {
+	if (!options.isCam && in.isHeld(SDL_SCANCODE_G)) {
 		options.camX -= options.camSpeed;
 	}
-	if (!options.isCam && in.isPressed(SDL_SCANCODE_H)) {
+	if (!options.isCam && in.isHeld(SDL_SCANCODE_H)) {
 		options.camY += options.camSpeed;
 	}
-	if (!options.isCam && in.isPressed(SDL_SCANCODE_J)) {
+	if (!options.isCam && in.isHeld(SDL_SCANCODE_J)) {
 		options.camX += options.camSpeed;
 	}
-	//REMOVE THIS LATER SO YOU DONT ACCIDENTALY HIT IT
-	if (in.isPressed(SDL_SCANCODE_ESCAPE) == true) {
-		isRunning = false;
-	}
-	if (in.isPressed(SDL_SCANCODE_SPACE) == false) {
-		keyDownSpace = false;
-	}
-	if (keyDownSpace == false && in.isPressed(SDL_SCANCODE_SPACE) == true) {
+
+	if (in.isKey(SDL_SCANCODE_SPACE)) {
 		if (textBox.isActive == true) {
 			textBox.isActive = false;
 		}
 		else {
 			textBox.isActive = true;
 		}
-		keyDownSpace = true;
 	}
-	if (in.isPressed(SDL_SCANCODE_O) == false) {
-		keyDownO = false;
-	}
-	if (keyDownO == false && in.isPressed(SDL_SCANCODE_O) == true) {
+
+	if (in.isKey(SDL_SCANCODE_O)) {
 		save();
-		keyDownO = true;
 	}
-	if (in.isPressed(SDL_SCANCODE_P) == false) {
-		keyDownP = false;
-	}
-	if (keyDownP == false && in.isPressed(SDL_SCANCODE_P) == true) {
+
+	if (in.isKey(SDL_SCANCODE_P)) {
 		load();
-		keyDownP = true;
 	}
-	if (in.isPressed(SDL_SCANCODE_I) == false) {
-		keyDownI = false;
-	}
-	if (keyDownI == false && in.isPressed(SDL_SCANCODE_I) == true) {
+
+	if (in.isKey(SDL_SCANCODE_I)) {
 		if (options.isCam == true) {
 			options.isCam = false;
 			std::cout << "Cam Lock Off" << std::endl;
@@ -163,33 +135,25 @@ void Game::input() {
 			player.move(NULL, NULL, false);
 			std::cout << "Cam Lock On" << std::endl;
 		}
-		keyDownI = true;
-	}
-	if (in.isPressed(SDL_SCANCODE_E) == false) {
-		keyDownE = false;
-	}
-	if (keyDownE == false && in.isPressed(SDL_SCANCODE_E) == true) {
-		interactNPC();
-		keyDownE = true;
 	}
 
-	if (in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == true) {
+	if (in.isKey(options.interact)) {
+		interactNPC();
+	}
+
+	if (in.isKey(options.trade)) {
+		interactShop();
+	}
+
+	if (in.isMouseHeld(mouseX, mouseY, SDL_BUTTON_LEFT, _mainWindow.getWindow())) {
 		player.castSpellMouse(mouseX, mouseY);
 	}
 
-	if (in.isPressed(SDL_SCANCODE_C) == false) {
-		keyDownC = false;
-	}
-	if (keyDownC == false && in.isPressed(SDL_SCANCODE_C) == true) {
+	if (in.isKey(options.bag)) {
 		bag.Init(player, items, itemsMem, _mainWindow);
-		keyDownC = true;
 	}
 
-	if (in.isPressed(SDL_SCANCODE_Q) == false) {
-		keyDownQ = false;
-	}
-	if (keyDownQ == false && in.isPressed(SDL_SCANCODE_Q) == true) {
-		keyDownQ = true;
+	if (in.isKey(options.pickup)) {
 		int q = player.collision(items);
 		if (q != -1 && items[q].id != 2 && player.items.size() <= Player::MAX_BAG_SIZE) {
 			player.items.push_back(items[q]);
@@ -197,10 +161,7 @@ void Game::input() {
 		}
 	}
 
-	if (in.isPressed(SDL_SCANCODE_V) == false) {
-		keyDownV = false;
-	}
-	if (keyDownV == false && in.isPressed(SDL_SCANCODE_V) == true) {
+	if (in.isKey(SDL_SCANCODE_V)) {
 		if (options.showPaths == true) {
 			options.showPaths = false;
 			std::cout << "Show Paths Off" << std::endl;
@@ -209,13 +170,9 @@ void Game::input() {
 			options.showPaths = true;
 			std::cout << "Show Paths On" << std::endl;
 		}
-		keyDownV = true;
 	}
 
-	if (in.isPressed(SDL_SCANCODE_B) == false) {
-		keyDownB = false;
-	}
-	if (keyDownB == false && in.isPressed(SDL_SCANCODE_B) == true) {
+	if (in.isKey(SDL_SCANCODE_B)) {
 		if (options.showWarps == true) {
 			options.showWarps = false;
 			std::cout << "Show Warps Off" << std::endl;
@@ -224,13 +181,9 @@ void Game::input() {
 			options.showWarps = true;
 			std::cout << "Show Warps On" << std::endl;
 		}
-		keyDownB = true;
 	}
 
-	if (in.isPressed(SDL_SCANCODE_N) == false) {
-		keyDownN = false;
-	}
-	if (keyDownN == false && in.isPressed(SDL_SCANCODE_N) == true) {
+	if (in.isKey(SDL_SCANCODE_N)) {
 		if (options.showCombatRange == true) {
 			options.showCombatRange = false;
 			std::cout << "Show Combat Range Off" << std::endl;
@@ -239,15 +192,10 @@ void Game::input() {
 			options.showCombatRange = true;
 			std::cout << "Show Combat Range On" << std::endl;
 		}
-		keyDownN = true;
 	}
 
-	if (in.isPressed(SDL_SCANCODE_0) == false) {
-		keyDown0 = false;
-	}
-	if (keyDown0 == false && in.isPressed(SDL_SCANCODE_0) == true) {
+	if (in.isKey(SDL_SCANCODE_0)) {
 		loadMap(map.id, FRESH);
-		keyDown0 = true;
 	}
 }
 
@@ -377,6 +325,12 @@ void Game::display() {
 		objectsMem[objects[i].id].render(objects[i].pos, _mainWindow.getRenderer());
 	}
 
+	// ----------EFFECTS----------
+	for (size_t i = 0; i < effects.size(); i++) {
+		effectsMem[effects[i].id].renderSprite(effects[i].pos, effects[i].sprite, _mainWindow.getRenderer());
+		effects[i].update();
+	}
+
 	// ----------SPELLS----------
 	for (size_t i = 0; i < player.spells.size(); i++) {
 		spellsMem[player.spells[i].id].renderSprite(player.spells[i].pos, player.spells[i].sprite, _mainWindow.getRenderer());
@@ -423,9 +377,20 @@ void Game::display() {
 
 	itemMouseOver();
 
+	//---------Map Name--------
+	gui.drawMapName(map.name, _mainWindow.getRenderer());
+
+	//---------Player UI Elements----------
+	UI::drawBarNoCam(UI::PLAYER_HEALTH, 0, player.maxHealth, player.health, Texture::healthBarFull, Texture::healthBarEmpty, _mainWindow.getRenderer());
+	UI::drawBarNoCam(UI::PLAYER_MANA, 0, player.maxMana, player.mana, Texture::manaBarFull, Texture::manaBarEmpty, _mainWindow.getRenderer());
+
+	Texture::drawRectTransNoCam(UI::SPELL_BOX, Text::BLACK, _mainWindow.getRenderer());
+	SDL_Rect spellBox = { UI::SPELL_BOX_SPELL.x, UI::SPELL_BOX_SPELL.y, player.spell.pos.w, player.spell.pos.h };
+	spellsMem[player.spell.id].renderNoCamSprite(spellBox, { NULL, NULL, NULL }, _mainWindow.getRenderer());
+
 	// ----------TEXT----------
 	for (size_t i = 0; i < texts.size(); i++) {
-		texts[i].renderOutline(_mainWindow.getRenderer());
+		texts[i].render(_mainWindow.getRenderer());
 	}
 
 	for (size_t i = 0; i < uiInfo.size(); i++) {
@@ -491,6 +456,17 @@ void Game::interactNPC() {
 		}
 		else {
 			npcs[nIndex].promptDialoge(textBox);
+		}
+	}
+}
+
+void Game::interactShop() {
+	int index = -1;
+	index = Npc::collisionNPCSpeech(npcs, player.pos);
+
+	if (index != -1) {
+		if (npcs[index].lootTable[0].id != -1) {
+			shop.shop(&_mainWindow, &player, &npcs[index], itemsMem);
 		}
 	}
 }
@@ -687,6 +663,7 @@ void Game::loadMap(const int& id, int type) {
 	Object::loadMapObjects(id, objects);
 	objectSolids.clear();
 	objectSolids = Object::createObjectSolids(objects);
+	Effect::loadEffects(id, effects);
 	switch (type) {
 	case NULL:				loadMapEntities(id, enemies, npcs, false);
 							loadMapItems(id, items, false);
@@ -702,9 +679,12 @@ void Game::loadMap(const int& id, int type) {
 							break;
 						
 	}
+
 	Warp::loadWarps(id, warps);
 
 	player.move(NULL, NULL, false);
+	gui.bmapName = true;
+	gui.mapName.tock(0);
 }
 
 
@@ -844,10 +824,12 @@ void Game::saveMap(const int& id) {
 	file << "Warps - " << sfile.getStr(10) << std::endl;
 	file << "Object Size - " << sfile.getStr(11) << std::endl;
 	file << "Objects - " << sfile.getStr(12) << std::endl;
-	file << "Entity Size - " << sfile.getStr(13) << std::endl;
-	file << "Entities - " << sfile.getStr(14) << std::endl;
-	file << "Item Size - " << sfile.getStr(15) << std::endl;
-	file << "Items - " << sfile.getStr(16) << std::endl;
+	file << "Effect Size - " << sfile.getStr(13) << std::endl;
+	file << "Effects - " << sfile.getStr(14) << std::endl;
+	file << "Entity Size - " << sfile.getStr(15) << std::endl;
+	file << "Entities - " << sfile.getStr(16) << std::endl;
+	file << "Item Size - " << sfile.getStr(17) << std::endl;
+	file << "Items - " << sfile.getStr(18) << std::endl;
 	file.close();
 }
 
@@ -884,8 +866,8 @@ void Game::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std::
 		fileData = file.getStr(6);
 	}
 	else {
-		entitySize = file.getInt(13);
-		fileData = file.getStr(14);
+		entitySize = file.getInt(15);
+		fileData = file.getStr(16);
 	}
 	fileDataLength = int(fileData.length());
 
@@ -975,8 +957,8 @@ void Game::loadMapItems(const int& mapID, std::vector<Item>& items, bool isFresh
 		fileData = file.getStr(8);
 	}
 	else {
-		itemSize = file.getInt(15);
-		fileData = file.getStr(16);
+		itemSize = file.getInt(17);
+		fileData = file.getStr(18);
 	}
 	fileDataLength = int(fileData.length());
 

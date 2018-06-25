@@ -769,6 +769,11 @@ std::vector<Item> Entity::loadLootTable(const int& id, const int& type) {
 		lootTable.push_back(tempItem);
 	}
 
+	if (lootSize == 0) {
+		tempItem.id = -1;
+		lootTable.push_back(tempItem);
+	}
+
 	return lootTable;
 }
 
@@ -812,21 +817,4 @@ void Entity::loadPaths(int& size, std::string& fileData, const int& fileDataLeng
 		paths.push_back(tempPath);
 	}
 	activePath = 0;
-}
-
-std::string Entity::findName(const int& type, const int& id) {
-	switch (type) {
-	case PLAYER:	return "player";	break;
-	case ENEMY:
-		switch (id) {
-		case 1:		return "dummy";		break;
-		case 2:		return "link";		break;
-		}
-	case NPC:
-		switch (id) {
-		case 1:		return "greg";		break;
-		}
-	}
-
-	return "UNKOWN";
 }

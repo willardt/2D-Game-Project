@@ -21,6 +21,7 @@ private:
 	SDL_Color _markerColor;
 
 	Window _mainWindow;
+	Input in;
 
 	std::vector<SDL_Rect> _itemsPos;
 	std::vector<SDL_Rect> _equipItemsPos;

@@ -18,13 +18,15 @@
 #include "warp.h"
 #include "object.h"
 #include "ui.h"
+#include "shop.h"
+#include "effect.h"
 
 #ifndef GAME_H
 #define GAME_H
 
-#define FRESH  50
-#define FRESH_ENTITIES 51
-#define FRESH_ITEMS 52
+#define FRESH  40
+#define FRESH_ENTITIES 41
+#define FRESH_ITEMS 42
 
 class Game {
 
@@ -40,10 +42,16 @@ public:
 	std::vector<Warp> warps;
 	std::vector<Object> objects;
 	std::vector<Object> objectSolids;
+	std::vector<Effect> effects;
 	TextBox textBox;
+
+	UI gui;
+
+	Input in;
 
 	Map map;
 	Bag bag;
+	Shop shop;
 
 	std::vector<Texture> tilesMem;
 	std::vector<Texture> enemiesMem;
@@ -51,6 +59,7 @@ public:
 	std::vector<Texture> spellsMem;
 	std::vector<Texture> itemsMem;
 	std::vector<Texture> objectsMem;
+	std::vector<Texture> effectsMem;
 
 	Texture background;
 	SDL_Rect backRect;
@@ -77,6 +86,7 @@ public:
 	void move(Npc& n, int i, int dir, int dis, bool update);
 
 	void interactNPC();
+	void interactShop();
 
 	int spellCollision(Spell& spell, std::vector<Entity>& objs);
 	int spellCollision(Spell& spell, std::vector<Npc>& npcs);

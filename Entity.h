@@ -146,7 +146,6 @@ public:
 
 	static std::vector<Item> loadLootTable(const int& id, const int& type);
 	static std::vector<Texture> memInit(const int& type);
-	static std::string findName(const int& type, const int& id);
 };
 
 #endif

@@ -2,7 +2,7 @@
 
 const SDL_Color Texture::healthBarFullGreen = { 20, 250, 20, 255 };
 const SDL_Color Texture::healthBarFull = { 20, 250, 20, 255 };
-const SDL_Color Texture::healthBarEmpty = { 200, 20, 20, 255 };
+const SDL_Color Texture::healthBarEmpty = { 0, 0, 0, 255 };
 const SDL_Color Texture::manaBarFull = { 20, 20, 250, 255 };
 const SDL_Color Texture::manaBarEmpty = { 20, 20, 20, 255 };
 

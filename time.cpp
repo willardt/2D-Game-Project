@@ -4,7 +4,7 @@ void Time::tock(int time) {
 	_tick = time;
 }
 
-bool Time::tick(int time) {
+bool Time::tick(const int& time) {
 	_tick++;
 	if (_tick == time) {
 		_tick = 0;
