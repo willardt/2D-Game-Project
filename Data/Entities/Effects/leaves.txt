@@ -1,0 +1,6 @@
+id - 1
+name - Leaves
+width - 30
+height - 120
+frames - 7
+sprite time - 13

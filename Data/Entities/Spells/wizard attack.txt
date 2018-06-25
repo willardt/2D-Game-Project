@@ -1,0 +1,13 @@
+Name - Wizard Attack
+Texture - Data/Textures/wizard attack.bmp
+Width - 30
+Height - 30
+Speed - .02
+Max Distance - 1000
+Damage - 20
+End Frame - 25
+Fire Rate - 35
+Mana Cost - 5
+Color r - 180
+Color g - 227
+Color b - 239

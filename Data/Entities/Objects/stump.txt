@@ -1,0 +1,5 @@
+id - 8
+name - Stump
+Width - 30
+Height - 30
+Solid - 1

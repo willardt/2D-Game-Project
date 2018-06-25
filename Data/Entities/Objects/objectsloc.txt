@@ -6,3 +6,6 @@
 5 - tree5.txt
 6 - tree6.txt
 7 - bush.txt
+8 - stump.txt
+9 - logs.txt
+10 - tent.txt

@@ -1,2 +1,5 @@
 Fireball - Data/Textures/Spells/fireball.png
 Bushki Attack - Data/Textures/Spells/bushki attack.png
+Bandit Attack - Data/Textures/Spells/bandit attack.png
+Wizard Attack - Data/Textures/Spells/wizard attack.png
+Bandit Leader Attack - Data/Textures/Spells/bandit leader attack.png

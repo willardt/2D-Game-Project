@@ -2,3 +2,6 @@
 1 - dummy.txt
 2 - link.txt
 3 - bushki.txt
+4 - bandit.txt
+5 - wizard.txt
+6 - bandit leader.txt

@@ -6,3 +6,6 @@
 5 Tree5 - Data/Textures/Objects/tree2.png
 6 Tree6 - Data/Textures/Objects/tree2.png
 7 Bush - Data/Textures/Objects/bush.png
+8 Stump - Data/Textures/Objects/stump.png
+9 Logs - Data/Textures/Objects/logs.png
+10 Tent - Data/Textures/Objects/tent.png

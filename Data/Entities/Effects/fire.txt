@@ -1,0 +1,6 @@
+id - 0
+name - Fire
+width - 50
+height - 50
+frames - 3
+sprite time - 10

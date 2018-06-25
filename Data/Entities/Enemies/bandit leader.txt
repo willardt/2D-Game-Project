@@ -1,0 +1,41 @@
+Name - Bandit Leader
+Texture - Data/Textures/bandit leader.png
+Width - 64
+Height - 128
+Total Frames - 9
+Run Frame - 8
+Min Down - 5
+Max Down - 8
+Min Up - 1
+Max Up - 4
+Min Right - 5
+Max Right - 8
+Min Left - 1
+Max Left - 4
+Level - 7
+Exp - 120
+Health - 500
+Health Regen - 10
+Mana - 500
+Mana Regen - 50
+Damage - 8
+Defense - 3
+Leech - 3
+Drain - 5
+Luck - 0
+Speed - 2
+Shards - 100
+Total Cast Frames - 8
+Up - 12
+Down - 9
+Left - 11
+Right - 10
+Up Right - 13
+Up Left - 16
+Down Right - 14
+Down Left - 15
+Spell ID - 4
+Loot Size - 0
+Loot Table - 
+Combat Range w - 1000
+Combat Range h - 1000

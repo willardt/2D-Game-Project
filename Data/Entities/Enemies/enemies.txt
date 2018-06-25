@@ -2,3 +2,6 @@ Player - Data/Textures/player.png
 Dummy - Data/Textures/player.png
 Link - Data/Textures/Enemies/link.png
 Bushki - Data/Textures/Enemies/bushki.png
+Bandit - Data/Textures/Enemies/bandit.png
+Wizard - Data/Textures/Enemies/wizard.png
+Bandit Leader - Data/Textures/Enemies/bandit leader.png

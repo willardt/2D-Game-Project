@@ -1,0 +1,6 @@
+id - 2
+name - Ripple
+width - 32
+height - 32
+frames - 6
+sprite time - 7

@@ -2,3 +2,5 @@
 1 - ring.txt
 2 - shards.txt
 3 - stick.txt
+4 - rock.txt
+5 - pebbles.txt
