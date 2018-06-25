@@ -26,4 +26,19 @@ void Options::Init() {
 	mapY = 0;
 
 	lang = file.getInt(10);
+
+	loadKeys();
+}
+
+void Options::loadKeys() {
+	File file;
+	file.read("Data/bindings.txt");
+	up = SDL_Scancode(file.getInt(1));
+	down = SDL_Scancode(file.getInt(2));
+	right = SDL_Scancode(file.getInt(3));
+	left  = SDL_Scancode(file.getInt(4));
+	interact = SDL_Scancode(file.getInt(5));
+	bag = SDL_Scancode(file.getInt(6));
+	trade = SDL_Scancode(file.getInt(7));
+	pickup = SDL_Scancode(file.getInt(8));
 }

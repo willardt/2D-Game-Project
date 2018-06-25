@@ -18,6 +18,8 @@ void Editor::Init() {
 	mainItemsMem = Item::memInit();
 	tileObjectMem = Object::memInit();
 	mainObjectMem = Object::memInit();
+	tileEffectMem = Effect::memInit();
+	mainEffectMem = Effect::memInit();
 
 	backRect = { 0, 0, _mainWindow.getWidth(), _mainWindow.getHeight() };
 	tileRect = { 0, 0, _tileWindow.getWidth(), _tileWindow.getHeight() };
@@ -27,6 +29,7 @@ void Editor::Init() {
 	selectedTextureNpc.setPath("Data/Maps/Tiles/empty.png");
 	selectedTextureItem.setPath("Data/Maps/Tiles/empty.png");
 	selectedTextureObject.setPath("Data/Maps/Tiles/empty.png");
+	selectedTextureEffect.setPath("Data/Maps/Tiles/empty.png");
 
 	options.camX = 0;
 	options.camY = 0;
@@ -41,6 +44,8 @@ void Editor::Init() {
 	isWarpPos = false;
 	isWarpDest = false;
 	isPathSelecting = false;
+
+	selected = -1;
 
 	mouseX = 0;
 	mouseY = 0;
@@ -58,39 +63,29 @@ void Editor::begin() {
 }
 
 void Editor::input() {
-	static Input in;
-
-	static bool keyDownL = true;
-	static bool keyDownO = true;
-	static bool keyDownLeftMouse = true;
-	static bool keyDown1 = true;
-	static bool keyDown2 = true;
-	static bool keyDown3 = true;
-	static bool keyDown4 = true;
-	static bool keyDown5 = true;
-	static bool keyDown6 = true;
-	static bool keyDownE = true;
-	static bool keyDownQ = true;
-
 	Options& options = options.Instance();
 
-	isRunning = in.getQuit(_mainWindow.getWindow());
+	isRunning = in.get(_mainWindow.getWindow());
+	if (isRunning) {
+		isRunning = !in.isKey(SDL_SCANCODE_ESCAPE);
+	}
 
-	if (options.isCam == false && in.isPressed(SDL_SCANCODE_W) == true) {
+	if (options.isCam == false && in.isHeld(SDL_SCANCODE_W) == true) {
 		options.camY -= options.camSpeed;
 	}
-	if (options.isCam == false && in.isPressed(SDL_SCANCODE_A) == true) {
+	if (options.isCam == false && in.isHeld(SDL_SCANCODE_A) == true) {
 		options.camX -= options.camSpeed;
 	}
-	if (options.isCam == false && in.isPressed(SDL_SCANCODE_S) == true) {
+	if (options.isCam == false && in.isHeld(SDL_SCANCODE_S) == true) {
 		options.camY += options.camSpeed;
 	}
-	if (options.isCam == false && in.isPressed(SDL_SCANCODE_D) == true) {
+	if (options.isCam == false && in.isHeld(SDL_SCANCODE_D) == true) {
 		options.camX += options.camSpeed;
 	}
 
 	//SELECT TILE ON TILE WINDOW
-	if (in.leftClick(mouseX, mouseY, _tileWindow.getWindow()) == true) {
+
+	if (inTile.isMouse(mouseX, mouseY, SDL_BUTTON_LEFT, _tileWindow.getWindow())) {
 		if (chooseType == CHOOSE_TILES) {
 			currentT = setCurrentTile();
 		}
@@ -106,20 +101,20 @@ void Editor::input() {
 		else if (chooseType == CHOOSE_OBJECTS) {
 			currentO = setCurrentObject();
 		}
+		else if (chooseType == CHOOSE_EFFECTS) {
+			currentEff = setCurrentEffect();
+		}
 	}
 
 	//PLACE TILE ON MAIN WINDOW
-	if (in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == true) {
+
+	if (in.isMouseHeld(mouseX, mouseY, SDL_BUTTON_LEFT, _mainWindow.getWindow())) {
 		if (chooseType == CHOOSE_TILES) {
 			placeTile();
 		}
 	}
 
-	if (in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == false) {
-		keyDownLeftMouse = false;
-	}
-
-	if (keyDownLeftMouse == false && in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == true) {
+	if (in.isMouse(mouseX, mouseY, SDL_BUTTON_LEFT, _mainWindow.getWindow())) {
 		if (chooseType == CHOOSE_ENEMIES || chooseType == CHOOSE_NPCS) {
 			placeEntity();
 		}
@@ -142,26 +137,24 @@ void Editor::input() {
 			loadMap(currentW.teleID);
 			isWarpPos = false;
 			isWarpDest = true;
-			keyDownLeftMouse = true;
-			std::cout << in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) << " " << in.getQuit(_mainWindow.getWindow()) << std::endl;
+			//std::cout << in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) << " " << in.getQuit(_mainWindow.getWindow()) << std::endl;
 			while (isSelecting == true) {
-				isSelecting = in.getQuit(_mainWindow.getWindow());
-				if (in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == false) {
-					keyDownLeftMouse = false;
-				}
-				else if (keyDownLeftMouse == false && in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == true) {
+				isSelecting = in.get(_mainWindow.getWindow());
+
+				if (in.isMouse(mouseX, mouseY, SDL_BUTTON_LEFT, _mainWindow.getWindow())) {
 					isSelecting = false;
 				}
-				if (options.isCam == false && in.isPressed(SDL_SCANCODE_W) == true) {
+
+				if (options.isCam == false && in.isHeld(SDL_SCANCODE_W) == true) {
 					options.camY -= options.camSpeed;
 				}
-				if (options.isCam == false && in.isPressed(SDL_SCANCODE_A) == true) {
+				if (options.isCam == false && in.isHeld(SDL_SCANCODE_A) == true) {
 					options.camX -= options.camSpeed;
 				}
-				if (options.isCam == false && in.isPressed(SDL_SCANCODE_S) == true) {
+				if (options.isCam == false && in.isHeld(SDL_SCANCODE_S) == true) {
 					options.camY += options.camSpeed;
 				}
-				if (options.isCam == false && in.isPressed(SDL_SCANCODE_D) == true) {
+				if (options.isCam == false && in.isHeld(SDL_SCANCODE_D) == true) {
 					options.camX += options.camSpeed;
 				}
 
@@ -177,108 +170,71 @@ void Editor::input() {
 		else if (chooseType == CHOOSE_OBJECTS) {
 			placeObject();
 		}
-		keyDownLeftMouse = true;
-	}
-
-	if (in.isPressed(SDL_SCANCODE_ESCAPE) == true) {
-		isRunning = false;
+		else if (chooseType == CHOOSE_EFFECTS) {
+			placeEffect();
+		}
 	}
 
 	//Create or Load Map
-	if (in.isPressed(SDL_SCANCODE_L) == false) {
-		keyDownL = false;
-	}
-
-	if (keyDownL == false && in.isPressed(SDL_SCANCODE_L) == true) {
+	if (in.isKey(SDL_SCANCODE_L)) {
 		create();
-		keyDownL = true;
 	}
 
 	//Save Map
-	if (in.isPressed(SDL_SCANCODE_O) == false) {
-		keyDownO = false;
-	}
-
-	if (keyDownO == false && in.isPressed(SDL_SCANCODE_O) == true) {
+	if (in.isKey(SDL_SCANCODE_O)) {
 		save();
-		keyDownO = true;
 	}
 
 	//Switch Tiles / Entities
-	if (in.isPressed(SDL_SCANCODE_1) == false) {
-		keyDown1 = false;
-	}
 
-	if (keyDown1 == false && in.isPressed(SDL_SCANCODE_1) == true) {
+	if (in.isKey(SDL_SCANCODE_1)) {
 		chooseType = CHOOSE_TILES;
 		selectedRect.w = 64;
 		selectedRect.h = 64;
-		keyDown1 = true;
 	}
 
-	if (in.isPressed(SDL_SCANCODE_2) == false) {
-		keyDown2 = false;
-	}
-
-	if (keyDown2 == false && in.isPressed(SDL_SCANCODE_2) == true) {
+	if (in.isKey(SDL_SCANCODE_2)) {
 		chooseType = CHOOSE_NPCS;
 		selectedRect.w = currentN.pos.w;
 		selectedRect.h = currentN.pos.h;
-		keyDown2 = true;
 	}
 
-	if (in.isPressed(SDL_SCANCODE_3) == false) {
-		keyDown3 = false;
-	}
-
-	if (keyDown3 == false && in.isPressed(SDL_SCANCODE_3) == true) {
+	if (in.isKey(SDL_SCANCODE_3)) {
 		chooseType = CHOOSE_ENEMIES;
 		selectedRect.w = currentE.pos.w;
 		selectedRect.h = currentE.pos.h;
-		keyDown3 = true;
 	}
 
-	if (in.isPressed(SDL_SCANCODE_4) == false) {
-		keyDown4 = false;
-	}
-
-	if (keyDown4 == false && in.isPressed(SDL_SCANCODE_4) == true) {
+	if (in.isKey(SDL_SCANCODE_4)) {
 		chooseType = CHOOSE_ITEMS;
 		selectedRect.w = 64;
 		selectedRect.h = 64;
-		keyDown4 = true;
 	}
 
-	if (in.isPressed(SDL_SCANCODE_5) == false) {
-		keyDown5 = false;
-	}
-	if (keyDown5 == false && in.isPressed(SDL_SCANCODE_5) == true) {
+	if (in.isKey(SDL_SCANCODE_5)) {
 		chooseType = CHOOSE_OBJECTS;
 		selectedRect.w = 86;
 		selectedRect.h = 86;
-		keyDown6 = true;
 	}
 
-	if (in.isPressed(SDL_SCANCODE_6) == false) {
-		keyDown6 = false;
+	if (in.isKey(SDL_SCANCODE_6)) {
+		chooseType = CHOOSE_EFFECTS;
+		selectedRect.w = 50;
+		selectedRect.h = 50;
 	}
-	if (keyDown6 == false && in.isPressed(SDL_SCANCODE_6) == true) {
+
+	if (in.isKey(SDL_SCANCODE_7)) {
 		chooseType = CHOOSE_WARPS;
-		keyDown5 = true;
 	}
 
-	if (in.isPressed(SDL_SCANCODE_E) == false) {
-		keyDownE = false;
-	}
-	if (keyDownE == false && in.isPressed(SDL_SCANCODE_E) == true) {
-		chooseType = CHOOSE_NONE;
+	if (in.isKey(SDL_SCANCODE_E)) {
 		if (chooseType == CHOOSE_ENEMIES) {
-			selectedRect.w = enemies[selected].pos.w;
-			selectedRect.h = enemies[selected].pos.h;
+			selectedRect.w = 32;
+			selectedRect.h = 64;
 		}
 		else if (chooseType == CHOOSE_NPCS) {
-			selectedRect.w = npcs[selected].pos.w;
-			selectedRect.h = npcs[selected].pos.h;
+			selectedRect.w = 32;
+			selectedRect.h = 64;
 		}
 		else if (chooseType == CHOOSE_ITEMS) {
 			selectedRect.w = 64;
@@ -288,14 +244,14 @@ void Editor::input() {
 			selectedRect.w = 86;
 			selectedRect.h = 86;
 		}
-
-		keyDownE = true;
+		else if (chooseType == CHOOSE_EFFECTS) {
+			selectedRect.w = 50;
+			selectedRect.h = 50;
+		}
+		chooseType = CHOOSE_NONE;
 	}
 
-	if (in.isPressed(SDL_SCANCODE_Q) == false) {
-		keyDownQ = false;
-	}
-	if (keyDownQ == false && in.isPressed(SDL_SCANCODE_Q) == true) {
+	if (in.isKey(SDL_SCANCODE_Q)) {
 		if (chooseType == CHOOSE_NONE) {
 			if (selectType == SELECT_ENEMY) {
 				enemies.erase(enemies.begin() + selected);
@@ -317,8 +273,11 @@ void Editor::input() {
 				objects.erase(objects.begin() + selected);
 				selectType = NULL;
 			}
+			else if (selectType == SELECT_EFFECT) {
+				effects.erase(effects.begin() + selected);
+				selectType = NULL;
+			}
 		}
-		keyDownQ = true;
 	}
 }
 
@@ -368,6 +327,17 @@ void Editor::display() {
 	if (chooseType == CHOOSE_OBJECTS) {
 		mouse = { mouseX + options.camX - (currentO.pos.w / 2), mouseY + options.camY - (currentO.pos.h / 2), currentO.pos.w, currentO.pos.h};
 		mainObjectMem[currentO.id].render(mouse, _mainWindow.getRenderer());
+	}
+
+	for (size_t i = 0; i < effects.size(); i++) {
+		mainEffectMem[effects[i].id].renderSprite(effects[i].pos, effects[i].sprite, _mainWindow.getRenderer());
+		effects[i].update();
+	}
+	if (chooseType == CHOOSE_EFFECTS) {
+		mouse = { mouseX + options.camX - (currentEff.pos.w / 2), mouseY + options.camY - (currentEff.pos.h / 2), currentEff.pos.w, currentEff.pos.h };
+		Sprite effectSprite;
+		effectSprite = { 0, 0, NULL };
+		mainEffectMem[currentEff.id].renderSprite(mouse, effectSprite , _mainWindow.getRenderer());
 	}
 
 	for (size_t i = 0; i < items.size(); i++) {
@@ -451,6 +421,13 @@ void Editor::display() {
 			tileObjectMem[i].renderNoCam({ i * Map::TILE_SIZE, Editor::TILE_LAYOUT_Y, Map::TILE_SIZE, Map::TILE_SIZE }, _tileWindow.getRenderer());
 		}
 	}
+	else if (chooseType == CHOOSE_EFFECTS) {
+		selectedTextureEffect.renderNoCamSprite(selectedRect, { 0, 0, NULL }, _tileWindow.getRenderer());
+
+		for (int i = 0; i < int(tileEffectMem.size()); i++) {
+			tileEffectMem[i].renderNoCamSprite({ i * Map::TILE_SIZE, Editor::TILE_LAYOUT_Y, Map::TILE_SIZE, Map::TILE_SIZE }, { 0, 0, NULL }, _tileWindow.getRenderer());
+		}
+	}
 	else if (chooseType == CHOOSE_NONE) {
 		if (selectType == SELECT_ENEMY) {
 			tileEnemyMem[enemies[selected].id].renderNoCamSprite(selectedRect, { 0, 0, NULL }, _tileWindow.getRenderer());
@@ -463,6 +440,9 @@ void Editor::display() {
 		}
 		else if (selectType == SELECT_OBJECT) {
 			tileObjectMem[objects[selected].id].renderNoCam(selectedRect, _tileWindow.getRenderer());
+		}
+		else if (selectType == SELECT_EFFECT) {
+			tileEffectMem[effects[selected].id].renderNoCamSprite(selectedRect, { 0, 0, NULL }, _tileWindow.getRenderer());
 		}
 	}
 
@@ -642,7 +622,7 @@ void Editor::setCurrentWarp(SDL_Rect& rect) {
 	Options& options = options.Instance();
 	Input in;
 	bool isSetting = true;
-	bool keyDownLeft = true;
+	bool isLeft = false;
 
 	rect.x = mouseX + options.camX;
 	rect.y = mouseY + options.camY;
@@ -653,27 +633,25 @@ void Editor::setCurrentWarp(SDL_Rect& rect) {
 	isWarpSelecting = true;
 
 	while (isSetting == true) {
-		isSetting = in.getQuit(_mainWindow.getWindow());
+		isSetting = in.get(_mainWindow.getWindow());
+		if (!isLeft) {
+			isLeft = in.isMouse(mouseX, mouseY, SDL_BUTTON_LEFT, _mainWindow.getWindow());
+		}
+		else {
+			isSetting = !in.isMouse(mouseX, mouseY, SDL_BUTTON_LEFT, _mainWindow.getWindow());
+		}
 
-		if (options.isCam == false && in.isPressed(SDL_SCANCODE_W) == true) {
+		if (options.isCam == false && in.isHeld(SDL_SCANCODE_W) == true) {
 			options.camY -= options.camSpeed;
 		}
-		if (options.isCam == false && in.isPressed(SDL_SCANCODE_A) == true) {
+		if (options.isCam == false && in.isHeld(SDL_SCANCODE_A) == true) {
 			options.camX -= options.camSpeed;
 		}
-		if (options.isCam == false && in.isPressed(SDL_SCANCODE_S) == true) {
+		if (options.isCam == false && in.isHeld(SDL_SCANCODE_S) == true) {
 			options.camY += options.camSpeed;
 		}
-		if (options.isCam == false && in.isPressed(SDL_SCANCODE_D) == true) {
+		if (options.isCam == false && in.isHeld(SDL_SCANCODE_D) == true) {
 			options.camX += options.camSpeed;
-		}
-
-		if (in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == false) {
-			keyDownLeft = false;
-		}
-		else if (keyDownLeft == false && in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == true) {
-			keyDownLeft = true;
-			isSetting = false;
 		}
 
 		rect.w = (mouseX + options.camX) - rect.x;
@@ -740,6 +718,49 @@ Object Editor::setCurrentObject() {
 
 	selectedRect.w = 86;
 	selectedRect.h = 86;
+	selectedName = Text::printT(TEXT_NORMAL, temp.name, { 50, 50, NULL, 35 }, Text::WHITE);
+
+	return temp;
+}
+
+Effect Editor::setCurrentEffect() {
+	Options& options = options.Instance();
+
+	int widthPos = 0;
+	int heightPos = 0;
+	int width = 12;
+	int length = Map::TILE_SIZE;
+	int id = 0;
+	Effect temp;
+
+	widthPos = mouseX / length;
+	heightPos = (mouseY - Editor::TILE_LAYOUT_Y) / length;
+
+	if (widthPos > width * length || widthPos < 0) {
+		temp.Init(id);
+	}
+	if (heightPos >(length * (int(tileMap.size()) / width)) || mouseY < Editor::TILE_LAYOUT_Y) {
+		temp.Init(id);
+	}
+
+	if (heightPos == 0) {
+		id = widthPos;
+		temp.Init(id);
+	}
+	else {
+		id = (heightPos * map.width) + widthPos;
+		temp.Init(id);
+	}
+
+	if (id < int(mainEffectMem.size()) && id >= 0) {
+		selectedTextureEffect.setPath(mainEffectMem[id].getPath());
+	}
+	else {
+		temp.Init(0);
+	}
+
+	selectedRect.w = 50;
+	selectedRect.h = 50;
 	selectedName = Text::printT(TEXT_NORMAL, temp.name, { 50, 50, NULL, 35 }, Text::WHITE);
 
 	return temp;
@@ -887,9 +908,8 @@ void Editor::placeItem() {
 void Editor::placePath(Entity& e, std::vector<Path>& p) {
 	Input in;
 	Options& options = options.Instance();
-	bool keyDownLeft = true;
-	bool keyDownBack = true;
 	bool selecting = true;
+	bool isLeft = false;
 	isPathSelecting = true;
 
 	e.paths.clear();
@@ -897,51 +917,45 @@ void Editor::placePath(Entity& e, std::vector<Path>& p) {
 
 	while (selecting == true) {
 
-		if (in.getQuit(_mainWindow.getWindow()) == false) {
+		if (in.get(_mainWindow.getWindow()) == false) {
 			selecting = false;
 			isRunning = false;
 		}
 
-		if (options.isCam == false && in.isPressed(SDL_SCANCODE_W) == true) {
+		if (options.isCam == false && in.isHeld(SDL_SCANCODE_W) == true) {
 			options.camY -= options.camSpeed;
 		}
-		if (options.isCam == false && in.isPressed(SDL_SCANCODE_A) == true) {
+		if (options.isCam == false && in.isHeld(SDL_SCANCODE_A) == true) {
 			options.camX -= options.camSpeed;
 		}
-		if (options.isCam == false && in.isPressed(SDL_SCANCODE_S) == true) {
+		if (options.isCam == false && in.isHeld(SDL_SCANCODE_S) == true) {
 			options.camY += options.camSpeed;
 		}
-		if (options.isCam == false && in.isPressed(SDL_SCANCODE_D) == true) {
+		if (options.isCam == false && in.isHeld(SDL_SCANCODE_D) == true) {
 			options.camX += options.camSpeed;
 		}
 
-		if (in.isPressed(SDL_SCANCODE_BACKSPACE) == false) {
-			keyDownBack = false;
-		}
-		if (keyDownBack == false && in.isPressed(SDL_SCANCODE_BACKSPACE) == true) {
+		if (in.isKey(SDL_SCANCODE_BACKSPACE)) {
 			if (p.size() > 0) {
 				p.pop_back();
 				e.paths.pop_back();
 			}
-			keyDownBack = true;
 		}
 
-		if (in.isPressed(SDL_SCANCODE_SPACE) == true || in.isPressed(SDL_SCANCODE_ESCAPE) == true) {
+		if (in.isKey(SDL_SCANCODE_SPACE) || in.isKey(SDL_SCANCODE_ESCAPE)) {
 			selecting = false;
 		}
 
-		if (in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == false) {
-			keyDownLeft = false;
+		if (!isLeft) {
+			isLeft = in.isMouse(mouseX, mouseY, SDL_BUTTON_LEFT, _mainWindow.getWindow());
 		}
-
-		if (keyDownLeft == false && in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == true) {
+		else if (in.isMouse(mouseX, mouseY, SDL_BUTTON_LEFT, _mainWindow.getWindow())) {
 			Path temp;
 			temp.x = (mouseX - 10) + options.camX;
 			temp.y = (mouseY - 10) + options.camY;
 			temp.met = false;
 			p.push_back(temp);
 			e.paths.push_back(temp);
-			keyDownLeft = true;
 		}
 
 		display();
@@ -956,9 +970,8 @@ void Editor::placePath(Entity& e, std::vector<Path>& p) {
 void Editor::placePath(Npc& n, std::vector<Path>& p) {
 	Input in;
 	Options& options = options.Instance();
-	bool keyDownLeft = true;
-	bool keyDownBack = true;
 	bool selecting = true;
+	bool isLeft = false;
 	isPathSelecting = true;
 
 	n.paths.clear();
@@ -966,51 +979,45 @@ void Editor::placePath(Npc& n, std::vector<Path>& p) {
 
 	while (selecting == true) {
 
-		if (in.getQuit(_mainWindow.getWindow()) == false) {
+		if (in.get(_mainWindow.getWindow()) == false) {
 			selecting = false;
 			isRunning = false;
 		}
 
-		if (options.isCam == false && in.isPressed(SDL_SCANCODE_W) == true) {
+		if (options.isCam == false && in.isHeld(SDL_SCANCODE_W) == true) {
 			options.camY -= options.camSpeed;
 		}
-		if (options.isCam == false && in.isPressed(SDL_SCANCODE_A) == true) {
+		if (options.isCam == false && in.isHeld(SDL_SCANCODE_A) == true) {
 			options.camX -= options.camSpeed;
 		}
-		if (options.isCam == false && in.isPressed(SDL_SCANCODE_S) == true) {
+		if (options.isCam == false && in.isHeld(SDL_SCANCODE_S) == true) {
 			options.camY += options.camSpeed;
 		}
-		if (options.isCam == false && in.isPressed(SDL_SCANCODE_D) == true) {
+		if (options.isCam == false && in.isHeld(SDL_SCANCODE_D) == true) {
 			options.camX += options.camSpeed;
 		}
 
-		if (in.isPressed(SDL_SCANCODE_BACKSPACE) == false) {
-			keyDownBack = false;
-		}
-		if (keyDownBack == false && in.isPressed(SDL_SCANCODE_BACKSPACE) == true) {
+		if (in.isKey(SDL_SCANCODE_BACKSPACE)) {
 			if (p.size() > 0) {
 				p.pop_back();
 				n.paths.pop_back();
 			}
-			keyDownBack = true;
 		}
 
-		if (in.isPressed(SDL_SCANCODE_SPACE) == true || in.isPressed(SDL_SCANCODE_ESCAPE) == true) {
+		if (in.isKey(SDL_SCANCODE_SPACE) || in.isKey(SDL_SCANCODE_ESCAPE)) {
 			selecting = false;
 		}
 
-		if (in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == false) {
-			keyDownLeft = false;
+		if (!isLeft) {
+			isLeft = in.isMouse(mouseX, mouseY, SDL_BUTTON_LEFT, _mainWindow.getWindow());
 		}
-
-		if (keyDownLeft == false && in.leftClick(mouseX, mouseY, _mainWindow.getWindow()) == true) {
+		else if (in.isMouse(mouseX, mouseY, SDL_BUTTON_LEFT, _mainWindow.getWindow())) {
 			Path temp;
 			temp.x = (mouseX - 10) + options.camX;
 			temp.y = (mouseY - 10) + options.camY;
 			temp.met = false;
 			p.push_back(temp);
 			n.paths.push_back(temp);
-			keyDownLeft = true;
 		}
 
 		display();
@@ -1094,6 +1101,43 @@ void Editor::placeObject() {
 	}
 }
 
+void Editor::placeEffect() {
+	Options& options = options.Instance();
+
+	bool isValid = true;
+	int widthPos = 0;
+	int heightPos = 0;
+	int n = 0;
+	int x = 0;
+	int y = 0;
+
+	widthPos = (mouseX + options.camX) / Map::TILE_SIZE;
+	heightPos = (mouseY + options.camY) / Map::TILE_SIZE;
+
+	x = mouseX;
+	y = mouseY;
+
+	if (widthPos > map.width - (currentEff.pos.w / Map::TILE_SIZE) - 1) {
+		isValid = false;
+	}
+	else if (mouseX + options.camX < 0) {
+		isValid = false;
+	}
+
+	if (heightPos > map.height - (currentEff.pos.h / Map::TILE_SIZE) - 1) {
+		isValid = false;
+	}
+	else if (mouseY + options.camY < 0) {
+		isValid = false;
+	}
+
+	if (isValid == true) {
+		currentEff.pos.x = mouseX + options.camX - (currentEff.pos.w / 2);
+		currentEff.pos.y = mouseY + options.camY - (currentEff.pos.h / 2);
+		effects.push_back(currentEff);
+	}
+}
+
 void Editor::select() {
 	selected = collision(mouseX, mouseY, enemies);
 	if (selected != -1) {
@@ -1131,7 +1175,16 @@ void Editor::select() {
 						std::cout << "Object id: " << objects[selected].id << std::endl;
 					}
 					else {
-						selectType = NULL;
+						selected = collision(mouseX, mouseY, effects);
+						if (selected != -1) {
+							selectType = SELECT_EFFECT;
+							selectedRect.w = 50;
+							selectedRect.h = 50;
+							std::cout << "Effect name: " << effects[selected].name << std::endl;
+						}
+						else {
+							selectType = NULL;
+						}
 					}
 				}
 			}
@@ -1188,6 +1241,17 @@ int Editor::collision(const int& x, const int& y, std::vector<Object>& o) {
 	SDL_Rect mouse = { x - 15 + options.camX, y - 15 + options.camY, 30, 30 };
 	for (size_t i = 0; i < o.size(); i++) {
 		if (Collision::seperateAxis(mouse, o[i].pos) == true) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+int Editor::collision(const int& x, const int& y, std::vector<Effect>& e) {
+	Options& options = options.Instance();
+	SDL_Rect mouse = { x - 15 + options.camX, y - 15 + options.camY, 30, 30 };
+	for (size_t i = 0; i < e.size(); i++) {
+		if (Collision::seperateAxis(mouse, e[i].pos)) {
 			return i;
 		}
 	}
@@ -1269,6 +1333,13 @@ void Editor::save() {
 	file << "Objects - ";
 	for (size_t i = 0; i < objects.size(); i++) {
 		file << std::to_string(objects[i].id) + "|" + std::to_string(objects[i].pos.x) + "|" + std::to_string(objects[i].pos.y) + " ";
+	}
+	file << std::endl;
+
+	file << "Effect Size - " << effects.size() << std::endl;
+	file << "Effects - ";
+	for (size_t i = 0; i < effects.size(); i++) {
+		file << std::to_string(effects[i].id) + "|" + std::to_string(effects[i].pos.x) + "|" + std::to_string(effects[i].pos.y) + " ";
 	}
 	file << std::endl;
 
@@ -1406,6 +1477,7 @@ int Editor::getMapIDInput(const int& type) {
 void Editor::loadMap(const int& id) {
 	map.Init(id);
 	Object::loadMapObjects(id, objects);
+	Effect::loadEffects(id, effects);
 	Editor::loadMapEntities(id, enemies, npcs, true);
 	Editor::loadMapItems(id, items, true);
 	Warp::loadWarps(id, warps);
@@ -1432,8 +1504,8 @@ void Editor::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std
 		fileData = file.getStr(6);
 	}
 	else {
-		entitySize = file.getInt(13);
-		fileData = file.getStr(14);
+		entitySize = file.getInt(15);
+		fileData = file.getStr(16);
 	}
 	fileDataLength = int(fileData.length());
 
@@ -1523,8 +1595,8 @@ void Editor::loadMapItems(const int& mapID, std::vector<Item>& items, bool isFre
 		fileData = file.getStr(8);
 	}
 	else {
-		itemSize = file.getInt(15);
-		fileData = file.getStr(16);
+		itemSize = file.getInt(17);
+		fileData = file.getStr(18);
 	}
 	fileDataLength = int(fileData.length());
 

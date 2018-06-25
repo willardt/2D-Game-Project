@@ -7,7 +7,7 @@ class Player : public Entity {
 private:
 	enum { QUEST_LOAD_DATA_SIZE = 1};
 public:
-	enum { EQUIPPED_SIZE = 10, MAX_BAG_SIZE = 200};
+	enum { EQUIPPED_SIZE = 10, MAX_BAG_SIZE = 199};
 	std::vector<Quest> quests;
 	std::vector<Item> items;
 

@@ -39,6 +39,17 @@ public:
 
 	int lang;
 
+	SDL_Scancode up;
+	SDL_Scancode down;
+	SDL_Scancode right;
+	SDL_Scancode left;
+	SDL_Scancode interact;
+	SDL_Scancode bag;
+	SDL_Scancode trade;
+	SDL_Scancode pickup;
+
+	void loadKeys();
+
 	void Init();
 };
 
