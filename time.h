@@ -7,9 +7,10 @@
 class Time {
 private:
 	int _tick;
+	int _tock;
 public:
 	void tock(int time);
-	bool tick(int time);
+	bool tick(const int& time);
 	int getTick();
 };
 

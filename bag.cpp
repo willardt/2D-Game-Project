@@ -31,26 +31,12 @@ void Bag::begin(Player& player, std::vector<Item>& mapItems, std::vector<Texture
 }
 
 void Bag::input(Player& player, std::vector<Item>& mapItems) {
-	static Input in;
 
-	static bool keyDownC = true;
-	static bool keyDownE = true;
-	static bool keyDownR = true;
-	static bool keyDownQ = true;
-
-	_isRunning = in.getQuit(_mainWindow.getWindow());
+	_isRunning = in.get(_mainWindow.getWindow());
+	_isRunning = !in.isKey(SDL_SCANCODE_ESCAPE);
 
 
-	if (in.isPressed(SDL_SCANCODE_C) == false) {
-		keyDownC = false;
-	}
-
-	if (keyDownC == false && in.isPressed(SDL_SCANCODE_C) == true) {
-		keyDownC = true;
-		_isRunning = false;
-	}
-
-	if (in.leftClick(_mouseX, _mouseY, _mainWindow.getWindow())) {
+	if (in.isMouseHeld(_mouseX, _mouseY, SDL_BUTTON_LEFT, _mainWindow.getWindow())) {
 		_selected = selectItem(_itemsPos);
 		if (_selected != -1) {
 			_isSelected = true;
@@ -70,12 +56,7 @@ void Bag::input(Player& player, std::vector<Item>& mapItems) {
 		}
 	}
 
-	if (in.isPressed(SDL_SCANCODE_E) == false) {
-		keyDownE = false;
-	}
-
-	if (keyDownE == false && in.isPressed(SDL_SCANCODE_E) == true) {
-		keyDownE = true;
+	if (in.isKey(SDL_SCANCODE_E)) {
 		if (_isSelected == true) {
 			player.equipItem(_selected);
 			createItemPos(player);
@@ -84,26 +65,16 @@ void Bag::input(Player& player, std::vector<Item>& mapItems) {
 		}
 	}
 
-	if (in.isPressed(SDL_SCANCODE_R) == false) {
-		keyDownR = false;
-	}
-
-	if (keyDownR == false && in.isPressed(SDL_SCANCODE_R) == true) {
-		keyDownR = true;
+	if (in.isKey(SDL_SCANCODE_R)) {
 		if (_isSelectedEquip == true) {
 			player.unequipItem(_selectedEquip);
 			createItemPos(player);
 			createTexts(player);
 			_isSelectedEquip = false;
-		}	
+		}
 	}
 
-	if (in.isPressed(SDL_SCANCODE_Q) == false) {
-		keyDownQ = false;
-	}
-
-	if (keyDownQ == false && in.isPressed(SDL_SCANCODE_Q) == true) {
-		keyDownQ = true;
+	if (in.isKey(SDL_SCANCODE_Q)) {
 		if (_isSelectedEquip == true) {
 			if (player.equipped[_selectedEquip].isEquipped == true) {
 				player.maxHealth -= player.equipped[_selectedEquip].health;
@@ -144,7 +115,6 @@ void Bag::input(Player& player, std::vector<Item>& mapItems) {
 			createTexts(player);
 		}
 	}
-
 }
 
 void Bag::display(Player& player, std::vector<Texture>& itemsMem) {
@@ -212,7 +182,6 @@ int Bag::selectItem(std::vector<SDL_Rect>& area) {
 		}
 	}
 	return -1;
-
 }
 
 void Bag::createItemPos(Player& player) {
@@ -277,9 +246,9 @@ void Bag::createTexts(Player& player) {
 	_texts.clear();
 
 
-	Text::printT(NULL, file.getU16(1), { 950, 75, 120, 30 }, _texts, Text::WHITE, false);		//EQUIP
-	Text::printT(NULL, file.getU16(2), { 950, 100, 130, 30 }, _texts, Text::WHITE, false);		//UNEQUIP
-	Text::printT(NULL, file.getU16(3), { 950, 125, 110, 30 }, _texts, Text::WHITE, false);		//DROP
+	Text::printT(NULL, file.getU16(1), { 950, 300, 120, 30 }, _texts, Text::WHITE, false);		//EQUIP
+	Text::printT(NULL, file.getU16(2), { 950, 325, 130, 30 }, _texts, Text::WHITE, false);		//UNEQUIP
+	Text::printT(NULL, file.getU16(3), { 950, 350, 110, 30 }, _texts, Text::WHITE, false);		//DROP
 	Text::printT(NULL, player.uName, { 700, 25, NULL, 30 }, _texts, Text::WHITE, true);					//NAME
 	Text::printT(NULL, file.getU16(4), { 400, 50, 90, 25 }, _texts, Text::WHITE, false);		//Level
 	Text::printT(TEXT_DAMAGE, std::to_string(player.level), { 500, 50, NULL, 25 }, _texts, Text::WHITE);
@@ -338,7 +307,7 @@ void Bag::createItemTexts(Player& player, const int& index) {
 
 	if (player.items[index].defense != 0) {
 		modifer = setModifer(player.items[index].defense);
-		Text::printT(NULL, file.getU16(11), { 725, height, 100, 25 }, _itemText, { 150, 50, 100, 0 }, false);
+		Text::printT(NULL, file.getU16(11), { 725, height, 100, 25 }, _itemText, { 150, 50, 150, 0 }, false);
 		Text::printT(TEXT_DAMAGE, modifer + std::to_string(player.items[index].defense), { 850, height, NULL, 25 }, _itemText, { 100, 50, 150, 0 });
 		height += 25;
 	}
@@ -429,7 +398,7 @@ void Bag::createItemTextsEquip(Player& player, const int& slot) {
 
 	if (player.equipped[slot].defense != 0) {
 		modifer = setModifer(player.equipped[slot].defense);
-		Text::printT(NULL, file.getU16(11), { 725, height, 100, 25 }, _itemText, { 150, 50, 100, 0 }, false);
+		Text::printT(NULL, file.getU16(11), { 725, height, 100, 25 }, _itemText, { 150, 50, 150, 0 }, false);
 		Text::printT(TEXT_DAMAGE, modifer + std::to_string(player.equipped[slot].defense), { 850, height, NULL, 25 }, _itemText, { 100, 50, 150, 0 });
 		height += 25;
 	}
