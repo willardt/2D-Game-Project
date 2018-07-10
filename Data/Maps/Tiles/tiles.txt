@@ -39,3 +39,10 @@ Tent Tile - Data/Maps/Tiles/tent tile.png
 Tent Tile2 - Data/Maps/Tiles/tent tile2.png
 Tent Tile3 - Data/Maps/Tiles/tent tile3.png
 None - Data/Maps/Tiles/none.png
+Bridge - Data/Maps/Tiles/bridge.png
+Bridge2 - Data/Maps/Tiles/bridge2.png
+Bridge3 - Data/Maps/Tiles/bridge3.png
+Bridge4 - Data/Maps/Tiles/bridge4.png
+Bridge5 - Data/Maps/Tiles/bridge5.png
+Bridge6 - Data/Maps/Tiles/bridge6.png
+Hole - Data/Maps/Tiles/hole.png

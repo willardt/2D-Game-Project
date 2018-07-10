@@ -39,3 +39,10 @@ Tent Tile - 0
 Tent Tile2 - 1
 Tent Tile3 - 0
 None - 1
+Bridge - 0
+Bridge2 - 0
+Bridge3 - 0
+Bridge4 - 0
+Bridge5 - 0
+Bridge6 - 0
+Hole - 0
