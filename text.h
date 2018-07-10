@@ -16,9 +16,7 @@
 class Text {
 private:
 	enum { _PTSIZE = 50, _OUTLINE = 2 };
-	const static std::string _NORMAL_FONT_PATH;
-	const static std::string _DAMAGE_FONT_PATH;
-	const static std::string _RUSSIAN_FONT_PATH;
+	const static std::string FONT_PATH;
 
 	std::string _text;
 	u16string _utext;
@@ -26,16 +24,8 @@ public:
 	enum { TEXT_SPACING_W = 20, DAMAGE_SIZE_Y = 30, NORMAL_SIZE_Y = 30};
 	enum { MAX_NORMAL_FRAME = 300, MAX_DAMAGE_FRAME = 50 };
 
-	static TTF_Font* NORMAL_FONT() {
-		static TTF_Font* f = TTF_OpenFont(_NORMAL_FONT_PATH.c_str(), _PTSIZE);
-		return f;
-	}
-	static TTF_Font* DAMAGE_FONT() {
-		static TTF_Font* f = TTF_OpenFont(_DAMAGE_FONT_PATH.c_str(), _PTSIZE);
-		return f;
-	}
-	static TTF_Font* RUSSIAN_FONT() {
-		static TTF_Font* f = TTF_OpenFont(_RUSSIAN_FONT_PATH.c_str(), _PTSIZE);
+	static TTF_Font* FONT() {
+		static TTF_Font* f = TTF_OpenFont(FONT_PATH.c_str(), _PTSIZE);
 		return f;
 	}
 
@@ -45,8 +35,11 @@ public:
 	const static SDL_Color BLACK;
 	const static SDL_Color WHITE;
 	const static SDL_Color PURPLE;
+	const static SDL_Color CLEAR;
 	const static SDL_Color NORMAL_COLOR;
 	const static SDL_Color DAMAGE_COLOR;
+	const static SDL_Color SYSTEM_COLOR;
+	const static SDL_Color BUFF_DURATION;
 
 	SDL_Texture* texture;  // Texture of the text with basic font
 	SDL_Texture* oTexture;  // Outline texture

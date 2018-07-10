@@ -6,6 +6,8 @@
 #include "player.h"
 #include "window.h"
 #include "text.h"
+#include "FPS.h"
+#include "bag.h"
 
 #ifndef SHOP_H
 #define SHOP_H
@@ -32,6 +34,7 @@ private:
 	bool _isShop;
 
 	Input in;
+	FPS fps;
 
 	Window* _window;
 	Player* _player;

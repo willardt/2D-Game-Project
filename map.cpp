@@ -23,13 +23,13 @@ void Map::Init(const int& nid) {
 	map.clear();
 	solids.clear();
 	Options& options = options.Instance();
-	File mapSolidsFile;
 	File file;
+	File uFile;
 	Tile tempTile;
 	std::string tileData = "";
 	std::string dataStr = "";
-	size_t tileDataLength = 0;
-	int data;
+	int tileDataLength = 0;
+	int data = 0;
 
 	int j = 0;
 	int m = 0;
@@ -38,16 +38,23 @@ void Map::Init(const int& nid) {
 
 	std::string path = "Data/Maps/map" + std::to_string(id) + ".txt";
 
-	mapSolidsFile.read("Data/Maps/Tiles/solids.txt");
-
 	file.read(path);
+
+	if (options.lang == ENGLISH) {
+		uFile.uread("Data/Maps/En/maps.txt");
+	}
+	else if (options.lang == RUSSIAN) {
+		uFile.uread("Data/Maps/Ru/maps.txt");
+	}
+
+	uname = uFile.getU16(id);
 
 	name = file.getStr(1);
 	width = file.getInt(2);
 	height = file.getInt(3);
 	tileData = file.getStr(4);
 
-	tileDataLength = tileData.length();
+	tileDataLength = int(tileData.length());
 
 	area = height * width;
 	options.mapX = width;
@@ -77,16 +84,62 @@ void Map::Init(const int& nid) {
 		tempTile.pos.x = m * Map::TILE_SIZE;
 		tempTile.pos.w = Map::TILE_SIZE;
 		tempTile.pos.h = Map::TILE_SIZE;
-		tempTile.isSolid = bool(mapSolidsFile.getInt(tempTile.id + 1));
-
-		if (tempTile.isSolid) {
-			solids.push_back(tempTile);
-		}
 
 		map.push_back(tempTile);
 
 		m++;
 	}
+
+	Tile tempSolid;
+	std::string fileData = " ";
+	std::string solidData = " ";
+	int fileDataLength = 0;
+	int solidSize = 0;
+	p = 0;
+	q = 0;
+
+	std::cout << "Loading Solids for map" << id << std::endl;
+
+	solidSize = file.getInt(5);
+	fileData = file.getStr(6);
+	fileDataLength = int(fileData.length());
+
+	int dataType = 0;
+
+	for (int i = 0; i < solidSize; i++) {
+		while (dataType <= SOLID_DATA_SIZE) {
+			if (dataType < SOLID_DATA_SIZE) {
+				while (fileData[p] != '|' && p <= fileDataLength) {
+					p++;
+				}
+			}
+			else {
+				while (fileData[p] != ' ' && p <= fileDataLength) {
+					p++;
+				}
+			}
+
+			solidData = fileData.substr(q, p - q);
+			data = std::stoi(solidData);
+
+			q = p + 1;
+			p = q;
+
+			switch (dataType) {
+			case 0:		tempSolid.pos.x = data;			break;
+			case 1:		tempSolid.pos.y = data;			break;
+			}
+
+			dataType++;
+		}
+
+		tempSolid.pos.w = 32;
+		tempSolid.pos.h = 32;
+		solids.push_back(tempSolid);
+		dataType = 0;
+	}
+	std::cout << "Solids Loaded for map" << id << std::endl;
+
 
 	std::cout << "Map Loaded " + path << std::endl;
 }

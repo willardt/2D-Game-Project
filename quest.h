@@ -19,6 +19,7 @@ public:
 	u16string question;
 	u16string active;
 	u16string complete;
+	std::vector<u16string> dialoge;
 
 	int id;
 	int type;
@@ -26,12 +27,15 @@ public:
 	int total;
 	int targetID;
 	int rewardID;
+	int line;
+	int lines;
 	bool isComplete;
 	bool isActive;
 	bool isEnd;
 
 	void Init(const int& npcID);
 	void update();
+	void nextLine();
 	void addCount(const int& enemyID);
 };
 

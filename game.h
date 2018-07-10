@@ -20,6 +20,7 @@
 #include "ui.h"
 #include "shop.h"
 #include "effect.h"
+#include "spellbook.h"
 
 #ifndef GAME_H
 #define GAME_H
@@ -52,6 +53,7 @@ public:
 	Map map;
 	Bag bag;
 	Shop shop;
+	Spellbook spellbook;
 
 	std::vector<Texture> tilesMem;
 	std::vector<Texture> enemiesMem;
@@ -101,6 +103,9 @@ public:
 	void objectCollision(const int& dir, const int& dis, Player& p);
 	void warpCollision();
 	void itemMouseOver();
+
+	void playerSpellCollisions(std::vector<Spell>& spells);
+	void enemySpellCollisions(std::vector<Spell>& spells, Entity& enemy);
 
 	void loadMap(const int& id, int type);
 	void saveMap(const int& id);

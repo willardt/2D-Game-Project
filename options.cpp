@@ -7,6 +7,7 @@ void Options::Init() {
 	showPaths = false;
 	showWarps = false;
 	showCombatRange = false;
+	showSolids = false;
 
 	isCam = file.getInt(1);
 	camX = file.getInt(2);
@@ -19,6 +20,8 @@ void Options::Init() {
 	windowHeight = file.getInt(7);
 	windowWidthHalf = windowWidth / 2;
 	windowHeightHalf = windowHeight / 2;
+	windowWidthQuarter = windowWidthHalf / 2;
+	windowHeightQuarter = windowHeightHalf / 2;
 	windowX = file.getInt(8);
 	windowY = file.getInt(9);
 

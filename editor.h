@@ -28,7 +28,9 @@
 #define CHOOSE_WARPS 54
 #define CHOOSE_OBJECTS 55
 #define CHOOSE_EFFECTS 56
-#define CHOOSE_NONE 57
+#define CHOOSE_SOLID 57
+#define CHOOSE_SOLID_REMOVE 58
+#define CHOOSE_NONE 59
 
 #define SELECT_ENEMY 60
 #define SELECT_NPC 61
@@ -46,7 +48,7 @@ private:
 	Window _mainWindow;
 	Window _tileWindow;
 public:
-	enum { MAIN_WINDOW_WIDTH = 1100, MAIN_WINDOW_HEIGHT = 800, MAIN_WINDOW_X = 400, MAIN_WINDOW_Y = 200 };
+	enum { MAIN_WINDOW_WIDTH = 1400, MAIN_WINDOW_HEIGHT = 900, MAIN_WINDOW_X = 100, MAIN_WINDOW_Y = 100 };
 	enum {TILE_WINDOW_WIDTH = 400, TILE_WINDOW_HEIGHT = 800, TILE_WINDOW_X = 1500, TILE_WINDOW_Y = 200};
 	enum {TILE_LAYOUT_Y = 400, ROW_SIZE = 12};
 
@@ -133,6 +135,8 @@ public:
 	void placeWarp(SDL_Rect& rect);
 	void placeObject();
 	void placeEffect();
+	void placeSolid();
+	void removeSolid();
 	void select();
 
 	int collision(const int& x, const int& y, std::vector<Entity>& e);

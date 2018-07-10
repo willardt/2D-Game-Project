@@ -74,14 +74,18 @@ public:
 	SpellAni spellAni;
 
 	std::vector<Spell> spells;
+
 	Spell spell;
+	Spell secondary;
 
 	std::vector<Path> paths;
 
 	Time combat;
 	Time regen;
 	Time casting;
+	Time castingSecondary;
 	Time castingAni;
+	Time moveSpriteTimer;
 
 	std::string name;
 	u16string uName;
@@ -90,6 +94,8 @@ public:
 	bool isCombat;
 	bool isCasting;
 	bool isCastable;
+	bool isCastableSecondary;
+	bool isBoss;
 
 	int id;
 	int type;
@@ -99,7 +105,7 @@ public:
 	int combatFrame;
 	int castDir;
 	int activePath;
-	int fireRate;
+	int spriteTime;
 
 	std::vector<Item> lootTable;
 
@@ -132,9 +138,10 @@ public:
 	void applyDamage(const int& damage, std::vector<Text>& t, SDL_Color& color);
 	int calcDamage(int d, int def, int lvl);
 
-	void castSpellMouse(int mX, int mY);
-	void castSpell(int nX, int nY);
+	void castSpellMouse(int mX, int mY, Spell& nspell, bool isSecondary);
+	void castSpell(int nX, int nY, Spell& nspell, bool isSecondary);
 	int calcCastDir(int mX, int mY);
+	void splitSpell(std::vector<Spell>& spells, Spell& spell);
 
 	void addExp(int xp, TextBox& t);
 	void dropLoot(std::vector<Item>& items);
@@ -144,8 +151,11 @@ public:
 	int getPathDir();
 	void reversePath();
 
+	static int getBossReward(const int& id);
+
 	static std::vector<Item> loadLootTable(const int& id, const int& type);
 	static std::vector<Texture> memInit(const int& type);
+
 };
 
 #endif

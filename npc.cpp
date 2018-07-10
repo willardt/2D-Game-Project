@@ -1,14 +1,10 @@
 #include "npc.h"
 
 void Npc::speech(TextBox& t, std::string s) {
-	t.isActive = true;
-	t.activeTime.tock(0);
 	t.print(s);
 }
 
 void Npc::speech(TextBox& t, u16string s) {
-	t.isActive = true;
-	t.activeTime.tock(0);
 	t.print(s);
 }
 
@@ -33,8 +29,11 @@ bool Npc::promptQuest(Quest& q, TextBox& t) {
 }
 
 void Npc::promptDialoge(TextBox& t) {
-	t.setSpeaker(quest.npcName, Text::WHITE);
-	speech(t, quest.question);
+	if (quest.lines > 0) {
+		t.setSpeaker(quest.npcName, Text::WHITE);
+		speech(t, quest.dialoge[quest.line]);
+		quest.nextLine();
+	}
 }
 
 void Npc::collision(const int& dir, const int& dis, std::vector<Npc>& npcs, const int& selfIndex) {

@@ -14,8 +14,8 @@ void Warp::loadWarps(const int& mapID, std::vector<Warp>& w) {
 
 	std::cout << "Loading Warps for map" << mapID << std::endl;
 
-	warpSize = file.getInt(9);
-	fileData = file.getStr(10);
+	warpSize = file.getInt(11);
+	fileData = file.getStr(12);
 	fileDataLength = int(fileData.length());
 
 	int p = 0;

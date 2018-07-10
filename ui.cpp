@@ -1,11 +1,12 @@
 #include "ui.h"
 
 const SDL_Color UI::ITEM_INFO_COLOR = { 25, 25, 25, 100 };
-const SDL_Rect UI::MAP_NAME = { 350, 0, 400, 30 };
+const SDL_Rect UI::MAP_NAME = { 600, 0, 400, 30 };
 const SDL_Rect UI::PLAYER_HEALTH = { 25, 50, 300, 50 };
 const SDL_Rect UI::PLAYER_MANA = { 25, 70, 300, 50 };
-const SDL_Rect UI::SPELL_BOX = { 17, 725, 50, 50 };
+const SDL_Rect UI::SPELL_BOX = { 7, 825, 50, 50 };
 const SDL_Rect UI::SPELL_BOX_SPELL = { 32, 740, NULL, NULL };
+const SDL_Rect UI::SECONDARY_BOX = { 73, 825, 50, 50 };
 
 void UI::drawItemInfo(SDL_Rect& mouse, SDL_Rect size, u16string name, int& drop, std::vector<Text>& texts, SDL_Renderer* renderer) {
 	Text::clear(texts);
@@ -54,22 +55,29 @@ void UI::drawBarNoCam(const SDL_Rect& rect, int height, const int& maxL, const i
 	Texture::drawRectNoCam(newPos, front, renderer);;
 }
 
-void UI::drawMapName(std::string name, SDL_Renderer* renderer) {
+void UI::setMap(u16string uname) {
+	mapName = Text::printT(TEXT_BOX, uname, MAP_NAME, Text::WHITE);
+	bmapName = true;
+	mapNameTime.tock(0);
+
+	for (int i = 0; i < uname.size(); i++) {
+		if (uname[i] == '_') {
+			uname[i] = ' ';
+		}
+	}
+	mapName.pos.x += (MAP_NAME.w - mapName.pos.w) / 2;
+}
+
+void UI::drawMapName(SDL_Renderer* renderer) {
 	if (bmapName) {
-		if (!mapName.tick(MAP_NAME_TIME)) {
+		if (!mapNameTime.tick(MAP_NAME_TIME)) {
 			Texture::drawRectTransNoCam(MAP_NAME, Text::BLACK, renderer);
-			for (int i = 0; i < name.size(); i++) {
-				if (name[i] == '_') {
-					name[i] = ' ';
-				}
-			}
-			Text nameText = Text::printT(TEXT_BOX, name, MAP_NAME, Text::WHITE);
-			nameText.pos.x += (MAP_NAME.w - nameText.pos.w) / 2;
-			nameText.renderNoCam(renderer);
+			mapName.renderNoCam(renderer);
 		}
 		else {
 			bmapName = false;
-			mapName.tock(0);
+			mapNameTime.tock(0);
+			mapName.destroy();
 		}
 	}
 }

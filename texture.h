@@ -27,6 +27,7 @@ public:
 	const static SDL_Color healthBarEmpty;
 	const static SDL_Color manaBarFull;
 	const static SDL_Color manaBarEmpty;
+	const static SDL_Color mapSolid;
 
 	bool isLoaded;
 

@@ -75,6 +75,8 @@ void TextBox::print(std::string line) {
 		Text::printT(TEXT_BOX, nlines[lines - 1], { _BOX_X, _LINE_Y + _LINE_SPACING_Y * int(lines - 1), NULL, _LINE_HEIGHT }, _lines, Text::WHITE);
 		lines--;
 	}
+	isActive = true;
+	activeTime.tock(0);
 }
 
 // add a line with a color
@@ -121,6 +123,8 @@ void TextBox::print(std::string line, SDL_Color color) {
 		Text::printT(TEXT_BOX, nlines[lines - 1], { _BOX_X, _LINE_Y + _LINE_SPACING_Y * int(lines - 1), NULL, _LINE_HEIGHT }, _lines, color);
 		lines--;
 	}
+	isActive = true;
+	activeTime.tock(0);
 }
 
 // add a unicode line of type u16string
@@ -169,6 +173,8 @@ void TextBox::print(u16string uline) {
 	}
 
 	//Text::printT(TEXT_BOX, uline, { _BOX_X, lineHeight(), NULL, _LINE_HEIGHT }, _lines, Text::WHITE);
+	isActive = true;
+	activeTime.tock(0);
 }
 
 // add a unicode line with a color
@@ -217,6 +223,8 @@ void TextBox::print(u16string uline, SDL_Color color) {
 	}
 
 	//Text::printT(TEXT_BOX, uline, { _BOX_X, lineHeight(), NULL, _LINE_HEIGHT }, _lines, Text::WHITE);
+	isActive = true;
+	activeTime.tock(0);
 }
 
 // set the speaker's name to be displayed
@@ -238,4 +246,17 @@ void TextBox::setSpeaker(u16string speaker, SDL_Color color) {
 // do not display a speaker
 void TextBox::removeSpeaker() {
 	_isSpeaker = false;
+}
+
+u16string TextBox::getSystemMessage(int lineNum) {
+	Options& options = options.Instance();
+	File file;
+	if (options.lang == ENGLISH) {
+		file.uread("Data/Messages/En/messages.txt");
+	}
+	else if (options.lang == RUSSIAN) {
+		file.uread("Data/Messages/Ru/messages.txt");
+	}
+
+	return file.getU16(lineNum);
 }

@@ -9,7 +9,6 @@ void Game::Init() {
 	map.Init(0);
 
 	player.Init(PLAYER, NULL, NULL, NULL);
-	player.spell.Init(0);;
 
 	backRect = { 0, 0, _mainWindow.getWidth(), _mainWindow.getHeight() };
 
@@ -146,11 +145,15 @@ void Game::input() {
 	}
 
 	if (in.isMouseHeld(mouseX, mouseY, SDL_BUTTON_LEFT, _mainWindow.getWindow())) {
-		player.castSpellMouse(mouseX, mouseY);
+		player.castSpellMouse(mouseX, mouseY, player.spell, false);
+	}
+
+	if (in.isMouseHeld(mouseX, mouseY, SDL_BUTTON_RIGHT, _mainWindow.getWindow())) {
+		player.castSpellMouse(mouseX, mouseY, player.secondary, true);
 	}
 
 	if (in.isKey(options.bag)) {
-		bag.Init(player, items, itemsMem, _mainWindow);
+		bag.Init(&player, &items, itemsMem, &_mainWindow);
 	}
 
 	if (in.isKey(options.pickup)) {
@@ -194,77 +197,46 @@ void Game::input() {
 		}
 	}
 
+	if (in.isKey(SDL_SCANCODE_M)) {
+		if (options.showSolids) {
+			options.showSolids = false;
+			std::cout << "Show Solids Off" << std::endl;
+		}
+		else {
+			options.showSolids = true;
+			std::cout << "Show Solids On" << std::endl;
+		}
+	}
+
 	if (in.isKey(SDL_SCANCODE_0)) {
 		loadMap(map.id, FRESH);
+	}
+
+	if (in.isKey(SDL_SCANCODE_TAB)) {
+		spellbook.spellBook(&player, &_mainWindow, spellsMem);
 	}
 }
 
 void Game::update() {
-
 	warpCollision();
 
 	// ----------PLAYER----------
 	player.playerUpdate();
 	player.pickupShards(items, texts);
-
-	for (size_t i = 0; i < player.spells.size(); i++) {
-		if (player.spells[i].isActive == true) {
-			if (player.collision(player.spells[i], map.solids) == true) {
-			}
-			else {
-				int q = player.collision(player.spells[i], enemies);
-				if (q != -1) {
-					enemies[q].applyDamage(player.calcDamage(player.spells[i].damage, enemies[q].defense, enemies[q].level), texts, player.spells[i].color);
-					if (enemies[q].isDead == true) {
-						int k = player.findQuestTarget(enemies[q].id);
-						if (k != -1) {
-							player.quests[k].addCount(enemies[q].id);
-						}
-					}
-				}
-				else {
-					q = spellCollision(player.spells[i], npcs);
-					if (q != -1) {
-
-					}
-					else {
-						spellCollision(player.spells[i], objectSolids);
-					}
-				}
-			}
-		}
-	}
+	playerSpellCollisions(player.spells);
 
 	// ----------ENTITIES----------
 	for (size_t i = 0; i < enemies.size(); i++) {
 		move(enemies[i], int(i), enemies[i].getPathDir(), NULL, true);
-		enemies[i].updateCombat(player.pos);
-
-		for (size_t j = 0; j < enemies[i].spells.size(); j++) {
-			if (enemies[i].spells[j].isActive == true) {
-				if (enemies[i].collision(enemies[i].spells[j], map.solids) == true) {
-				}
-				else if (player.spellCollision(enemies[i].spells[j]) == true) {
-					player.applyDamage(enemies[i].calcDamage(enemies[i].spells[j].damage, player.defense, player.level), texts, enemies[i].spells[j].color);
-					enemies[i].isCombat = true;
-				}
-				else {
-					int q = spellCollision(enemies[i].spells[j], npcs);
-					if (q != -1) {
-
-					}
-					else {
-						spellCollision(enemies[i].spells[j], objectSolids);
-					}
-				}
-			}
-		}
-
 		enemies[i].update();
+		enemies[i].updateCombat(player.pos);
+		enemySpellCollisions(enemies[i].spells, enemies[i]);
 
 		if (enemies[i].isDead == true) {
-			player.addExp(enemies[i].exp, textBox);
-			Text::printT(TEXT_DAMAGE, "+" + std::to_string(enemies[i].exp), { player.pos.x + 50, player.pos.y - 50, NULL, 25 }, texts, Text::GREEN);
+			if (enemies[i].exp > 0) {
+				player.addExp(enemies[i].exp, textBox);
+				Text::printT(TEXT_DAMAGE, "+" + std::to_string(enemies[i].exp), { player.pos.x + 50, player.pos.y - 50, NULL, 25 }, texts, Text::GREEN);
+			}
 			enemies[i].dropLoot(items);
 			enemies.erase(enemies.begin() + i);
 		}
@@ -294,7 +266,13 @@ void Game::update() {
 
 
 	// ----------OTHER----------
-	std::string windowTitle = "FPS: " + std::to_string(fps.getFPS()) + " Cam - x: " + std::to_string(options.camX) + " y: " + std::to_string(options.camY) + " Player - x: " + std::to_string(player.pos.x) + " y: " + std::to_string(player.pos.y);
+	size_t spellSize = player.spells.size();
+	for (size_t i = 0; i < enemies.size(); i++) {
+		spellSize += enemies[i].spells.size();
+	}
+
+	std::string windowTitle = "Level: " + map.name + " id: " + std::to_string(map.id) + " FPS: " + std::to_string(fps.getFPS()) + " Cam - x: " + std::to_string(options.camX) + " y: " + std::to_string(options.camY) + " Player - x: " + std::to_string(player.pos.x) + " y: " + std::to_string(player.pos.y)
+		+ " # of Spells: " + std::to_string(spellSize);
 
 	SDL_SetWindowTitle(_mainWindow.getWindow(), windowTitle.c_str());
 
@@ -309,6 +287,12 @@ void Game::display() {
 	// ----------MAP----------
 	for (int i = 0; i < map.area; i++) {
 		tilesMem[map.map[i].id].render(map.map[i].pos, _mainWindow.getRenderer());
+	}
+
+	if (options.showSolids) {
+		for (size_t i = 0; i < map.solids.size(); i++) {
+			Texture::drawRectTrans(map.solids[i].pos, Texture::mapSolid, _mainWindow.getRenderer());
+		}
 	}
 
 	if (options.showWarps) {
@@ -378,15 +362,26 @@ void Game::display() {
 	itemMouseOver();
 
 	//---------Map Name--------
-	gui.drawMapName(map.name, _mainWindow.getRenderer());
+	gui.drawMapName(_mainWindow.getRenderer());
 
 	//---------Player UI Elements----------
 	UI::drawBarNoCam(UI::PLAYER_HEALTH, 0, player.maxHealth, player.health, Texture::healthBarFull, Texture::healthBarEmpty, _mainWindow.getRenderer());
 	UI::drawBarNoCam(UI::PLAYER_MANA, 0, player.maxMana, player.mana, Texture::manaBarFull, Texture::manaBarEmpty, _mainWindow.getRenderer());
 
 	Texture::drawRectTransNoCam(UI::SPELL_BOX, Text::BLACK, _mainWindow.getRenderer());
-	SDL_Rect spellBox = { UI::SPELL_BOX_SPELL.x, UI::SPELL_BOX_SPELL.y, player.spell.pos.w, player.spell.pos.h };
-	spellsMem[player.spell.id].renderNoCamSprite(spellBox, { NULL, NULL, NULL }, _mainWindow.getRenderer());
+	Texture::drawRectTransNoCam(UI::SECONDARY_BOX, Text::BLACK, _mainWindow.getRenderer());
+	spellsMem[player.spell.id].renderNoCamSprite(player.spell.pos, { NULL, NULL, NULL }, _mainWindow.getRenderer());
+	spellsMem[player.secondary.id].renderNoCamSprite(player.secondary.pos, { NULL, NULL, NULL }, _mainWindow.getRenderer());
+
+	int height = 0;
+	for (int i = 0; i < player.buffs.size(); i++) {
+		UI::drawBarNoCam({ player.buffs[i].pos.x + 50, player.buffs[i].pos.y + height, 100, 15 }, 0, player.buffs[i].duration, player.buffs[i].cduration, Text::BUFF_DURATION, Text::BLACK, _mainWindow.getRenderer());
+		height += 20;
+		itemsMem[player.buffs[i].id].renderNoCam({ player.buffs[i].pos.x, player.buffs[i].pos.y + height - 40, player.buffs[i].pos.w, player.buffs[i].pos.h }, _mainWindow.getRenderer());
+	}
+
+
+
 
 	// ----------TEXT----------
 	for (size_t i = 0; i < texts.size(); i++) {
@@ -596,17 +591,17 @@ void Game::objectCollision(const int& dir, const int& dis, Entity& enemy) {
 void Game::objectCollision(const int& dir, const int& dis, Npc& npc) {
 	for (size_t i = 0; i < objectSolids.size(); i++) {
 		if (Collision::rectCollision(npc.pos, objectSolids[i].pos) == true) {
-			switch (dir) {
-			case UP:		npc.move(DOWN, dis, false);			break;
-			case DOWN:		npc.move(UP, dis, false);			break;
-			case RIGHT:		npc.move(LEFT, dis, false);			break;
-			case LEFT:		npc.move(RIGHT, dis, false);			break;
-			case UPRIGHT:	npc.move(DOWNLEFT, dis, false);		break;
-			case DOWNLEFT:	npc.move(UPRIGHT, dis, false);		break;
-			case UPLEFT:	npc.move(DOWNRIGHT, dis, false);		break;
-			case DOWNRIGHT:	npc.move(UPLEFT, dis, false);		break;
-			}
-			break;
+switch (dir) {
+case UP:		npc.move(DOWN, dis, false);			break;
+case DOWN:		npc.move(UP, dis, false);			break;
+case RIGHT:		npc.move(LEFT, dis, false);			break;
+case LEFT:		npc.move(RIGHT, dis, false);			break;
+case UPRIGHT:	npc.move(DOWNLEFT, dis, false);		break;
+case DOWNLEFT:	npc.move(UPRIGHT, dis, false);		break;
+case UPLEFT:	npc.move(DOWNRIGHT, dis, false);		break;
+case DOWNRIGHT:	npc.move(UPLEFT, dis, false);		break;
+}
+break;
 		}
 	}
 }
@@ -637,7 +632,7 @@ void Game::warpCollision() {
 			saveMap(map.id);
 			loadMap(warps[i].teleID, NULL);
 			player.pos.x = destX - player.posWidthHalf;
-			player.pos.y = destY - player.posHeightHalf;
+			player.pos.y = destY - player.pos.h;
 			player.centerCamera(map.width, map.height);
 			break;
 		}
@@ -650,6 +645,61 @@ void Game::itemMouseOver() {
 		if (items[i].id != 2 && Collision::seperateAxis(mouse, items[i].pos)) {
 			UI::drawItemInfo(mouse, { NULL, NULL, NULL, NULL }, items[i].uName, items[i].dropChance, uiInfo, _mainWindow.getRenderer());
 			break;
+		}
+	}
+}
+
+void Game::playerSpellCollisions(std::vector<Spell>& spells) {
+	for (size_t i = 0; i < spells.size(); i++) {
+		if (spells[i].isActive == true) {
+			if (player.collision(spells[i], map.solids) == true) {
+				//Spell Hit
+			}
+			else {
+				int q = player.collision(spells[i], enemies);
+				if (q != -1) {
+					enemies[q].applyDamage(player.calcDamage(spells[i].damage, enemies[q].defense, enemies[q].level), texts, spells[i].color);
+					if (enemies[q].isDead == true) {
+						int k = player.findQuestTarget(enemies[q].id);
+						if (k != -1) {
+							player.quests[k].addCount(enemies[q].id);
+						}
+						if (enemies[q].isBoss) {
+							player.addSpell(Entity::getBossReward(enemies[q].id), textBox);
+						}
+					}
+				}
+				else {
+					q = spellCollision(spells[i], npcs);
+					if (q != -1) {
+					}
+					else {
+						spellCollision(spells[i], objectSolids);
+					}
+				}
+			}
+		}
+	}
+}
+
+void Game::enemySpellCollisions(std::vector<Spell>& spells, Entity& enemy) {
+	for (size_t j = 0; j < spells.size(); j++) {
+		if (spells[j].isActive == true) {
+			if (enemy.collision(spells[j], map.solids) == true) {
+			}
+			else if (player.spellCollision(spells[j]) == true) {
+				player.applyDamage(enemy.calcDamage(spells[j].damage, player.defense, player.level), texts, spells[j].color);
+				enemy.isCombat = true;
+			}
+			else {
+				int q = spellCollision(spells[j], npcs);
+				if (q != -1) {
+
+				}
+				else {
+					spellCollision(spells[j], objectSolids);
+				}
+			}
 		}
 	}
 }
@@ -683,8 +733,7 @@ void Game::loadMap(const int& id, int type) {
 	Warp::loadWarps(id, warps);
 
 	player.move(NULL, NULL, false);
-	gui.bmapName = true;
-	gui.mapName.tock(0);
+	gui.setMap(map.uname);
 }
 
 
@@ -719,6 +768,8 @@ void Game::save() {
 	saveMap(map.id);
 
 	std::cout << "GAME SAVED" << std::endl;
+
+	textBox.print(MESSAGE_GAMESAVED, Text::SYSTEM_COLOR);
 }
 
 void Game::load() {
@@ -771,6 +822,16 @@ void Game::load() {
 
 	mapID = file.getInt(24);
 
+	for (int i = 0; i < Player::SPELLBOOK_SIZE; i++) {
+		player.spellBook[i].Init(file.getInt(27 + i));
+	}
+
+
+	player.selectSpell(file.getInt(25));
+	player.spell.setSpaceUI(UI::SPELL_BOX.w, UI::SPELL_BOX.h, UI::SPELL_BOX.x, UI::SPELL_BOX.y);
+	player.selectSecondary(file.getInt(26));
+	player.secondary.setSpaceUI(UI::SECONDARY_BOX.w, UI::SECONDARY_BOX.h, UI::SECONDARY_BOX.x, UI::SECONDARY_BOX.y);
+
 	loadMap(mapID, NULL);
 
 	std::cout << "GAME LOADED" << std::endl;
@@ -789,6 +850,8 @@ void Game::saveMap(const int& id) {
 	file << "Width - " << sfile.getStr(2) << std::endl;
 	file << "Height - " << sfile.getStr(3) << std::endl;
 	file << "Tiles - " << sfile.getStr(4) << std::endl;
+	file << "Solid Size - " << sfile.getStr(5) << std::endl;
+	file << "Solids - " << sfile.getStr(6) << std::endl;
 	file << "Entity Size - " << std::to_string(enemies.size() + npcs.size()) << std::endl;
 	file << "Entities - ";
 	for (size_t i = 0; i < enemies.size(); i++) {
@@ -820,16 +883,16 @@ void Game::saveMap(const int& id) {
 		file << std::to_string(items[i].id) + "|" + std::to_string(items[i].pos.x) + "|" + std::to_string(items[i].pos.y) + "|" + tempShards + " ";
 	}
 	file << std::endl;
-	file << "Warp Size - " << sfile.getStr(9) << std::endl;
-	file << "Warps - " << sfile.getStr(10) << std::endl;
-	file << "Object Size - " << sfile.getStr(11) << std::endl;
-	file << "Objects - " << sfile.getStr(12) << std::endl;
-	file << "Effect Size - " << sfile.getStr(13) << std::endl;
-	file << "Effects - " << sfile.getStr(14) << std::endl;
-	file << "Entity Size - " << sfile.getStr(15) << std::endl;
-	file << "Entities - " << sfile.getStr(16) << std::endl;
-	file << "Item Size - " << sfile.getStr(17) << std::endl;
-	file << "Items - " << sfile.getStr(18) << std::endl;
+	file << "Warp Size - " << sfile.getStr(11) << std::endl;
+	file << "Warps - " << sfile.getStr(12) << std::endl;
+	file << "Object Size - " << sfile.getStr(13) << std::endl;
+	file << "Objects - " << sfile.getStr(14) << std::endl;
+	file << "Effect Size - " << sfile.getStr(15) << std::endl;
+	file << "Effects - " << sfile.getStr(16) << std::endl;
+	file << "Entity Size - " << sfile.getStr(17) << std::endl;
+	file << "Entities - " << sfile.getStr(18) << std::endl;
+	file << "Item Size - " << sfile.getStr(19) << std::endl;
+	file << "Items - " << sfile.getStr(20) << std::endl;
 	file.close();
 }
 
@@ -862,12 +925,12 @@ void Game::loadMapEntities(const int& mapID, std::vector<Entity>& enemies, std::
 	std::cout << "Loading Entities for map" << mapID << std::endl;
 
 	if (isFresh == false) {
-		entitySize = file.getInt(5);
-		fileData = file.getStr(6);
+		entitySize = file.getInt(7);
+		fileData = file.getStr(8);
 	}
 	else {
-		entitySize = file.getInt(15);
-		fileData = file.getStr(16);
+		entitySize = file.getInt(17);
+		fileData = file.getStr(18);
 	}
 	fileDataLength = int(fileData.length());
 
@@ -953,12 +1016,12 @@ void Game::loadMapItems(const int& mapID, std::vector<Item>& items, bool isFresh
 	std::cout << "Loading Items for map" << mapID << std::endl;
 
 	if (isFresh == false) {
-		itemSize = file.getInt(7);
-		fileData = file.getStr(8);
+		itemSize = file.getInt(9);
+		fileData = file.getStr(10);
 	}
 	else {
-		itemSize = file.getInt(17);
-		fileData = file.getStr(18);
+		itemSize = file.getInt(19);
+		fileData = file.getStr(20);
 	}
 	fileDataLength = int(fileData.length());
 

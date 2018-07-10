@@ -2,6 +2,7 @@
 #include "text.h"
 #include "item.h"
 #include "time.h"
+#include "input.h"
 
 #ifndef UI_H
 #define UI_H
@@ -17,13 +18,16 @@ public:
 	const static SDL_Rect PLAYER_MANA;
 	const static SDL_Rect SPELL_BOX;
 	const static SDL_Rect SPELL_BOX_SPELL;
+	const static SDL_Rect SECONDARY_BOX;
 
-	Time mapName;
+	Text mapName;
+	Time mapNameTime;
 	bool bmapName;
 
 	static void drawItemInfo(SDL_Rect& mouse, SDL_Rect size, u16string name, int& drop, std::vector<Text>& texts, SDL_Renderer* renderer);
 	static void drawBar(const SDL_Rect& rect, int height, const int& maxL, const int& l, SDL_Color front, SDL_Color back, SDL_Renderer* renderer);
 	static void drawBarNoCam(const SDL_Rect& rect, int height, const int& maxL, const int& l, SDL_Color front, SDL_Color back, SDL_Renderer* renderer);
-	void drawMapName(std::string name, SDL_Renderer* renderer);
+	void setMap(u16string name);
+	void drawMapName(SDL_Renderer* renderer);
 };
 #endif

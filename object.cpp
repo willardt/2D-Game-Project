@@ -54,8 +54,8 @@ void Object::loadMapObjects(const int& id, std::vector<Object>& o) {
 
 	std::cout << "Loading Objects for map" << id << std::endl;
 
-	objectSize = file.getInt(11);
-	fileData = file.getStr(12);
+	objectSize = file.getInt(13);
+	fileData = file.getStr(14);
 	fileDataLength = int(fileData.length());
 
 	int p = 0;

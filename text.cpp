@@ -1,16 +1,17 @@
 ﻿#include "text.h"
 
-const std::string Text::_NORMAL_FONT_PATH = "Data/Fonts/normalfont.ttf";
-const std::string Text::_DAMAGE_FONT_PATH = "Data/Fonts/damagefont.ttf";
-const std::string Text::_RUSSIAN_FONT_PATH = "Data/Fonts/russianfont.ttf";
+const std::string Text::FONT_PATH = "Data/Fonts/font.ttf";
 const SDL_Color Text::RED = { 255, 0, 0, 150 };
 const SDL_Color Text::BLUE = { 0, 0, 255, 150 };
 const SDL_Color Text::GREEN = { 50, 250, 50, 150 };
 const SDL_Color Text::BLACK = { 0, 0, 0, 150 };
 const SDL_Color Text::WHITE = { 255, 255, 255, 255 };
 const SDL_Color Text::PURPLE = { 200, 25, 225, 150 };
+const SDL_Color Text::CLEAR = { 200, 200, 200, 100 };
 const SDL_Color Text::NORMAL_COLOR = { 255, 255, 255, 255 };
 const SDL_Color Text::DAMAGE_COLOR = { 50, 150, 200, 255 };
+const SDL_Color Text::SYSTEM_COLOR = { 250, 50, 100, 255 };
+const SDL_Color Text::BUFF_DURATION = { 100, 165, 180, 255 };
 
 // Create a texture from a string, called in .render()
 bool Text::load(std::string text, SDL_Renderer* renderer) {
@@ -254,18 +255,18 @@ void Text::setSpacing() {
 // Returns a font type based on text's type or Unicode
 TTF_Font* Text::getFontType() {
 	if (isUnicode == true) {
-		return RUSSIAN_FONT();
+		return FONT();
 	}
 
 	switch (type) {
 	case TEXT_NORMAL:
-		return NORMAL_FONT();
+		return FONT();
 		break;
 	case TEXT_DAMAGE:
-		return DAMAGE_FONT();
+		return FONT();
 		break;
 	case TEXT_BOX:
-		return NORMAL_FONT();
+		return FONT();
 		break;
 	default:
 		return nullptr;

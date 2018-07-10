@@ -20,10 +20,12 @@ private:
 public:
 	enum {
 		TILE_SIZE = 32, MAX_WIDTH = 150,
-		MAX_HEIGHT = 150, SOLID_TILES = 2, TILE_SHEET_WIDTH = 10
+		MAX_HEIGHT = 150, SOLID_TILES = 2, TILE_SHEET_WIDTH = 10,
+		SOLID_DATA_SIZE = 1
 	};
 
 	std::string name;
+	u16string uname;
 
 	bool isTileLoaded = false;
 

@@ -54,6 +54,10 @@ void Item::Init(const int& nid) {
 		speed = file.getInt(13);
 		dropChance = file.getInt(14);
 		price = file.getInt(15);
+		duration = file.getInt(16) * 60;
+		cduration = duration;
+		maxHealth = file.getInt(17);
+		maxMana = file.getInt(18);
 
 		if (options.lang == ENGLISH) {
 			file.uread("Data/Entities/Items/En/" + itemPath);
@@ -69,6 +73,12 @@ void Item::Init(const int& nid) {
 }
 
 SDL_Color Item::getRarity(int& dropChance) {
+	if (dropChance == RARE_SHARD) {
+		return { 240, 125, 125 };
+	}
+	if (dropChance == RARE_SPECIAL) {
+		return { 125, 240, 240, 255 };
+	}
 	if (dropChance > RARE_GREEN) {
 		return { 150, 150, 150, 255 };
 	}

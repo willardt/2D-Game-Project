@@ -57,8 +57,8 @@ void Effect::loadEffects(const int& mapID, std::vector<Effect>& e) {
 
 	std::cout << "Loading Effects for map" << mapID << std::endl;
 
-	effectSize = file.getInt(13);
-	fileData = file.getStr(14);
+	effectSize = file.getInt(15);
+	fileData = file.getStr(16);
 	fileDataLength = int(fileData.length());
 
 	int p = 0;

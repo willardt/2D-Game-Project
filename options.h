@@ -19,6 +19,7 @@ public:
 	bool showPaths;
 	bool showWarps;
 	bool showCombatRange;
+	bool showSolids;
 
 	bool isCam;
 	int camX;
@@ -31,6 +32,8 @@ public:
 	int windowHeight;
 	int windowWidthHalf;
 	int windowHeightHalf;
+	int windowWidthQuarter;
+	int windowHeightQuarter;
 	int windowX;
 	int windowY;
 

@@ -6,7 +6,7 @@ void Time::tock(int time) {
 
 bool Time::tick(const int& time) {
 	_tick++;
-	if (_tick == time) {
+	if (_tick >= time) {
 		_tick = 0;
 		return true;
 	}

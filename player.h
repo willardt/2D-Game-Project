@@ -7,11 +7,16 @@ class Player : public Entity {
 private:
 	enum { QUEST_LOAD_DATA_SIZE = 1};
 public:
-	enum { EQUIPPED_SIZE = 10, MAX_BAG_SIZE = 199};
+	enum { EQUIPPED_SIZE = 10, MAX_BAG_SIZE = 359, SPELLBOOK_SIZE = 12};
 	std::vector<Quest> quests;
 	std::vector<Item> items;
+	std::vector<Item> buffs;
 
 	Item equipped[EQUIPPED_SIZE];
+	Spell spellBook[SPELLBOOK_SIZE];
+
+	int currentSpell;
+	int currentSecondary;
 
 	void playerUpdate();
 
@@ -28,7 +33,18 @@ public:
 
 	void equipItem(const int& index);
 	void unequipItem(const int& slot);
+	void useItem(const int& index);
+
+	void addBuff(Item& i);
+	void removeBuff(int index);
+	void updateBuffs();
+
+	void selectSpell(int index);
+	void selectSecondary(int index);
+	void swapSpells(Spell& s1, Spell& s2);
+	void addSpell(int spellID, TextBox& t);
 
 	bool spellCollision(Spell& s);
+
 };
 #endif

@@ -16,6 +16,7 @@ void Player::playerUpdate() {
 	updateCastingAni();
 	updateCasting();
 	updateSpells();
+	updateBuffs();
 }
 
 void Player::pickupShards(std::vector<Item>& items, std::vector<Text>& texts) {
@@ -72,6 +73,110 @@ void Player::unequipItem(const int& slot) {
 
 		equipped[slot].isEquipped = false;
 		equipped[slot].id = -1;
+	}
+}
+
+void Player::useItem(const int& index) {
+	if (index > items.size()) {
+		return;
+	}
+
+	damage += items[index].damage;
+	defense += items[index].defense;
+	health += items[index].health;
+	if (health > maxHealth) {
+		health = maxHealth;
+	}
+	maxHealth += items[index].maxHealth;
+	hps += items[index].hps;
+	mana += items[index].mana;
+	if (mana > maxMana) {
+		mana = maxMana;
+	}
+	maxMana += items[index].maxMana;
+	mps += items[index].mps;
+	leech += items[index].leech;
+	drain += items[index].drain;
+	luck += items[index].luck;
+	speed += items[index].speed;
+
+	if (items[index].duration == 0) {
+		items.erase(items.begin() + index);
+	}
+	else {
+		items[index].pos.x = 50;
+		items[index].pos.y = 200;
+		items[index].pos.w = 15;
+		items[index].pos.h = 15;
+		buffs.push_back(items[index]);
+		items.erase(items.begin() + index);
+	}
+}
+
+void Player::removeBuff(int index) {
+	damage -= buffs[index].damage;
+	defense -= buffs[index].defense;
+	maxHealth -= buffs[index].maxHealth;
+	if (health > maxHealth) {
+		health = maxHealth;
+	}
+	maxMana -= buffs[index].maxMana;
+	if (mana > maxMana) {
+		mana = maxMana;
+	}
+	hps -= buffs[index].hps;
+	mps -= buffs[index].mps;
+	leech -= buffs[index].leech;
+	drain -= buffs[index].drain;
+	luck -= buffs[index].luck;
+	speed -= buffs[index].speed;
+
+	buffs.erase(buffs.begin() + index);
+}
+
+void Player::updateBuffs() {
+	for (size_t i = 0; i < buffs.size(); i++) {
+		buffs[i].cduration--;
+		if (buffs[i].cduration <= 0) {
+			removeBuff(i);
+		}
+	}
+}
+
+void Player::selectSpell(int index) {
+	if (spellBook[index].id != -1) {
+		currentSpell = index;
+		Entity::spell = spellBook[currentSpell];
+	}
+}
+
+void Player::selectSecondary(int index) {
+	if (spellBook[index].id != -1) {
+		currentSecondary = index;
+		Entity::secondary = spellBook[currentSecondary];
+	}
+}
+
+void Player::swapSpells(Spell& s1, Spell& s2) {
+	Spell temp = s1;
+	s1 = s2;
+	s2 = temp;
+}
+
+void Player::addSpell(int spellID, TextBox& t) {
+	Spell s;
+	s.Init(spellID);
+	int i = 0;
+	while (spellBook[i].id != -1) {
+		i++;
+	}
+
+	if (i > Player::SPELLBOOK_SIZE) {
+		std::cout << "Exceeded spellbook size" << std::endl;
+	}
+	else {
+		spellBook[i] = s;
+		t.print(MESSAGE_NEWSPELL + s.uname, s.color);
 	}
 }
 
@@ -299,6 +404,13 @@ void Player::save(const int& mapID) {
 	file << std::endl;
 
 	file << "Map - " << mapID << std::endl;
+
+	file << "Selected Spell - " << currentSpell << std::endl;
+	file << "Selected Secondary - " << currentSecondary << std::endl;
+
+	for (int i = 0; i < SPELLBOOK_SIZE; i++) {
+		file << "Spell " + std::to_string(i) + "- " << spellBook[i].id << std::endl;
+	}
 
 	file.close();
 }

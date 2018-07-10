@@ -15,6 +15,9 @@ int main(int args, char* argc[]) {
 	Options& options = options.Instance();
 	options.Init();
 
+	HWND console = GetConsoleWindow();
+	MoveWindow(console, -1100, 200, 1100, 600, TRUE);
+
 	srand(time(NULL));
 
 	SDL_Init(SDL_INIT_EVERYTHING);

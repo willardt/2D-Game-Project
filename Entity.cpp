@@ -84,11 +84,12 @@ void Entity::Init(const int& ntype, const int& nid, const int& x, const int& y) 
 	spellAni.dright = file.getInt(35);
 	spellAni.dleft = file.getInt(36);
 	spell.Init(file.getInt(37));
+	secondary.Init(file.getInt(38));
 
 	combatRange.x = pos.x;
 	combatRange.y = pos.y;
-	combatRange.w = file.getInt(40);
-	combatRange.h = file.getInt(41);
+	combatRange.w = file.getInt(41);
+	combatRange.h = file.getInt(42);
 	combatRangeWidthHalf = combatRange.w / 2;
 	combatRangeHeightHalf = combatRange.h / 2;
 	
@@ -96,17 +97,19 @@ void Entity::Init(const int& ntype, const int& nid, const int& x, const int& y) 
 	
 	sprite = Texture::updateSprite(pos, sprite.frame);
 
-	fireRate = spell.fireRate - level;
-
 	combat.tock(0);
 	regen.tock(0);
 	casting.tock(0);
+	castingSecondary.tock(0);
 	castingAni.tock(0);
+	moveSpriteTimer.tock(0);
 	
 	isCasting = false;
 	isCombat = false;
 	isDead = false;
 	isCastable = true;
+	isCastableSecondary = true;
+	isBoss = bool(file.getInt(43));
 }
 
 void Entity::update() {
@@ -150,11 +153,20 @@ void Entity::updateRegen() {
 
 void Entity::updateCasting() {
 	if (isCastable == false) {
-		if (fireRate <= 0) {
+		if (spell.fireRate <= 0) {
 			isCastable = true;
 		}
-		else if (casting.tick(fireRate) == true) {
+		else if (casting.tick(spell.fireRate) == true) {
 			isCastable = true;
+		}
+	}
+
+	if (isCastableSecondary == false) {
+		if (secondary.fireRate <= 0) {
+			isCastableSecondary = true;
+		}
+		else if (castingSecondary.tick(secondary.fireRate) == true) {
+			isCastableSecondary = true;
 		}
 	}
 }
@@ -172,6 +184,11 @@ void Entity::updateCastingAni() {
 void Entity::updateSpells() {
 	for (size_t i = 0; i < spells.size(); i++) {
 		spells[i].update();
+
+		if (spells[i].type == TYPE_SPLIT) {
+			splitSpell(spells, spells[i]);
+		}
+
 		if (spells[i].isEnd == true) {
 			spells.erase(spells.begin() + i);
 		}
@@ -198,8 +215,8 @@ void Entity::updateCombat(SDL_Rect& player) {
 		combat.tock(0);
 	}
 
-	if (isCombat && isCastable) {
-		castSpell(player.x, player.y);
+	if (isCombat) {
+		castSpell(player.x, player.y, spell, false);
 	}
 }
 
@@ -308,7 +325,9 @@ void Entity::move(const int& dir, int dis, const bool& update) {
 	}
 
 	if (update == true) {
-		updateSprite(MOVE, dir);
+		if (moveSpriteTimer.tick(8 - speed)) {
+			updateSprite(MOVE, dir);
+		}
 	}
 
 }
@@ -584,10 +603,17 @@ int Entity::calcDamage(int d, int def, int lvl) {
 	return ndamage;
 }
 
-void Entity::castSpellMouse(int mX, int mY) {
-	if (isCastable == true && mana >= spell.cost) {
+void Entity::castSpellMouse(int mX, int mY, Spell& nspell, bool isSecondary) {
+	if (isSecondary && !isCastableSecondary) {
+		return;
+	}
+	if (!isSecondary && !isCastable) {
+		return;
+	}
+
+	if (mana >= spell.cost) {
 		Options& options = options.Instance();
-		Spell s = spell;
+		Spell s = nspell;
 
 		s.pos.x = pos.x + posWidthHalf;
 		s.pos.y = pos.y + posHeightHalf;
@@ -602,17 +628,31 @@ void Entity::castSpellMouse(int mX, int mY) {
 		isCasting = true;
 		castingAni.tock(0);
 		castDir = calcCastDir(mX + options.camX, mY + options.camY);
+		s.dir = castDir;
 
 		spells.push_back(s);
 
-		isCastable = false;
+		if (isSecondary) {
+			isCastableSecondary = false;
+		}
+		else {
+			isCastable = false;
+		}
+
 		mana -= spell.cost;
 	}
 }
 
-void Entity::castSpell(int nX, int nY) {
-	if (isCastable == true && mana >= spell.cost) {
-		Spell s = spell;
+void Entity::castSpell(int nX, int nY, Spell& nspell, bool isSecondary) {
+	if (isSecondary && !isCastableSecondary) {
+		return;
+	}
+	if (!isSecondary && !isCastable) {
+		return;
+	}
+
+	if (mana >= spell.cost) {
+		Spell s = nspell;
 
 		s.pos.x = pos.x + posWidthHalf;
 		s.pos.y = pos.y + posHeightHalf;
@@ -627,28 +667,38 @@ void Entity::castSpell(int nX, int nY) {
 		isCasting = true;
 		castingAni.tock(0);
 		castDir = calcCastDir(nX, nY);
+		s.dir = castDir;
 
 		spells.push_back(s);
 
-		isCastable = false;
+		if (isSecondary) {
+			isCastableSecondary = false;
+		}
+		else {
+			isCastable = false;
+		}
+
 		mana -= spell.cost;
+	}
+}
+
+void Entity::splitSpell(std::vector<Spell>& spells, Spell& spell) {
+	if (spell.isHalf && !spell.isSplit) {
+		Spell s1 = spell;
+		Spell s2 = s1;
+		Spell::split(s1, s2);
+		spells.push_back(s1);
+		spells.push_back(s2);
+		spell.dis = float(spell.maxDis);
+		spell.isSplit = true;
 	}
 }
 
 void Entity::addExp(int xp, TextBox& t) {
 	exp += xp;
 	while (exp >= 100) {
-		Options& options = options.Instance();
-		File file;
-		if (options.lang == ENGLISH) {
-			file.uread("Data/Messages/En/messages.txt");
-		}
-		else if (options.lang == RUSSIAN) {
-			file.uread("Data/Messages/Ru/messages.txt");
-		}
-		
-		t.print(file.getU16(1));
-		t.isActive = true;
+	
+		t.print(MESSAGE_LEVEL, Text::GREEN);
 
 		level++;
 		damage += 2;
@@ -669,7 +719,6 @@ void Entity::addExp(int xp, TextBox& t) {
 		}
 		exp -= 100;
 	}
-	fireRate = spell.fireRate - level;
 }
 
 void Entity::dropLoot(std::vector<Item>& items) {
@@ -723,6 +772,13 @@ int Entity::calcCastDir(int mX, int mY) {
 	return UP;
 }
 
+int Entity::getBossReward(const int& id) {
+	switch (id) {
+	case 6:		return 5;			//BANDIT LEADER ----- WATER
+	}
+	return -1;
+}
+
 std::vector<Item> Entity::loadLootTable(const int& id, const int& type) {
 	File file;
 	File locFile;
@@ -746,8 +802,8 @@ std::vector<Item> Entity::loadLootTable(const int& id, const int& type) {
 		file.read("Data/Entities/player.txt");
 	}
 
-	lootSize = file.getInt(38);
-	fileData = file.getStr(39);
+	lootSize = file.getInt(39);
+	fileData = file.getStr(40);
 	fileDataLength = int(fileData.length());
 
 	int p = 0;
