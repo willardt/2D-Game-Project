@@ -36,8 +36,8 @@ Down Right - 0
 Down Left - 0
 Spell ID - 0
 Secondary ID - 0
-Loot Size - 2
-Loot Table - 5 4
+Loot Size - 0
+Loot Table - 
 Combat Range w - 0
 Combat Range h - 0
 Is Boss - 0

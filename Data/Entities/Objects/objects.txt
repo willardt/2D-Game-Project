@@ -9,3 +9,5 @@
 8 Stump - Data/Textures/Objects/stump.png
 9 Logs - Data/Textures/Objects/logs.png
 10 Tent - Data/Textures/Objects/tent.png
+11 Small Potion Shop Sign - Data/Textures/Objects/small potion shop sign.png
+12 Armor Shop Sign - Data/Textures/Objects/armor shop sign.png

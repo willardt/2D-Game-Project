@@ -1,0 +1,5 @@
+id - 11
+name - Small Potion Shop Sign
+Width - 32
+Height - 16
+Solid - 1

@@ -1,0 +1,5 @@
+id - 12
+name - Armor Shop Sign
+Width - 32
+Height - 16
+Solid - 1

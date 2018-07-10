@@ -2,3 +2,8 @@ Player - 0
 Greg - 1
 Old Man - 0
 Tim - 0
+Lucas - 1
+Lily - 0
+Jessica - 0
+Chelsea - 0
+Dave - 0

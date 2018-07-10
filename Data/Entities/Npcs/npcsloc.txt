@@ -2,3 +2,8 @@
 1 - greg.txt
 2 - old man.txt
 3 - tim.txt
+4 - lucas.txt
+5 - lily.txt
+6 - jessica.txt
+7 - jimmy.txt
+8 - dave.txt

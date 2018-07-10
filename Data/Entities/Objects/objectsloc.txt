@@ -9,3 +9,5 @@
 8 - stump.txt
 9 - logs.txt
 10 - tent.txt
+11 - small potion shop sign.txt
+12 - armor shop sign.txt

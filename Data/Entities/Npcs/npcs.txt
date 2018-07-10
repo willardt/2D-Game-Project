@@ -2,3 +2,8 @@ Player - Data/Textures/player.png
 Greg - Data/Textures/player.png
 Old Man - Data/Textures/player.png
 Tim - Data/Textures/player.png
+Lucas - Data/Textures/player.png
+Lily - Data/Textures/player.png
+Jessica - Data/Textures/player.png
+Jimmy - Data/Textures/player.png
+Dave - Data/Textures/player.png

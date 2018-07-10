@@ -11,3 +11,6 @@ Mana Cost - 5
 Color r - 180
 Color g - 227
 Color b - 239
+Type - 0
+End Sprite - 1
+Sprite Delay - 20
