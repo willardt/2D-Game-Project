@@ -35,7 +35,9 @@ Up Left - 7
 Down Right - 7
 Down Left - 7
 Spell ID - 1
+Secondary ID - 0
 Loot Size - 1
 Loot Table - 3
 Combat Range w - 300
 Combat Range h - 300
+Is Boss - 0

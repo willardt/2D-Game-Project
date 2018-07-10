@@ -1,0 +1,43 @@
+Name - Pot
+Texture - Data/Textures/pot.png
+Width - 32
+Height - 32
+Total Frames - 1
+Run Frame - 1
+Min Down - 1
+Max Down - 1
+Min Up - 1
+Max Up - 1
+Min Right - 1
+Max Right - 1
+Min Left - 1
+Max Left - 1
+Level - 1
+Exp - 0
+Health - 1
+Health Regen - 0
+Mana - 0
+Mana Regen - 0
+Damage - 0
+Defense - 0
+Leech - 0
+Drain - 0
+Luck - 0
+Speed - 0
+Shards - 0
+Total Cast Frames - 0
+Up - 1
+Down - 1
+Left - 1
+Right - 1
+Up Right - 1
+Up Left - 1
+Down Right - 1
+Down Left - 1
+Spell ID - 0
+Secondary ID - 0
+Loot Size - 5
+Loot Table - 10 13 16 19 21
+Combat Range w - 0
+Combat Range h - 0
+Is Boss - 0

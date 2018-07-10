@@ -35,7 +35,9 @@ Up Left - 16
 Down Right - 14
 Down Left - 15
 Spell ID - 4
-Loot Size - 0
-Loot Table - 
+Secondary ID - 0
+Loot Size - 1
+Loot Table - 8
 Combat Range w - 1000
 Combat Range h - 1000
+Is Boss - 1

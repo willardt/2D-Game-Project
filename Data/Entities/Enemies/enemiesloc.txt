@@ -5,3 +5,4 @@
 4 - bandit.txt
 5 - wizard.txt
 6 - bandit leader.txt
+7 - pot.txt

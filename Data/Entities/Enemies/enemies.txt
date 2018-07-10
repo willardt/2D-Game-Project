@@ -1,7 +1,8 @@
-Player - Data/Textures/player.png
-Dummy - Data/Textures/player.png
-Link - Data/Textures/Enemies/link.png
-Bushki - Data/Textures/Enemies/bushki.png
-Bandit - Data/Textures/Enemies/bandit.png
-Wizard - Data/Textures/Enemies/wizard.png
-Bandit Leader - Data/Textures/Enemies/bandit leader.png
+0 Player - Data/Textures/player.png
+1 Dummy - Data/Textures/player.png
+2 Link - Data/Textures/Enemies/link.png
+3 Bushki - Data/Textures/Enemies/bushki.png
+4 Bandit - Data/Textures/Enemies/bandit.png
+5 Wizard - Data/Textures/Enemies/wizard.png
+6 Bandit Leader - Data/Textures/Enemies/bandit leader.png
+7 Pot - Data/Textures/Enemies/pot.png
