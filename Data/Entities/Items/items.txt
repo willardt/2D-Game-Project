@@ -4,3 +4,24 @@
 3 stick - Data/Textures/Items/stick.png
 4 rock - Data/Textures/Items/rock.png
 5 pebbles - Data/Textures/Items/pebbles.png
+6 boots - Data/Textures/Items/boots.png
+7 wizard hat - Data/Textures/Items/wizard hat.png
+8 shard of life - Data/Textures/Items/shard of life.png
+9 gloves - Data/Textures/Items/gloves.png
+10 small health potion - Data/Textures/Items/small health potion.png
+11 medium health potion - Data/Textures/Items/medium health potion.png
+12 large health potion - Data/Textures/Items/large health potion.png
+13 small mana potion - Data/Textures/Items/small mana potion.png
+14 medium mana potion - Data/Textures/Items/medium mana potion.png
+15 large mana potion - Data/Textures/Items/large mana potion.png
+16 small attack potion - Data/Textures/Items/small attack potion.png
+17 medium attack potion - Data/Textures/Items/medium attack potion.png
+18 large attack potion - Data/Textures/Items/large attack potion.png
+19 small defense potion - Data/Textures/Items/small defense potion.png
+20 medium defense potion - Data/Textures/Items/medium defense potion.png
+21 large defense potion - Data/Textures/Items/large defense potion.png
+22 small speed potion - Data/Textures/Items/small speed potion.png
+23 medium speed potion - Data/Textures/Items/medium speed potion.png
+24 large speed potion - Data/Textures/Items/large speed potion.png
+25 chest - Data/Textures/Items/chest.png
+26 pants - Data/Textures/Items/pants.png

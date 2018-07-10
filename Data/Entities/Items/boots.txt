@@ -1,0 +1,20 @@
+id - 6
+type - 6
+name - Boots
+Damage - 0
+Defense - 1
+Health - 10
+Hps - 0
+Mana - 0
+Mps - 0
+Leech - 0
+Drain - 0
+Luck - 0
+Speed - 1
+Drop Chance - 11
+Price - 40
+Duration - 0
+maxHealth - 0
+maxMana - 0
+maxHealth - 0
+maxMana - 0

@@ -1,8 +1,8 @@
-id - 3
-type - 1
-name - Stick
+id - 10
+type - 10
+name - Small Defense Potion
 Damage - 0
-Defense - 2
+Defense - 3
 Health - 0
 Hps - 0
 Mana - 0
@@ -11,8 +11,8 @@ Leech - 0
 Drain - 0
 Luck - 0
 Speed - 0
-Drop Chance - 40
-Price - 3
-Duration - 0
+Drop Chance - 20
+Price - 50
+Duration - 30
 maxHealth - 0
 maxMana - 0

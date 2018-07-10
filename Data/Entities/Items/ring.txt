@@ -3,13 +3,16 @@ type - 4
 name - Ring
 Damage - 0
 Defense - 0
-Health - 20
-Hps - 0
-Mana - 29
-Mps - 0
+Health - 10
+Hps - 1
+Mana - 10
+Mps - 1
 Leech - 0
 Drain - 0
 Luck - 1
-Speed - 2
+Speed - 0
 Drop Chance - 20
-Price - 20
+Price - 15
+Duration - 0
+maxHealth - 0
+maxMana - 0

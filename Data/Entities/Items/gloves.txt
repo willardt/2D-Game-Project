@@ -1,9 +1,9 @@
-id - 0
-type - 0
-name - Dagger
-Damage - 3
-Defense - 0
-Health - 0
+id - 9
+type - 7
+name - Gloves
+Damage - 0
+Defense - 3
+Health - 10
 Hps - 0
 Mana - 0
 Mps - 0
@@ -11,8 +11,8 @@ Leech - 0
 Drain - 0
 Luck - 0
 Speed - 0
-Drop Chance - 30
-Price - 15
+Drop Chance - 15
+Price - 40
 Duration - 0
 maxHealth - 0
 maxMana - 0

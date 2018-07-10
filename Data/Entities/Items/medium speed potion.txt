@@ -1,7 +1,7 @@
-id - 0
-type - 0
-name - Dagger
-Damage - 3
+id - 10
+type - 10
+name - Medium Speed Potion
+Damage - 0
 Defense - 0
 Health - 0
 Hps - 0
@@ -10,9 +10,9 @@ Mps - 0
 Leech - 0
 Drain - 0
 Luck - 0
-Speed - 0
-Drop Chance - 30
-Price - 15
+Speed - 3
+Drop Chance - 0
+Price - 100
 Duration - 0
 maxHealth - 0
 maxMana - 0

@@ -1,9 +1,9 @@
-id - 3
-type - 1
-name - Stick
+id - 26
+type - 2
+name - Pants
 Damage - 0
-Defense - 2
-Health - 0
+Defense - 3
+Health - 25
 Hps - 0
 Mana - 0
 Mps - 0
@@ -11,8 +11,10 @@ Leech - 0
 Drain - 0
 Luck - 0
 Speed - 0
-Drop Chance - 40
-Price - 3
+Drop Chance - 11
+Price - 100
 Duration - 0
+maxHealth - 0
+maxMana - 0
 maxHealth - 0
 maxMana - 0

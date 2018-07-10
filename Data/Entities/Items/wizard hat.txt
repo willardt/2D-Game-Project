@@ -1,18 +1,18 @@
-id - 2
-type - -1
-name - Shards
+id - 7
+type - 9
+name - Wizard Hat
 Damage - 0
 Defense - 0
 Health - 0
-Hps - 0
-Mana - 0
-Mps - 0
+Hps - 2
+Mana - 25
+Mps - 3
 Leech - 0
-Drain - 0
+Drain - 2
 Luck - 0
 Speed - 0
-Drop Chance - 0
-Price - 0
+Drop Chance - 100
+Price - 200
 Duration - 0
 maxHealth - 0
 maxMana - 0

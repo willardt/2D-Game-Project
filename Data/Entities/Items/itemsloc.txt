@@ -4,3 +4,24 @@
 3 - stick.txt
 4 - rock.txt
 5 - pebbles.txt
+6 - boots.txt
+7 - wizard hat.txt
+8 - shard of life.txt
+9 - gloves.txt
+10 - small health potion.txt
+11 - medium health potion.txt
+12 - large health potion.txt
+13 - small mana potion.txt
+14 - medium mana potion.txt
+15 - large mana potion.txt
+16 - small attack potion.txt
+17 - medium attack potion.txt
+18 - large attack potion.txt
+19 - small defense potion.txt
+20 - medium defense potion.txt
+21 - large defense potion.txt
+22 - small speed potion.txt
+23 - medium speed potion.txt
+24 - large speed potion.txt
+25 - chest.txt
+26 - pants.txt
