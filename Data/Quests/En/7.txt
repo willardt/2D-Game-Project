@@ -1,8 +1,8 @@
-Quest ID - 0
+Quest ID - 7
 Quest Type - 0
 Quest Name - 
 Total Kills - 0
 Target id - 0
 Target Name - 
 Reward id - 0
-Lines - 0
+Lines - 1

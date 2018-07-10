@@ -1,0 +1,8 @@
+Quest ID - 4
+Quest Type - 1
+Quest Name - Kill Bandits
+Total Kills - 5
+Target id - 4
+Target Name - Bandit
+Reward id - 2
+Lines - 0

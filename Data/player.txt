@@ -1,24 +1,38 @@
 Name - Will
-Position.x - 794
-Position.y - 1202
+Position.x - 874
+Position.y - 615
 Quest Size - 0
 Quests - 
-Item Size - 1
-Items - 3 
-Level - 6
-Exp - 3
-Max Health - 150
-Health - 133
-Health Regen - 7
-Max Mana - 200
-Mana - 211
-Mana Regen - 12
-Damage - 11
-Defense - 5
+Item Size - 0
+Items - 
+Level - 1
+Exp - 0
+Max Health - 100
+Health - 180
+Health Regen - 1
+Max Mana - 100
+Mana - 100
+Mana Regen - 1
+Damage - 5
+Defense - 0
 Leech - 0
 Drain - 0
-Luck - 1
-Speed - 4
-Shards - 366
-Equipped - 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 
-Map - 21
+Luck - 0
+Speed - 5
+Shards - 0
+Equipped - -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+Map - 1
+Selected Spell - 1
+Selected Secondary - 0
+Spell 0- 0
+Spell 1- -1
+Spell 2- -1
+Spell 3- -1
+Spell 4- -1
+Spell 5- -1
+Spell 6- -1
+Spell 7- -1
+Spell 8- -1
+Spell 9- -1
+Spell 10- -1
+Spell 11- -1
