@@ -1,0 +1,16 @@
+Stackable - 0
+Duration - 50
+Dot Damage - 0
+Dot Tick - 0
+Slow - 1
+Armor Reduction - 0
+Health Reduction - 0
+Mana Reduction - 0
+Width - 10
+Height - 10
+Sprite Delay - 5
+End Sprite - 4
+Color r - 102
+Color g - 199
+Color b - 223
+Element - 21
