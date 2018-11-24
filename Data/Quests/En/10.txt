@@ -1,0 +1,8 @@
+Quest ID - 10
+Quest Type - 1
+Quest Name - Kill Scrawler Mother
+Total Kills - 1
+Target id - 9
+Target Name - Scrawler Mother
+Reward id - 28
+Lines - 0

@@ -1,0 +1,8 @@
+Quest ID - 9
+Quest Type - 1
+Quest Name - Kill Scrawlers
+Total Kills - 5
+Target id - 8
+Target Name - Scrawler
+Reward id - 2
+Lines - 0

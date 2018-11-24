@@ -1,6 +1,6 @@
 Cam Lock Enabled - 1
 Cam.x - 0
-Cam.y - 197
+Cam.y - 164
 Cam Speed - 10
 FPS Limit - 60
 Window Width - 1600
