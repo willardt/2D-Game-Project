@@ -53,21 +53,6 @@ private:
 	int _selectedEquip;
 public:
 
-	const static SDL_Color LEVEL;
-	const static SDL_Color EXP;
-	const static SDL_Color HEALTH;
-	const static SDL_Color HEALTH_REGEN;
-	const static SDL_Color MANA;
-	const static SDL_Color MANA_REGEN;
-	const static SDL_Color DAMAGE;
-	const static SDL_Color DEFENSE;
-	const static SDL_Color LEECH;
-	const static SDL_Color DRAIN;
-	const static SDL_Color LUCK;
-	const static SDL_Color SPEED;
-	const static SDL_Color SHARDS;
-	const static SDL_Color DURATION;
-
 	void Init(Player* nplayer, std::vector<Item>* nmapItems, std::vector<Texture>& itemsMem, Window* window);
 	void begin(std::vector<Texture>& itemsMem);
 	void input();

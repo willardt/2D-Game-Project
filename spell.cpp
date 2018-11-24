@@ -70,6 +70,13 @@ void Spell::Init(int nid) {
 	endSpriteFrame = file.getInt(15);
 	spriteTime = file.getInt(16);
 	spriteTimer.tock(0);
+
+	if (file.getInt(17) != 0) {
+		hasDebuff = true;
+	}
+	debuff.Init(file.getInt(17));
+
+	element = file.getInt(18);
 }
 
 void Spell::update() {	

@@ -564,6 +564,10 @@ int Editor::setCurrentTile() {
 	selectedRect.h = 64;
 	selectedName = Text::printT(TEXT_NORMAL, "Tile", { 50, 50, NULL, 35 }, Text::WHITE);
 
+	if (n > tileMap.size() - 1) {
+		n = 0;
+	}
+
 	return n;
 }
 

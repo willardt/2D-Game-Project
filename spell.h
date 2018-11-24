@@ -4,6 +4,7 @@
 #include "file.h"
 #include "time.h"
 #include "ui.h"
+#include "debuff.h"
 
 #ifndef SPELL_H
 #define SPELL_H
@@ -22,6 +23,13 @@
 #define DOWNRIGHT 7
 #define DOWNLEFT 8
 
+#define TYPE_FIRE 20
+#define TYPE_WATER 21
+#define TYPE_EARTH 22
+#define TYPE_LIFE 23
+#define TYPE_AIR 24
+#define TYPE_NORMAL 25
+
 class Spell {
 private:
 public:
@@ -35,10 +43,13 @@ public:
 	Time endTime;
 	Time spriteTimer;
 
+	Debuff debuff;
+
 	bool isActive;
 	bool isEnd;
 	bool isHalf;
 	bool isSplit;
+	bool hasDebuff;
 
 	std::string name;
 	u16string uname;
@@ -65,6 +76,7 @@ public:
 	int cost;
 	int endFrame;
 	int dir;
+	int element;
 
 	int spaceXUI;
 	int spaceYUI;

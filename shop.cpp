@@ -18,6 +18,7 @@ void Shop::shop(Window* window, Player* player, Npc* npc, std::vector<Texture>& 
 	_player = player;
 	_npc = npc;
 	_marker = { -100, 0, 8, 8 };
+	_selectedID = 0;
 	fps.Init();
 	File file;
 	if (options.lang == ENGLISH) {
@@ -189,79 +190,79 @@ void Shop::createItemTextPlayer() {
 
 	if (_player->items[_selectedID].damage != 0) {
 		modifer = setModifer(_player->items[_selectedID].damage);
-		Text::printT(NULL, file.getU16(10), { 1025, height, 100, 25 }, _texts, Bag::DAMAGE, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].damage), { 1150, height, NULL, 25 }, _texts, Bag::DAMAGE);
+		Text::printT(NULL, file.getU16(10), { 1025, height, 100, 25 }, _texts, Text::DAMAGE, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].damage), { 1150, height, NULL, 25 }, _texts, Text::DAMAGE);
 		height += 25;
 	}
 
 	if (_player->items[_selectedID].defense != 0) {
 		modifer = setModifer(_player->items[_selectedID].defense);
-		Text::printT(NULL, file.getU16(11), { 1025, height, 100, 25 }, _texts, Bag::DEFENSE, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].defense), { 1150, height, NULL, 25 }, _texts, Bag::DEFENSE);
+		Text::printT(NULL, file.getU16(11), { 1025, height, 100, 25 }, _texts, Text::DEFENSE, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].defense), { 1150, height, NULL, 25 }, _texts, Text::DEFENSE);
 		height += 25;
 	}
 
 	if (_player->items[_selectedID].health != 0) {
 		modifer = setModifer(_player->items[_selectedID].health);
-		Text::printT(NULL, file.getU16(6), { 1025, height, 100, 25 }, _texts, Bag::HEALTH, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].health), { 1150, height, NULL, 25 }, _texts, Bag::HEALTH);
+		Text::printT(NULL, file.getU16(6), { 1025, height, 100, 25 }, _texts, Text::HEALTH, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].health), { 1150, height, NULL, 25 }, _texts, Text::HEALTH);
 		height += 25;
 	}
 
 	if (_player->items[_selectedID].hps != 0) {
 		modifer = setModifer(_player->items[_selectedID].hps);
-		Text::printT(NULL, file.getU16(7), { 1025, height, 100, 25 }, _texts, Bag::HEALTH_REGEN, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].hps), { 1150, height, NULL, 25 }, _texts, Bag::HEALTH_REGEN);
+		Text::printT(NULL, file.getU16(7), { 1025, height, 100, 25 }, _texts, Text::HEALTH_REGEN, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].hps), { 1150, height, NULL, 25 }, _texts, Text::HEALTH_REGEN);
 		height += 25;
 	}
 
 	if (_player->items[_selectedID].mana != 0) {
 		modifer = setModifer(_player->items[_selectedID].mana);
-		Text::printT(NULL, file.getU16(8), { 1025, height, 100, 25 }, _texts, Bag::MANA, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].mana), { 1150, height, NULL, 25 }, _texts, Bag::MANA);
+		Text::printT(NULL, file.getU16(8), { 1025, height, 100, 25 }, _texts, Text::MANA, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].mana), { 1150, height, NULL, 25 }, _texts, Text::MANA);
 		height += 25;
 	}
 
 	if (_player->items[_selectedID].mps != 0) {
 		modifer = setModifer(_player->items[_selectedID].mps);
-		Text::printT(NULL, file.getU16(9), { 1025, height, 100, 25 }, _texts, Bag::MANA_REGEN, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].mps), { 1150, height, NULL, 25 }, _texts, Bag::MANA_REGEN);
+		Text::printT(NULL, file.getU16(9), { 1025, height, 100, 25 }, _texts, Text::MANA_REGEN, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].mps), { 1150, height, NULL, 25 }, _texts, Text::MANA_REGEN);
 		height += 25;
 	}
 
 	if (_player->items[_selectedID].leech != 0) {
 		modifer = setModifer(_player->items[_selectedID].leech);
-		Text::printT(NULL, file.getU16(12), { 1025, height, 100, 25 }, _texts, Bag::LEECH, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].leech), { 1150, height, NULL, 25 }, _texts, Bag::LEECH);
+		Text::printT(NULL, file.getU16(12), { 1025, height, 100, 25 }, _texts, Text::LEECH, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].leech), { 1150, height, NULL, 25 }, _texts, Text::LEECH);
 		height += 25;
 	}
 
 	if (_player->items[_selectedID].drain != 0) {
 		modifer = setModifer(_player->items[_selectedID].drain);
-		Text::printT(NULL, file.getU16(13), { 1025, height, 100, 25 }, _texts, Bag::DRAIN, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].drain), { 1150, height, NULL, 25 }, _texts, Bag::DRAIN);
+		Text::printT(NULL, file.getU16(13), { 1025, height, 100, 25 }, _texts, Text::DRAIN, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].drain), { 1150, height, NULL, 25 }, _texts, Text::DRAIN);
 		height += 25;
 	}
 
 	if (_player->items[_selectedID].luck != 0) {
 		modifer = setModifer(_player->items[_selectedID].luck);
-		Text::printT(NULL, file.getU16(14), { 1025, height, 100, 25 }, _texts, Bag::LUCK, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].luck), { 1150, height, NULL, 25 }, _texts, Bag::LUCK);
+		Text::printT(NULL, file.getU16(14), { 1025, height, 100, 25 }, _texts, Text::LUCK, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].luck), { 1150, height, NULL, 25 }, _texts, Text::LUCK);
 		height += 25;
 	}
 
 	if (_player->items[_selectedID].speed != 0) {
 		modifer = setModifer(_player->items[_selectedID].speed);
-		Text::printT(NULL, file.getU16(15), { 1025, height, 100, 25 }, _texts, Bag::SPEED, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].speed), { 1150, height, NULL, 25 }, _texts, Bag::SPEED);
+		Text::printT(NULL, file.getU16(15), { 1025, height, 100, 25 }, _texts, Text::SPEED, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_player->items[_selectedID].speed), { 1150, height, NULL, 25 }, _texts, Text::SPEED);
 		height += 25;
 	}
 
 	if (_player->items[_selectedID].duration != 0) {
 		modifer = setModifer(_player->items[_selectedID].duration);
-		Text::printT(NULL, file.getU16(17), { 1025, height, 100, 25 }, _texts, Bag::DURATION, false);
+		Text::printT(NULL, file.getU16(17), { 1025, height, 100, 25 }, _texts, Text::DURATION, false);
 		int duration = _player->items[_selectedID].duration / 60;
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(duration), { 1150, height, NULL, 25 }, _texts, Bag::DURATION);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(duration), { 1150, height, NULL, 25 }, _texts, Text::DURATION);
 		height += 25;
 	}
 }
@@ -285,79 +286,79 @@ void Shop::createItemTextNpc() {
 
 	if (_npc->lootTable[_selectedID].damage != 0) {
 		modifer = setModifer(_npc->lootTable[_selectedID].damage);
-		Text::printT(NULL, file.getU16(10), { 1025, height, 100, 25 }, _texts, Bag::DAMAGE, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].damage), { 1150, height, NULL, 25 }, _texts, Bag::DAMAGE);
+		Text::printT(NULL, file.getU16(10), { 1025, height, 100, 25 }, _texts, Text::DAMAGE, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].damage), { 1150, height, NULL, 25 }, _texts, Text::DAMAGE);
 		height += 25;
 	}
 
 	if (_npc->lootTable[_selectedID].defense != 0) {
 		modifer = setModifer(_npc->lootTable[_selectedID].defense);
-		Text::printT(NULL, file.getU16(11), { 1025, height, 100, 25 }, _texts, Bag::DEFENSE, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].defense), { 1150, height, NULL, 25 }, _texts, Bag::DEFENSE);
+		Text::printT(NULL, file.getU16(11), { 1025, height, 100, 25 }, _texts, Text::DEFENSE, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].defense), { 1150, height, NULL, 25 }, _texts, Text::DEFENSE);
 		height += 25;
 	}
 
 	if (_npc->lootTable[_selectedID].health != 0) {
 		modifer = setModifer(_npc->lootTable[_selectedID].health);
-		Text::printT(NULL, file.getU16(6), { 1025, height, 100, 25 }, _texts, Bag::HEALTH, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].health), { 1150, height, NULL, 25 }, _texts, Bag::HEALTH);
+		Text::printT(NULL, file.getU16(6), { 1025, height, 100, 25 }, _texts, Text::HEALTH, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].health), { 1150, height, NULL, 25 }, _texts, Text::HEALTH);
 		height += 25;
 	}
 
 	if (_npc->lootTable[_selectedID].hps != 0) {
 		modifer = setModifer(_npc->lootTable[_selectedID].hps);
-		Text::printT(NULL, file.getU16(7), { 1025, height, 100, 25 }, _texts, Bag::HEALTH_REGEN, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].hps), { 1150, height, NULL, 25 }, _texts, Bag::HEALTH_REGEN);
+		Text::printT(NULL, file.getU16(7), { 1025, height, 100, 25 }, _texts, Text::HEALTH_REGEN, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].hps), { 1150, height, NULL, 25 }, _texts, Text::HEALTH_REGEN);
 		height += 25;
 	}
 
 	if (_npc->lootTable[_selectedID].mana != 0) {
 		modifer = setModifer(_npc->lootTable[_selectedID].mana);
-		Text::printT(NULL, file.getU16(8), { 1025, height, 100, 25 }, _texts, Bag::MANA, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].mana), { 1150, height, NULL, 25 }, _texts, Bag::MANA);
+		Text::printT(NULL, file.getU16(8), { 1025, height, 100, 25 }, _texts, Text::MANA, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].mana), { 1150, height, NULL, 25 }, _texts, Text::MANA);
 		height += 25;
 	}
 
 	if (_npc->lootTable[_selectedID].mps != 0) {
 		modifer = setModifer(_npc->lootTable[_selectedID].mps);
-		Text::printT(NULL, file.getU16(9), { 1025, height, 100, 25 }, _texts, Bag::MANA_REGEN, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].mps), { 1150, height, NULL, 25 }, _texts, Bag::MANA_REGEN);
+		Text::printT(NULL, file.getU16(9), { 1025, height, 100, 25 }, _texts, Text::MANA_REGEN, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].mps), { 1150, height, NULL, 25 }, _texts, Text::MANA_REGEN);
 		height += 25;
 	}
 
 	if (_npc->lootTable[_selectedID].leech != 0) {
 		modifer = setModifer(_npc->lootTable[_selectedID].leech);
-		Text::printT(NULL, file.getU16(12), { 1025, height, 100, 25 }, _texts, Bag::LEECH, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].leech), { 1150, height, NULL, 25 }, _texts, Bag::LEECH);
+		Text::printT(NULL, file.getU16(12), { 1025, height, 100, 25 }, _texts, Text::LEECH, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].leech), { 1150, height, NULL, 25 }, _texts, Text::LEECH);
 		height += 25;
 	}
 
 	if (_npc->lootTable[_selectedID].drain != 0) {
 		modifer = setModifer(_npc->lootTable[_selectedID].drain);
-		Text::printT(NULL, file.getU16(13), { 1025, height, 100, 25 }, _texts, Bag::DRAIN, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].drain), { 1150, height, NULL, 25 }, _texts, Bag::DRAIN);
+		Text::printT(NULL, file.getU16(13), { 1025, height, 100, 25 }, _texts, Text::DRAIN, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].drain), { 1150, height, NULL, 25 }, _texts, Text::DRAIN);
 		height += 25;
 	}
 
 	if (_npc->lootTable[_selectedID].luck != 0) {
 		modifer = setModifer(_npc->lootTable[_selectedID].luck);
-		Text::printT(NULL, file.getU16(14), { 1025, height, 100, 25 }, _texts, Bag::LUCK, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].luck), { 1150, height, NULL, 25 }, _texts, Bag::LUCK);
+		Text::printT(NULL, file.getU16(14), { 1025, height, 100, 25 }, _texts, Text::LUCK, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].luck), { 1150, height, NULL, 25 }, _texts, Text::LUCK);
 		height += 25;
 	}
 
 	if (_npc->lootTable[_selectedID].speed != 0) {
 		modifer = setModifer(_npc->lootTable[_selectedID].speed);
-		Text::printT(NULL, file.getU16(15), { 1025, height, 100, 25 }, _texts, Bag::SPEED, false);
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].speed), { 1150, height, NULL, 25 }, _texts, Bag::SPEED);
+		Text::printT(NULL, file.getU16(15), { 1025, height, 100, 25 }, _texts, Text::SPEED, false);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(_npc->lootTable[_selectedID].speed), { 1150, height, NULL, 25 }, _texts, Text::SPEED);
 		height += 25;
 	}
 
 	if (_npc->lootTable[_selectedID].duration != 0) {
 		modifer = setModifer(_npc->lootTable[_selectedID].duration);
-		Text::printT(NULL, file.getU16(17), { 1025, height, 100, 25 }, _texts, Bag::DURATION, false);
+		Text::printT(NULL, file.getU16(17), { 1025, height, 100, 25 }, _texts, Text::DURATION, false);
 		int duration = _npc->lootTable[_selectedID].duration / 60;
-		Text::printT(TEXT_DAMAGE, modifer + std::to_string(duration), { 1150, height, NULL, 25 }, _texts, Bag::DURATION);
+		Text::printT(TEXT_DAMAGE, modifer + std::to_string(duration), { 1150, height, NULL, 25 }, _texts, Text::DURATION);
 		height += 25;
 	}
 }

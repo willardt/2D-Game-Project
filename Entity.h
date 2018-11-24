@@ -74,6 +74,7 @@ public:
 	SpellAni spellAni;
 
 	std::vector<Spell> spells;
+	std::vector<Debuff> debuffs;
 
 	Spell spell;
 	Spell secondary;
@@ -107,6 +108,8 @@ public:
 	int activePath;
 	int spriteTime;
 
+	int element;
+
 	std::vector<Item> lootTable;
 
 	void Init(const int& ntype, const int& nid, const int& x, const int& y);
@@ -117,6 +120,7 @@ public:
 	void updateCasting();
 	void updateCastingAni();
 	void updateSpells();
+	void updateDebuffs(std::vector<Text>& t);
 	void updatePath();
 	void updateCombat(SDL_Rect& player);
 
@@ -136,7 +140,11 @@ public:
 
 	void applyDamage(const int& damage);
 	void applyDamage(const int& damage, std::vector<Text>& t, SDL_Color& color);
-	int calcDamage(int d, int def, int lvl);
+	static int calcElementMult(const int& damage, const int& selement, const int& eelement);
+	int calcDamage(int d, int def, int lvl, int nelement, int eelement);
+	void applyDebuff(Debuff& debuff);
+	void removeDebuff(int index);
+	void moveDebuffs(const int& dir, const int& dis);
 
 	void castSpellMouse(int mX, int mY, Spell& nspell, bool isSecondary);
 	void castSpell(int nX, int nY, Spell& nspell, bool isSecondary);

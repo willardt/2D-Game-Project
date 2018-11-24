@@ -5,6 +5,7 @@ void Game::Init() {
 	_mainWindow.update = true;
 
 	isRunning = false;
+	showEnemyInfo = false;
 
 	map.Init(0);
 
@@ -16,6 +17,7 @@ void Game::Init() {
 	enemiesMem = Entity::memInit(ENEMY);
 	npcsMem = Entity::memInit(NPC);
 	spellsMem = Spell::memInit();
+	debuffsMem = Debuff::memInit();
 	itemsMem = Item::memInit();
 	objectsMem = Object::memInit();
 	effectsMem = Effect::memInit();
@@ -164,6 +166,13 @@ void Game::input() {
 		}
 	}
 
+	if (in.isHeld(SDL_SCANCODE_F)) {
+		showEnemyInfo = true;
+	}
+	else {
+		showEnemyInfo = false;
+	}
+
 	if (in.isKey(SDL_SCANCODE_V)) {
 		if (options.showPaths == true) {
 			options.showPaths = false;
@@ -224,12 +233,14 @@ void Game::update() {
 	player.playerUpdate();
 	player.pickupShards(items, texts);
 	playerSpellCollisions(player.spells);
+	player.updateDebuffs(texts);
 
 	// ----------ENTITIES----------
 	for (size_t i = 0; i < enemies.size(); i++) {
 		move(enemies[i], int(i), enemies[i].getPathDir(), NULL, true);
 		enemies[i].update();
 		enemies[i].updateCombat(player.pos);
+		enemies[i].updateDebuffs(texts);
 		enemySpellCollisions(enemies[i].spells, enemies[i]);
 
 		if (enemies[i].isDead == true) {
@@ -321,7 +332,6 @@ void Game::display() {
 	}
 
 	// ----------ENTITIES----------
-	enemiesMem[0].renderSprite(player.pos, player.sprite, _mainWindow.getRenderer());
 
 	// ----------ENEMIES----------
 	for (size_t i = 0; i < enemies.size(); i++) {
@@ -342,6 +352,10 @@ void Game::display() {
 			spellsMem[enemies[i].spells[j].id].renderSprite(enemies[i].spells[j].pos, enemies[i].spells[j].sprite, _mainWindow.getRenderer());
 		}
 
+		for (size_t j = 0; j < enemies[i].debuffs.size(); j++) {
+			debuffsMem[enemies[i].debuffs[j].id].renderSprite(enemies[i].debuffs[j].pos, enemies[i].debuffs[j].sprite, _mainWindow.getRenderer());
+		}
+
 		if (enemies[i].isCombat == true) {
 			UI::drawBar(enemies[i].pos, 8, enemies[i].maxHealth, enemies[i].health, Texture::healthBarFull, Texture::healthBarEmpty, _mainWindow.getRenderer());
 			UI::drawBar(enemies[i].pos, 0, enemies[i].maxMana, enemies[i].mana, Texture::manaBarFull, Texture::manaBarEmpty, _mainWindow.getRenderer());
@@ -357,6 +371,13 @@ void Game::display() {
 				Texture::drawRectTrans({ npcs[i].paths[k].x, npcs[i].paths[k].y, 20, 20 }, Text::BLUE, _mainWindow.getRenderer());
 			}
 		}
+	}
+
+	// ----------Player----------
+	enemiesMem[0].renderSprite(player.pos, player.sprite, _mainWindow.getRenderer());
+	
+	for (size_t i = 0; i < player.debuffs.size(); i++) {
+		debuffsMem[player.debuffs[i].id].renderSprite(player.debuffs[i].pos, player.debuffs[i].sprite, _mainWindow.getRenderer());
 	}
 
 	itemMouseOver();
@@ -380,8 +401,15 @@ void Game::display() {
 		itemsMem[player.buffs[i].id].renderNoCam({ player.buffs[i].pos.x, player.buffs[i].pos.y + height - 40, player.buffs[i].pos.w, player.buffs[i].pos.h }, _mainWindow.getRenderer());
 	}
 
-
-
+	if (showEnemyInfo) {
+		SDL_Rect mouse = { mouseX + options.camX, mouseY + options.camY, 10, 10 };
+		for (size_t i = 0; i < enemies.size(); i++) {
+			if (Collision::seperateAxis(mouse, enemies[i].pos)) {
+				UI::drawEnemyInfo(mouse, enemies[i].uName, enemies[i].level, enemies[i].health, enemies[i].maxHealth, enemies[i].mana, enemies[i].maxMana, enemies[i].damage, enemies[i].defense, texts, _mainWindow.getRenderer());
+				break;
+			}
+		}
+	}
 
 	// ----------TEXT----------
 	for (size_t i = 0; i < texts.size(); i++) {
@@ -435,7 +463,7 @@ void Game::interactNPC() {
 				if (npcs[nIndex].promptQuest(player.quests[qIndex], textBox) == true) {
 					if (player.quests[qIndex].rewardID != 2) {
 						Item reward;
-						reward.Init(player.quests[nIndex].rewardID);
+						reward.Init(player.quests[qIndex].rewardID);
 						player.items.push_back(reward);
 					}
 					else {
@@ -643,7 +671,7 @@ void Game::itemMouseOver() {
 	SDL_Rect mouse = { mouseX + options.camX - (Options::MOUSE_WIDTH / 2), mouseY + options.camY - (Options::MOUSE_HEIGHT / 2) , Options::MOUSE_WIDTH, Options::MOUSE_HEIGHT };
 	for (size_t i = 0; i < items.size(); i++) {
 		if (items[i].id != 2 && Collision::seperateAxis(mouse, items[i].pos)) {
-			UI::drawItemInfo(mouse, { NULL, NULL, NULL, NULL }, items[i].uName, items[i].dropChance, uiInfo, _mainWindow.getRenderer());
+			UI::drawItemInfo(mouse, items[i].uName, items[i].dropChance, uiInfo, _mainWindow.getRenderer());
 			break;
 		}
 	}
@@ -658,7 +686,10 @@ void Game::playerSpellCollisions(std::vector<Spell>& spells) {
 			else {
 				int q = player.collision(spells[i], enemies);
 				if (q != -1) {
-					enemies[q].applyDamage(player.calcDamage(spells[i].damage, enemies[q].defense, enemies[q].level), texts, spells[i].color);
+					enemies[q].applyDamage(player.calcDamage(spells[i].damage, enemies[q].defense, enemies[q].level, spells[i].element, enemies[q].element), texts, spells[i].color);
+					if (player.spells[i].hasDebuff) {
+						enemies[q].applyDebuff(player.spells[i].debuff);
+					}
 					if (enemies[q].isDead == true) {
 						int k = player.findQuestTarget(enemies[q].id);
 						if (k != -1) {
@@ -688,7 +719,10 @@ void Game::enemySpellCollisions(std::vector<Spell>& spells, Entity& enemy) {
 			if (enemy.collision(spells[j], map.solids) == true) {
 			}
 			else if (player.spellCollision(spells[j]) == true) {
-				player.applyDamage(enemy.calcDamage(spells[j].damage, player.defense, player.level), texts, spells[j].color);
+				player.applyDamage(enemy.calcDamage(spells[j].damage, player.defense, player.level, spells[j].element, player.element), texts, spells[j].color);
+				if (spells[j].hasDebuff) {
+					player.applyDebuff(spells[j].debuff);
+				}
 				enemy.isCombat = true;
 			}
 			else {
@@ -709,6 +743,7 @@ void Game::loadMap(const int& id, int type) {
 	for (size_t i = 0; i < enemies.size(); i++) {
 		enemies[i].spells.clear();
 	}
+	player.save(map.id);
 	map.Init(id);
 	Object::loadMapObjects(id, objects);
 	objectSolids.clear();
@@ -831,6 +866,8 @@ void Game::load() {
 	player.spell.setSpaceUI(UI::SPELL_BOX.w, UI::SPELL_BOX.h, UI::SPELL_BOX.x, UI::SPELL_BOX.y);
 	player.selectSecondary(file.getInt(26));
 	player.secondary.setSpaceUI(UI::SECONDARY_BOX.w, UI::SECONDARY_BOX.h, UI::SECONDARY_BOX.x, UI::SECONDARY_BOX.y);
+
+	player.loadBuffs();
 
 	loadMap(mapID, NULL);
 

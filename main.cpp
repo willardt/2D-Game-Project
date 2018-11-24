@@ -16,7 +16,7 @@ int main(int args, char* argc[]) {
 	options.Init();
 
 	HWND console = GetConsoleWindow();
-	MoveWindow(console, -1100, 200, 1100, 600, TRUE);
+	MoveWindow(console, 0, 450, 1100, 600, TRUE);
 
 	srand(time(NULL));
 

@@ -59,6 +59,7 @@ public:
 	std::vector<Texture> enemiesMem;
 	std::vector<Texture> npcsMem;
 	std::vector<Texture> spellsMem;
+	std::vector<Texture> debuffsMem;
 	std::vector<Texture> itemsMem;
 	std::vector<Texture> objectsMem;
 	std::vector<Texture> effectsMem;
@@ -71,6 +72,7 @@ public:
 	FPS fps;
 
 	bool isRunning;
+	bool showEnemyInfo;
 
 	int mouseX;
 	int mouseY;

@@ -10,6 +10,9 @@ void Npc::speech(TextBox& t, u16string s) {
 
 bool Npc::promptQuest(Quest& q, TextBox& t) {
 	t.setSpeaker(q.npcName, Text::WHITE);
+	if (q.count >= q.total) {
+		q.isComplete = true;
+	}
 	if (quest.isEnd != true) {
 		if (q.isActive == false) {
 			q.isActive = true;

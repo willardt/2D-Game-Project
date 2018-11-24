@@ -86,10 +86,10 @@ SDL_Color Item::getRarity(int& dropChance) {
 		return { 150, 250, 150, 255 };
 	}
 	if (dropChance > RARE_PURPLE) {
-		return { 150, 100, 200, 255 };
+		return { 160, 240, 230, 255 };
 	}
 	if (dropChance > RARE_ORANGE) {
-		return { 225, 150, 200, 255 };
+		return { 205, 140, 250, 255 };
 	}
 	if (dropChance >= 0) {
 		return { 250, 200, 175, 255 };

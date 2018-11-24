@@ -329,6 +329,91 @@ void Player::loadQuests() {
 	std::cout << "Quests Loaded" << std::endl;
 }
 
+void Player::loadBuffs() {
+	File file;
+	Item tempBuff;
+	std::string fileData = " ";
+	std::string buffData = " ";
+	int fileDataLength = 0;
+	int buffSize = 0;
+	int data = 0;
+	file.read("Data/player.txt");
+	std::cout << "Loading Buffs" << std::endl;
+	buffs.clear();
+
+	buffSize = file.getInt(39);
+	fileData = file.getStr(40);
+	fileDataLength = int(fileData.length());
+
+	int p = 0;
+	int q = 0;
+	int dataType = 0;
+
+	for (int i = 0; i < buffSize; i++) {
+		dataType = 0;
+		while (dataType <= Player::BUFF_LOAD_DATA_SIZE) {
+			if (dataType < Player::BUFF_LOAD_DATA_SIZE) {
+				while (fileData[p] != '|' && p <= fileDataLength) {
+					p++;
+				}
+
+			}
+			else {
+				while (fileData[p] != ' ' && p <= fileDataLength) {
+					p++;
+				}
+			}
+
+			buffData = fileData.substr(q, p - q);
+			data = std::stoi(buffData);
+
+			q = p + 1;
+			p = q;
+
+			switch (dataType) {
+			case 0:		
+				tempBuff.id = data;
+				tempBuff.Init(tempBuff.id);
+				break;
+			case 1:		
+				tempBuff.cduration = data;
+				break;
+			}
+
+			dataType++;
+		}
+
+		damage += tempBuff.damage;
+		defense += tempBuff.defense;
+		health += tempBuff.health;
+		if (health > maxHealth) {
+			health = maxHealth;
+		}
+		maxHealth += tempBuff.maxHealth;
+		hps += tempBuff.hps;
+		mana += tempBuff.mana;
+		if (mana > maxMana) {
+			mana = maxMana;
+		}
+		maxMana += tempBuff.maxMana;
+		mps += tempBuff.mps;
+		leech += tempBuff.leech;
+		drain += tempBuff.drain;
+		luck += tempBuff.luck;
+		speed += tempBuff.speed;
+
+		tempBuff.pos.x = 50;
+		tempBuff.pos.y = 200;
+		tempBuff.pos.w = 15;
+		tempBuff.pos.h = 15;
+
+		buffs.push_back(tempBuff);
+
+	}
+
+	std::cout << "Buffs Loaded" << std::endl;
+}
+
 void Player::save(const int& mapID) {
 	std::ofstream file;
 	file.open("Data/player.txt");
@@ -366,6 +451,25 @@ void Player::save(const int& mapID) {
 		}
 	}
 
+	for (size_t i = 0; i < buffs.size(); i++) {
+		damage -= buffs[i].damage;
+		defense -= buffs[i].defense;
+		maxHealth -= buffs[i].maxHealth;
+		if (health > maxHealth) {
+			health = maxHealth;
+		}
+		maxMana -= buffs[i].maxMana;
+		if (mana > maxMana) {
+			mana = maxMana;
+		}
+		hps -= buffs[i].hps;
+		mps -= buffs[i].mps;
+		leech -= buffs[i].leech;
+		drain -= buffs[i].drain;
+		luck -= buffs[i].luck;
+		speed -= buffs[i].speed;
+	}
+
 	file << "Level - " << level << std::endl;
 	file << "Exp - " << exp << std::endl;
 	file << "Max Health - " << maxHealth << std::endl;
@@ -397,6 +501,25 @@ void Player::save(const int& mapID) {
 		}
 	}
 
+	for (size_t i = 0; i < buffs.size(); i++) {
+		damage += buffs[i].damage;
+		defense += buffs[i].defense;
+		maxHealth += buffs[i].maxHealth;
+		if (health > maxHealth) {
+			health = maxHealth;
+		}
+		maxMana += buffs[i].maxMana;
+		if (mana > maxMana) {
+			mana = maxMana;
+		}
+		hps += buffs[i].hps;
+		mps += buffs[i].mps;
+		leech += buffs[i].leech;
+		drain += buffs[i].drain;
+		luck += buffs[i].luck;
+		speed += buffs[i].speed;
+	}
+
 	file << "Equipped - ";
 	for (int i = 0; i < Player::EQUIPPED_SIZE; i++) {
 		file << std::to_string(equipped[i].id) + " ";
@@ -410,6 +533,12 @@ void Player::save(const int& mapID) {
 
 	for (int i = 0; i < SPELLBOOK_SIZE; i++) {
 		file << "Spell " + std::to_string(i) + "- " << spellBook[i].id << std::endl;
+	}
+
+	file << "Buffs Size - " << int(buffs.size()) << std::endl;
+	file << "Buffs - ";
+	for (size_t i = 0; i < buffs.size(); i++) {
+		file << std::to_string(buffs[i].id) + "|" + std::to_string(buffs[i].cduration) + " ";
 	}
 
 	file.close();

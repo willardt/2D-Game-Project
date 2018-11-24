@@ -13,6 +13,21 @@ const SDL_Color Text::DAMAGE_COLOR = { 50, 150, 200, 255 };
 const SDL_Color Text::SYSTEM_COLOR = { 250, 50, 100, 255 };
 const SDL_Color Text::BUFF_DURATION = { 100, 165, 180, 255 };
 
+const SDL_Color Text::LEVEL = { 138, 240, 157, 255 };
+const SDL_Color Text::EXP = { 138, 210, 157, 255 };
+const SDL_Color Text::HEALTH = { 240, 80, 80, 255 };
+const SDL_Color Text::HEALTH_REGEN = { 210, 80, 80, 255 };
+const SDL_Color Text::MANA = { 80, 194, 240, 255 };
+const SDL_Color Text::MANA_REGEN = { 80, 194, 210, 255 };
+const SDL_Color Text::DAMAGE = { 225, 168, 130, 255 };
+const SDL_Color Text::DEFENSE = { 190, 135, 220, 255 };
+const SDL_Color Text::LEECH = { 250, 140, 140, 255 };
+const SDL_Color Text::DRAIN = { 170, 210, 240, 255 };
+const SDL_Color Text::LUCK = { 225, 180, 230, 255 };
+const SDL_Color Text::SPEED = { 170, 240, 190, 255 };
+const SDL_Color Text::SHARDS = { 180, 230, 230, 255 };
+const SDL_Color Text::DURATION = { 100, 165, 180, 255 };
+
 // Create a texture from a string, called in .render()
 bool Text::load(std::string text, SDL_Renderer* renderer) {
 	SDL_Surface* surface = nullptr;

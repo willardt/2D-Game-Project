@@ -20,8 +20,10 @@ std::vector<Texture> Entity::memInit(const int& type) {
 }
 
 void Entity::Init(const int& ntype, const int& nid, const int& x, const int& y) {
+	Options& options = options.Instance();
 	File file;
 	File locFile;
+	File nameFile;
 	std::string path = "";
 	pos.x = x;
 	pos.y = y;
@@ -37,6 +39,12 @@ void Entity::Init(const int& ntype, const int& nid, const int& x, const int& y) 
 					break;
 	case ENEMY:		locFile.read("Data/Entities/Enemies/enemiesloc.txt");
 					file.read("Data/Entities/Enemies/" + locFile.getStr(id + 1));
+					if (options.lang == ENGLISH) {
+						nameFile.uread("Data/Entities/Enemies/En/" + locFile.getStr(id + 1));
+					}
+					else if (options.lang == RUSSIAN) {
+						nameFile.uread("Data/Entities/Enemies/Ru/" + locFile.getStr(id + 1));
+					}
 					break;
 	case NPC:		locFile.read("Data/Entities/Npcs/npcsloc.txt");	
 					file.read("Data/Entities/Npcs/" + locFile.getStr(id + 1)); 
@@ -44,6 +52,7 @@ void Entity::Init(const int& ntype, const int& nid, const int& x, const int& y) 
 	}
 
 	name = file.getStr(1);
+	uName = nameFile.getU16(1);
 	//	std::cout << texture.getPath() << std::endl;
 	pos.w = file.getInt(3);
 	pos.h = file.getInt(4);
@@ -110,6 +119,8 @@ void Entity::Init(const int& ntype, const int& nid, const int& x, const int& y) 
 	isCastable = true;
 	isCastableSecondary = true;
 	isBoss = bool(file.getInt(43));
+
+	element = file.getInt(44);
 }
 
 void Entity::update() {
@@ -191,6 +202,21 @@ void Entity::updateSpells() {
 
 		if (spells[i].isEnd == true) {
 			spells.erase(spells.begin() + i);
+		}
+	}
+}
+
+void Entity::updateDebuffs(std::vector<Text>& t) {
+	for (size_t i = 0; i < debuffs.size(); i++) {
+		debuffs[i].update();
+
+		if (debuffs[i].dotd != 0 && debuffs[i].isDotTick) {
+			applyDamage(calcElementMult(debuffs[i].dotd, debuffs[i].element, element), t, debuffs[i].color);
+			debuffs[i].isDotTick = false;
+		}
+
+		if (debuffs[i].isEnd) {
+			removeDebuff(i);
 		}
 	}
 }
@@ -330,6 +356,7 @@ void Entity::move(const int& dir, int dis, const bool& update) {
 		}
 	}
 
+	moveDebuffs(dir, dis);
 }
 
 void Entity::checkCam(const int& type, const int& dis) {
@@ -571,7 +598,7 @@ void Entity::applyDamage(const int& damage, std::vector<Text>& t, SDL_Color& col
 	Text::printT(TEXT_DAMAGE, std::to_string(damage), { (pos.x + randX) - Entity::DAMAGE_TEXT_SPACEING_X, (pos.y - randY) - Entity::DAMAGE_TEXT_SPACEING_Y, NULL, Text::DAMAGE_SIZE_Y }, t, color);
 }
 
-int Entity::calcDamage(int d, int def, int lvl) {
+int Entity::calcDamage(int d, int def, int lvl, int nelement, int eelement) {
 	int ndamage = d + damage;
 	ndamage -= def;
 	if (ndamage < 0) {
@@ -600,7 +627,98 @@ int Entity::calcDamage(int d, int def, int lvl) {
 		ndamage = ndamage * 2;
 	}
 
+	ndamage = calcElementMult(ndamage, nelement, eelement);
+
 	return ndamage;
+}
+
+int Entity::calcElementMult(const int& damage, const int& selement, const int& eelement) {
+	int newDamage = damage;
+	switch (selement) {
+	case TYPE_FIRE:
+		switch (eelement) {
+		case TYPE_WATER:	newDamage = damage / 2;		break;
+		case TYPE_LIFE:		newDamage = damage * 2;		break;
+		case TYPE_AIR:		newDamage = damage / 2;		break;
+		}
+		break;
+	case TYPE_WATER:
+		switch (eelement) {
+		case TYPE_FIRE:		newDamage = damage * 2;		break;
+		case TYPE_EARTH:	newDamage = damage * 2;		break;
+		case TYPE_LIFE:		newDamage = damage / 2;	   	break;
+		}
+		break;
+	case TYPE_EARTH:
+		switch (eelement) {
+		case TYPE_AIR:		newDamage = damage * 2;		break;
+		case TYPE_WATER:	newDamage = damage / 2;		break;
+		}
+		break;
+	case TYPE_AIR:
+		switch (eelement) {
+		case TYPE_FIRE:		newDamage = damage * 2;		break;
+		case TYPE_EARTH:	newDamage = damage / 2;		break;
+		}
+		break;
+	default:		break;
+	}
+	return newDamage;
+}
+
+void Entity::applyDebuff(Debuff& debuff) {
+	if (!debuff.isStackable) {
+		for (size_t i = 0; i < debuffs.size(); i++) {
+			if (debuffs[i].id == debuff.id) {
+				return;
+			}
+		}
+	}
+
+	speed -= debuff.slow;
+	defense -= debuff.armorReduction;
+	maxHealth -= debuff.healthReduction;
+	if (health > maxHealth) {
+		health = maxHealth;
+	}
+	maxMana -= debuff.manaReduction;
+	if (mana > maxMana) {
+		mana = maxMana;
+	}
+
+	debuff.pos.x = pos.x + rand() % pos.w;
+	debuff.pos.y = pos.y + rand() % pos.h;
+
+	debuffs.push_back(debuff);
+}
+
+void Entity::removeDebuff(int index) {
+	speed += debuffs[index].slow;
+	defense += debuffs[index].armorReduction;
+	maxHealth += debuffs[index].healthReduction;
+	maxMana += debuffs[index].manaReduction;
+
+	debuffs.erase(debuffs.begin() + index);
+}
+
+void Entity::moveDebuffs(const int& dir, const int& dis) {
+
+	for (size_t i = 0; i < debuffs.size(); i++) {
+		switch (dir) {
+		case UP:	debuffs[i].pos.y -= dis;	break;
+		case DOWN:	debuffs[i].pos.y += dis;	break;
+		case LEFT:	debuffs[i].pos.x -= dis;	break;
+		case RIGHT:		debuffs[i].pos.x += dis;	break;
+		case UPLEFT:	debuffs[i].pos.y -= dis;
+						debuffs[i].pos.x -= dis;	break;
+		case UPRIGHT:	debuffs[i].pos.y -= dis;	
+						debuffs[i].pos.x += dis;    break;
+		case DOWNLEFT:	debuffs[i].pos.y += dis;
+						debuffs[i].pos.x -= dis;	break;
+		case DOWNRIGHT:	debuffs[i].pos.y += dis;    
+						debuffs[i].pos.x += dis;	break;
+		}
+	}
 }
 
 void Entity::castSpellMouse(int mX, int mY, Spell& nspell, bool isSecondary) {

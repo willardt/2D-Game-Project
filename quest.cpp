@@ -43,9 +43,6 @@ void Quest::addCount(const int& enemyID) {
 	if (type == QUEST_KILL_COUNT && isComplete != true && isActive == true && targetID == enemyID) {
 		count++;
 		activeCount = std::to_string(count) + " / " + std::to_string(total);
-		if (count >= total) {
-			isComplete = true;
-		}
 	}
 }
 

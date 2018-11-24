@@ -5,7 +5,7 @@
 
 class Player : public Entity {
 private:
-	enum { QUEST_LOAD_DATA_SIZE = 1};
+	enum { QUEST_LOAD_DATA_SIZE = 1, BUFF_LOAD_DATA_SIZE = 1};
 public:
 	enum { EQUIPPED_SIZE = 10, MAX_BAG_SIZE = 359, SPELLBOOK_SIZE = 12};
 	std::vector<Quest> quests;
@@ -30,6 +30,7 @@ public:
 
 	void loadItems();
 	void loadQuests();
+	void loadBuffs();
 
 	void equipItem(const int& index);
 	void unequipItem(const int& slot);

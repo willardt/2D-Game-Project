@@ -41,6 +41,21 @@ public:
 	const static SDL_Color SYSTEM_COLOR;
 	const static SDL_Color BUFF_DURATION;
 
+	const static SDL_Color LEVEL;
+	const static SDL_Color EXP;
+	const static SDL_Color HEALTH;
+	const static SDL_Color HEALTH_REGEN;
+	const static SDL_Color MANA;
+	const static SDL_Color MANA_REGEN;
+	const static SDL_Color DAMAGE;
+	const static SDL_Color DEFENSE;
+	const static SDL_Color LEECH;
+	const static SDL_Color DRAIN;
+	const static SDL_Color LUCK;
+	const static SDL_Color SPEED;
+	const static SDL_Color SHARDS;
+	const static SDL_Color DURATION;
+
 	SDL_Texture* texture;  // Texture of the text with basic font
 	SDL_Texture* oTexture;  // Outline texture
 
