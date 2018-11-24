@@ -38,3 +38,5 @@ Toggle Place Solid - z
 Toggle Remove Solid - x
 Toggle Wars - c
 Load / Create map - l
+
+[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/v=g__5xRvBKFk/0.jpg)](http://www.youtube.com/watch?v=v=g__5xRvBKFk)
