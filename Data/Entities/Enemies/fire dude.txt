@@ -1,0 +1,44 @@
+Name - Fire Dude
+Texture - Data/Textures/fire dude.png
+Width - 64
+Height - 64
+Total Frames - 1
+Run Frame - 0
+Min Down - 0
+Max Down - 0
+Min Up - 0
+Max Up - 0
+Min Right - 0
+Max Right - 0
+Min Left - 0
+Max Left - 0
+Level - 8
+Exp - 60
+Health - 400
+Health Regen - 3
+Mana - 200
+Mana Regen - 20
+Damage - 25
+Defense - 4
+Leech - 0
+Drain - 5
+Luck - 0
+Speed - 2
+Shards - 50
+Total Cast Frames - 2
+Up - 1
+Down - 2
+Left - 2
+Right - 2
+Up Right - 1
+Up Left - 1
+Down Right - 2
+Down Left - 2
+Spell ID - 0
+Secondary ID - 0
+Loot Size - 1
+Loot Table - 7
+Combat Range w - 800
+Combat Range h - 800
+Is Boss - 0
+Element - 20

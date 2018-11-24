@@ -6,3 +6,7 @@
 5 Wizard - Data/Textures/Enemies/wizard.png
 6 Bandit Leader - Data/Textures/Enemies/bandit leader.png
 7 Pot - Data/Textures/Enemies/pot.png
+8 Scrawler - Data/Textures/Enemies/scrawler.png
+9 Scrawler Mother - Data/Textures/Enemies/scrawler mother.png
+10 Fire Dude - Data/Textures/Enemies/fire dude.png
+11 No Name - Data/Textures/Enemies/noname.png

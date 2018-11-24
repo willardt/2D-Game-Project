@@ -41,3 +41,4 @@ Loot Table - 0
 Combat Range w - 500
 Combat Range h - 500
 Is Boss - 0
+Element - 25

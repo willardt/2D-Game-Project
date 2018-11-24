@@ -13,6 +13,6 @@ Luck - 0
 Speed - 3
 Drop Chance - 0
 Price - 100
-Duration - 0
+Duration - 45
 maxHealth - 0
 maxMana - 0

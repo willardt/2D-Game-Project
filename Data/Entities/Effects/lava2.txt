@@ -1,0 +1,6 @@
+id - 3
+name - Lava2
+width - 20
+height - 20
+frames - 3
+sprite time - 25

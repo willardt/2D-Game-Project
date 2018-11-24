@@ -25,3 +25,5 @@
 24 large speed potion - Data/Textures/Items/large speed potion.png
 25 chest - Data/Textures/Items/chest.png
 26 pants - Data/Textures/Items/pants.png
+27 scrawler shell - Data/Textures/Items/scrawler shell.png
+28 scrawler necklace - Data/Textures/Items/scrawler necklace.png

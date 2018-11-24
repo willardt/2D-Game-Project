@@ -1,0 +1,44 @@
+Name - Scrawler Mother
+Texture - Data/Textures/scrawler mother.png
+Width - 64
+Height - 64
+Total Frames - 4
+Run Frame - 4
+Min Down - 0
+Max Down - 3
+Min Up - 0
+Max Up - 3
+Min Right - 0
+Max Right - 3
+Min Left - 0
+Max Left - 3
+Level - 7
+Exp - 27
+Health - 500
+Health Regen - 2
+Mana - 250
+Mana Regen - 10
+Damage - 30
+Defense - 10
+Leech - 0
+Drain - 0
+Luck - 0
+Speed - 4
+Shards - 25
+Total Cast Frames - 1
+Up - 4
+Down - 4
+Left - 4
+Right - 4
+Up Right - 4
+Up Left - 4
+Down Right - 4
+Down Left - 4
+Spell ID - 6
+Secondary ID - 0
+Loot Size - 1
+Loot Table - 27
+Combat Range w - 1200
+Combat Range h - 1200
+Is Boss - 0
+Element - 20

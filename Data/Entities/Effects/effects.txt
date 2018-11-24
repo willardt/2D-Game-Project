@@ -1,3 +1,5 @@
 0 Fire - Data/Textures/Effects/fire.png
 1 Leaves - Data/Textures/Effects/leaves.png
 2 Ripple - Data/Textures/Effects/ripple.png
+3 Lava - Data/Textures/Effects/lava.png
+4 Lava2 - Data/Textures/Effects/lava2.png

@@ -11,7 +11,7 @@ Leech - 0
 Drain - 0
 Luck - 0
 Speed - 0
-Drop Chance - 30
+Drop Chance - 35
 Price - 15
 Duration - 0
 maxHealth - 0

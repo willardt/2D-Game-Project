@@ -1,0 +1,44 @@
+Name - Bandit
+Texture - Data/Textures/noname.png
+Width - 26
+Height - 52
+Total Frames - 1
+Run Frame - 8
+Min Down - 5
+Max Down - 8
+Min Up - 1
+Max Up - 4
+Min Right - 5
+Max Right - 8
+Min Left - 1
+Max Left - 4
+Level - 2
+Exp - 8
+Health - 70
+Health Regen - 1
+Mana - 50
+Mana Regen - 5
+Damage - 4
+Defense - 2
+Leech - 0
+Drain - 0
+Luck - 0
+Speed - 1
+Shards - 5
+Total Cast Frames - 1
+Up - 12
+Down - 9
+Left - 11
+Right - 10
+Up Right - 13
+Up Left - 16
+Down Right - 14
+Down Left - 15
+Spell ID - 2
+Secondary ID - 0
+Loot Size - 3
+Loot Table - 6 9 0
+Combat Range w - 350
+Combat Range h - 350
+Is Boss - 0
+Element - 25

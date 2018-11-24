@@ -25,3 +25,5 @@
 24 - large speed potion.txt
 25 - chest.txt
 26 - pants.txt
+27 - scrawler shell.txt
+28 - scrawler necklace.txt

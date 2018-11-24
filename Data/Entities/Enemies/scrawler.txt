@@ -1,0 +1,44 @@
+Name - Scrawler
+Texture - Data/Textures/scrawler.png
+Width - 48
+Height - 48
+Total Frames - 4
+Run Frame - 4
+Min Down - 0
+Max Down - 3
+Min Up - 0
+Max Up - 3
+Min Right - 0
+Max Right - 3
+Min Left - 0
+Max Left - 3
+Level - 7
+Exp - 27
+Health - 200
+Health Regen - 1
+Mana - 100
+Mana Regen - 10
+Damage - 20
+Defense - 5
+Leech - 0
+Drain - 0
+Luck - 0
+Speed - 3
+Shards - 10
+Total Cast Frames - 1
+Up - 4
+Down - 4
+Left - 4
+Right - 4
+Up Right - 4
+Up Left - 4
+Down Right - 4
+Down Left - 4
+Spell ID - 6
+Secondary ID - 0
+Loot Size - 1
+Loot Table - 27
+Combat Range w - 1000
+Combat Range h - 1000
+Is Boss - 0
+Element - 20
