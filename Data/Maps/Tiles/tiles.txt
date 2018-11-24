@@ -1,48 +1,72 @@
-Empty - Data/Maps/Tiles/empty.png
-Grass - Data/Maps/Tiles/grass.png
-Grass2 - Data/Maps/Tiles/grass2.png
-Gradd3 - Data/Maps/Tiles/grass3.png
-Water - Data/Maps/Tiles/water.png
-Water2 - Data/Maps/Tiles/water2.png
-Water3 - Data/Maps/Tiles/water3.png
-Water4 - Data/Maps/Tiles/water4.png
-Water5 - Data/Maps/Tiles/water5.png
-Water6 - Data/Maps/Tiles/water6.png
-Water7 - Data/Maps/Tiles/water7.png
-Water8 - Data/Maps/Tiles/water8.png
-Water9 - Data/Maps/Tiles/water9.png
-Water10 - Data/Maps/Tiles/water10.png
-Water11 - Data/Maps/Tiles/water11.png
-Water12 - Data/Maps/Tiles/water12.png
-Water13 - Data/Maps/Tiles/water13.png
-Pebbles - Data/Maps/Tiles/pebbles.png
-Pebbles2 - Data/Maps/Tiles/pebbles2.png
-Pebbles3 - Data/Maps/Tiles/pebbles3.png
-path - Data/Maps/Tiles/path.png
-path2 - Data/Maps/Tiles/path2.png
-path3 - Data/Maps/Tiles/path3.png
-path4 - Data/Maps/Tiles/path4.png
-path5 - Data/Maps/Tiles/path5.png
-path6 - Data/Maps/Tiles/path6.png
-path7 - Data/Maps/Tiles/path7.png
-path8 - Data/Maps/Tiles/path8.png
-path9 - Data/Maps/Tiles/path9.png
-path10 - Data/Maps/Tiles/path10.png
-path11 - Data/Maps/Tiles/path11.png
-path12 - Data/Maps/Tiles/path12.png
-path13 - Data/Maps/Tiles/path13.png
-Red Flowers - Data/Maps/Tiles/red flowers.png
-Red Flowers2 - Data/Maps/Tiles/red flowers2.png
-Red Flowers3 - Data/Maps/Tiles/red flowers3.png
-House Tile - Data/Maps/Tiles/house tile.png
-Tent Tile - Data/Maps/Tiles/tent tile.png
-Tent Tile2 - Data/Maps/Tiles/tent tile2.png
-Tent Tile3 - Data/Maps/Tiles/tent tile3.png
-None - Data/Maps/Tiles/none.png
-Bridge - Data/Maps/Tiles/bridge.png
-Bridge2 - Data/Maps/Tiles/bridge2.png
-Bridge3 - Data/Maps/Tiles/bridge3.png
-Bridge4 - Data/Maps/Tiles/bridge4.png
-Bridge5 - Data/Maps/Tiles/bridge5.png
-Bridge6 - Data/Maps/Tiles/bridge6.png
-Hole - Data/Maps/Tiles/hole.png
+0 Empty - Data/Maps/Tiles/empty.png
+1 Grass - Data/Maps/Tiles/grass.png
+2 Grass2 - Data/Maps/Tiles/grass2.png
+3 Gradd3 - Data/Maps/Tiles/grass3.png
+4 Water - Data/Maps/Tiles/water.png
+5 Water2 - Data/Maps/Tiles/water2.png
+6 Water3 - Data/Maps/Tiles/water3.png
+7 Water4 - Data/Maps/Tiles/water4.png
+8 Water5 - Data/Maps/Tiles/water5.png
+9 Water6 - Data/Maps/Tiles/water6.png
+10 Water7 - Data/Maps/Tiles/water7.png
+11 Water8 - Data/Maps/Tiles/water8.png
+12 Water9 - Data/Maps/Tiles/water9.png
+13 Water10 - Data/Maps/Tiles/water10.png
+14 Water11 - Data/Maps/Tiles/water11.png
+15 Water12 - Data/Maps/Tiles/water12.png
+16 Water13 - Data/Maps/Tiles/water13.png
+17 Pebbles - Data/Maps/Tiles/pebbles.png
+18 Pebbles2 - Data/Maps/Tiles/pebbles2.png
+19 Pebbles3 - Data/Maps/Tiles/pebbles3.png
+20 path - Data/Maps/Tiles/path.png
+21 path2 - Data/Maps/Tiles/path2.png
+22 path3 - Data/Maps/Tiles/path3.png
+23 path4 - Data/Maps/Tiles/path4.png
+24 path5 - Data/Maps/Tiles/path5.png
+25 path6 - Data/Maps/Tiles/path6.png
+26 path7 - Data/Maps/Tiles/path7.png
+27 path8 - Data/Maps/Tiles/path8.png
+28 path9 - Data/Maps/Tiles/path9.png
+29 path10 - Data/Maps/Tiles/path10.png
+30 path11 - Data/Maps/Tiles/path11.png
+31 path12 - Data/Maps/Tiles/path12.png
+32 path13 - Data/Maps/Tiles/path13.png
+33 Red Flowers - Data/Maps/Tiles/red flowers.png
+34 Red Flowers2 - Data/Maps/Tiles/red flowers2.png
+35 Red Flowers3 - Data/Maps/Tiles/red flowers3.png
+36 House Tile - Data/Maps/Tiles/house tile.png
+37 Tent Tile - Data/Maps/Tiles/tent tile.png
+38 Tent Tile2 - Data/Maps/Tiles/tent tile2.png
+39 Tent Tile3 - Data/Maps/Tiles/tent tile3.png
+40 None - Data/Maps/Tiles/none.png
+41 Bridge - Data/Maps/Tiles/bridge.png
+42 Bridge2 - Data/Maps/Tiles/bridge2.png
+43 Bridge3 - Data/Maps/Tiles/bridge3.png
+44 Bridge4 - Data/Maps/Tiles/bridge4.png
+45 Bridge5 - Data/Maps/Tiles/bridge5.png
+46 Bridge6 - Data/Maps/Tiles/bridge6.png
+47 Hole - Data/Maps/Tiles/hole.png
+48 Cave - Data/Maps/Tiles/cave.png
+49 Cave2 - Data/Maps/Tiles/cave2.png
+50 Cave3 - Data/Maps/Tiles/cave3.png
+51 Cave Wall - Data/Maps/Tiles/cave wall.png
+52 Cave Wall2 - Data/Maps/Tiles/cave wall2.png
+53 Cave Wall3 - Data/Maps/Tiles/cave wall3.png
+54 Cave Wall4 - Data/Maps/Tiles/cave wall4.png
+55 Cave Wall5 - Data/Maps/Tiles/cave wall5.png
+56 Cave Wall6 - Data/Maps/Tiles/cave wall6.png
+57 Cave Wall7 - Data/Maps/Tiles/cave wall7.png
+58 Cave Wall8 - Data/Maps/Tiles/cave wall8.png
+59 Lava - Data/Maps/Tiles/lava.png
+60 Lava - Data/Maps/Tiles/lava2.png
+61 Lava - Data/Maps/Tiles/lava3.png
+62 Lava - Data/Maps/Tiles/lava4.png
+63 Lava - Data/Maps/Tiles/lava5.png
+64 Lava - Data/Maps/Tiles/lava6.png
+65 Lava - Data/Maps/Tiles/lava7.png
+66 Lava - Data/Maps/Tiles/lava8.png
+67 Lava - Data/Maps/Tiles/lava9.png
+68 Lava - Data/Maps/Tiles/lava10.png
+69 Lava - Data/Maps/Tiles/lava11.png
+70 Lava - Data/Maps/Tiles/lava12.png
+71 Lava - Data/Maps/Tiles/lava13.png
