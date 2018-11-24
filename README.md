@@ -1,5 +1,10 @@
-![Alt text](relative/A/Screenshots/ss1.png?raw=true "ss1")
+![Level 1](https://github.com/willardt/A/blob/master/Screenshots/ss1.png?raw=true "Level 1")
 
+![Level 2](https://github.com/willardt/A/blob/master/Screenshots/ss2.png?raw=true "Level 2")
+
+![Level 15](https://github.com/willardt/A/blob/master/Screenshots/ss3.png?raw=true "Level 15")
+
+![Level 33](https://github.com/willardt/A/blob/master/Screenshots/ss4.png?raw=true "Level 33")
 
 Instructions
 Put Data folder inside Game folder and run FEB SDL.exe
