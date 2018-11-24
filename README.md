@@ -1,3 +1,6 @@
+![Alt text](/A/Screenshots/ss1.png?raw=true "ss1")
+
+
 Instructions
 Put Data folder inside Game folder and run FEB SDL.exe
 Input 1 for editor, anything else for game
