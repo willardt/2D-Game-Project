@@ -1,0 +1,18 @@
+id - 27
+type - 1
+name - Scrawler Shell
+Damage - 0
+Defense - 5
+Health - 25
+Hps - 0
+Mana - 0
+Mps - 0
+Leech - 0
+Drain - 0
+Luck - 0
+Speed - 0
+Drop Chance - 20
+Price - 50
+Duration - 0
+maxHealth - 0
+maxMana - 0

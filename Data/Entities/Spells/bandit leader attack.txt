@@ -14,3 +14,5 @@ Color b - 150
 Type - 0
 End Sprite - 1
 Sprite Delay - 20
+Debuff - 0
+Element - 25

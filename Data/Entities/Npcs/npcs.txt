@@ -7,3 +7,5 @@ Lily - Data/Textures/player.png
 Jessica - Data/Textures/player.png
 Jimmy - Data/Textures/player.png
 Dave - Data/Textures/player.png
+Jim - Data/Textures/Npcs/jim.png
+Sao - Data/Textures/Npcs/jim.png

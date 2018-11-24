@@ -1,0 +1,18 @@
+Name - Scrawler Attack
+Texture - Data/Textures/scrawler attack.bmp
+Width - 15
+Height - 15
+Speed - .01
+Max Distance - 1200
+Damage - 20
+End Frame - 25
+Fire Rate - 40
+Mana Cost - 0
+Color r - 162
+Color g - 36
+Color b - 52
+Type - 0
+End Sprite - 4
+Sprite Delay - 3
+Debuff - 0
+Element - 20

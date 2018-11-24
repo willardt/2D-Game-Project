@@ -7,3 +7,5 @@ Lily - 0
 Jessica - 0
 Chelsea - 0
 Dave - 0
+Jim - 1
+Sao - 1

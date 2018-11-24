@@ -41,3 +41,4 @@ Loot Table - 25 26 6 9
 Combat Range w - 0
 Combat Range h - 0
 Is Boss - 0
+Element - 25

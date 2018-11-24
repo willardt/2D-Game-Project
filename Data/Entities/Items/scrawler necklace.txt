@@ -1,0 +1,18 @@
+id - 28
+type - 5
+name - Srawler Necklace
+Damage - 0
+Defense - 3
+Health - 0
+Hps - 0
+Mana - 0
+Mps - 0
+Leech - 0
+Drain - 0
+Luck - 1
+Speed - 1
+Drop Chance - 100
+Price - 300
+Duration - 0
+maxHealth - 0
+maxMana - 0

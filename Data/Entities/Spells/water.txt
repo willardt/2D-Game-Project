@@ -3,10 +3,10 @@ Texture - Data/Textures/water.png
 Width - 15
 Height - 15
 Speed - .0125
-Max Distance - 1000
+Max Distance - 800
 Damage - 20
 End Frame - 25
-Fire Rate - 20
+Fire Rate - 35
 Mana Cost - 0
 Color r - 102
 Color g - 199
@@ -14,3 +14,5 @@ Color b - 223
 Type - 1
 End Sprite - 4
 Sprite Delay - 5
+Debuff - 2
+Element - 21
