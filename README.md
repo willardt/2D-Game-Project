@@ -1,4 +1,4 @@
-![Alt text](/A/Screenshots/ss1.png?raw=true "ss1")
+![Alt text](relative/A/Screenshots/ss1.png?raw=true "ss1")
 
 
 Instructions
