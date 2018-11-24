@@ -39,4 +39,6 @@ Toggle Remove Solid - x
 Toggle Wars - c
 Load / Create map - l
 
-[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/v=g__5xRvBKFk/0.jpg)](http://www.youtube.com/watch?v=v=g__5xRvBKFk)
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=watch?v=g__5xRvBKFk
+" target="_blank"><img src="http://img.youtube.com/vi/watch?v=g__5xRvBKFk/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
