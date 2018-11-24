@@ -743,7 +743,9 @@ void Game::loadMap(const int& id, int type) {
 	for (size_t i = 0; i < enemies.size(); i++) {
 		enemies[i].spells.clear();
 	}
-	player.save(map.id);
+	if (map.id != 0) {
+		player.save(map.id);
+	}
 	map.Init(id);
 	Object::loadMapObjects(id, objects);
 	objectSolids.clear();
