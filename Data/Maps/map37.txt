@@ -1,0 +1,20 @@
+Name - 
+Width - 
+Height - 
+Tiles - 
+Solid Size - 
+Solids - 
+Entity Size - 0
+Entities - 
+Item Size - 0
+Items - 
+Warp Size - 
+Warps - 
+Object Size - 
+Objects - 
+Effect Size - 
+Effects - 
+Entity Size - 
+Entities - 
+Item Size - 
+Items - 
