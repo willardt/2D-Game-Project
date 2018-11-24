@@ -6,11 +6,11 @@
 
 ![Level 33](https://github.com/willardt/A/blob/master/Screenshots/ss4.png?raw=true "Level 33")
 
-Instructions
+Instructions:
 Put Data folder inside Game folder and run FEB SDL.exe
 Input 1 for editor, anything else for game
 
-Game Buttons
+Game Buttons:
 Movement - wasd
 Attack - left mouse & right mouse
 Inventory - c
@@ -33,7 +33,7 @@ Toggle warps - b
 Toggle combat range - n
 Toggle solids - m
 
-Editor Buttons
+Editor Buttons:
 Movement - wasd
 Place - left mouse
 Tiles - 1
