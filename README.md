@@ -47,5 +47,6 @@ Toggle Remove Solid - x
 Toggle Wars - c
 Load / Create map - l
 
-Game Demo - https://www.youtube.com/watch?v=4kv3hXBV6Yc \n
+Game Demo - https://www.youtube.com/watch?v=4kv3hXBV6Yc
+
 Editor Demo - https://www.youtube.com/watch?v=g__5xRvBKFk
