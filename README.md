@@ -1,3 +1,6 @@
+Game Demo - https://www.youtube.com/watch?v=4kv3hXBV6Yc  
+Editor Demo - https://www.youtube.com/watch?v=g__5xRvBKFk  
+
 ![Level 1](https://github.com/willardt/A/blob/master/Screenshots/ss1.png?raw=true "Level 1")
 
 ![Level 2](https://github.com/willardt/A/blob/master/Screenshots/ss2.png?raw=true "Level 2")
@@ -46,7 +49,4 @@ Toggle Place Solid - z
 Toggle Remove Solid - x  
 Toggle Wars - c  
 Load / Create map - l  
-
-Game Demo - https://www.youtube.com/watch?v=4kv3hXBV6Yc  
-
-Editor Demo - https://www.youtube.com/watch?v=g__5xRvBKFk  
+ 
